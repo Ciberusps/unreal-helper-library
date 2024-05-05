@@ -14,3 +14,15 @@ float UUnrealHelperLibraryBPLibrary::UnrealHelperLibrarySampleFunction(float Par
 	return -1;
 }
 
+FString UUnrealHelperLibraryBPLibrary::GetProjectVersion()
+{
+	FString ProjectVersion;
+	GConfig->GetString(
+		TEXT("/Script/EngineSettings.GeneralProjectSettings"),
+		TEXT("ProjectVersion"),
+		ProjectVersion,
+		GGameIni
+	);
+	return ProjectVersion;
+}
+

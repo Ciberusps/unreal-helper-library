@@ -29,4 +29,10 @@ class UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
 	static float UnrealHelperLibrarySampleFunction(float Param);
+	// UFUNCTION(BlueprintCallable, meta = (Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
+	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
+
+	// Get project version from "Project Settings"
+	UFUNCTION(BlueprintPure)
+	static FString GetProjectVersion();
 };
