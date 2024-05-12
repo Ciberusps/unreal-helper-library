@@ -3,8 +3,10 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "UnrealHelperLibraryBPLibrary.generated.h"
 
+struct FBlackboardKeySelector;
 /* 
 *	Function library class.
 *	Each function in it is expected to be static and represents blueprint node that can be called in any blueprint.
@@ -27,12 +29,16 @@ class UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibrary")
 	static float UnrealHelperLibrarySampleFunction(float Param);
 	// UFUNCTION(BlueprintCallable, meta = (Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
 	// Get project version from "Project Settings"
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, meta = (Keywords = "UnrealHelperLibrary version"), Category = "UnrealHelperLibrary")
 	static FString GetProjectVersion();
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
+	static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const bool bEnabled = true);
+
+	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 };

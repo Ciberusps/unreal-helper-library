@@ -3,29 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyEnums.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_NativeEnum.h"
+#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "BTT_SetBBValue.generated.h"
 
-UENUM(BlueprintType)
-enum ESetBBValueTypes
-{
-	None,
-	Bool,
-	Int,
-	Float,
-	String,
-	Name,
-	Vector,
-	Rotator,
-	Enum,
-	NativeEnum,
-	Object,
-	Class,
-};
+
 
 /**
  * Use with caution, setting BB values in BehaviorTrees directly is "anti-pattern"
@@ -94,5 +76,5 @@ private:
 	UPROPERTY()
 	UEnum* CurrentEnum;
 	UPROPERTY()
-	TEnumAsByte<ESetBBValueTypes> CurrentBBKeyValueType = ESetBBValueTypes::None;
+	TEnumAsByte<EBBValueType> CurrentBBKeyValueType = EBBValueType::None;
 };

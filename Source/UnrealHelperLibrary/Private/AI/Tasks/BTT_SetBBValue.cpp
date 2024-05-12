@@ -3,6 +3,7 @@
 
 #include "AI/Tasks/BTT_SetBBValue.h"
 
+#include "UnrealHelperLibraryBPLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
@@ -16,6 +17,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_String.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 
 UBTT_SetBBValue::UBTT_SetBBValue(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -92,37 +94,37 @@ FString UBTT_SetBBValue::GetStaticDescription() const
 
 	switch (CurrentBBKeyValueType)
 	{
-		case ESetBBValueTypes::Bool:
+		case EBBValueType::Bool:
 			Description = FString::Printf(TEXT("Set \"%s\" to %hhd"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue);
 			break;
-		case ESetBBValueTypes::Int:
+		case EBBValueType::Int:
 			Description = FString::Printf(TEXT("Set \"%s\" to %d"), *BlackboardKey.SelectedKeyName.ToString(), IntValue);
 			break;
-		case ESetBBValueTypes::Float:
+		case EBBValueType::Float:
 			Description = FString::Printf(TEXT("Set \"%s\" to %f"), *BlackboardKey.SelectedKeyName.ToString(), FloatValue);
 			break;
-		case ESetBBValueTypes::String:
+		case EBBValueType::String:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *StringValue);
 			break;
-		case ESetBBValueTypes::Name:
+		case EBBValueType::Name:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *NameValue.ToString());
 			break;
-		case ESetBBValueTypes::Vector:
+		case EBBValueType::Vector:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *VectorValue.ToString());
 			break;
-		case ESetBBValueTypes::Rotator:
+		case EBBValueType::Rotator:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *RotatorValue.ToString());
 			break;
-		case ESetBBValueTypes::Enum:
+		case EBBValueType::Enum:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			break;
-		case ESetBBValueTypes::NativeEnum:
+		case EBBValueType::NativeEnum:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			break;
-		case ESetBBValueTypes::Object:
+		case EBBValueType::Object:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *ObjectValue.SelectedKeyName.ToString());
 			break;
-		case ESetBBValueTypes::Class:
+		case EBBValueType::Class:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), ClassValue ? *ClassValue->GetName() : TEXT(""));
 			break;
 		default:
@@ -143,52 +145,7 @@ void UBTT_SetBBValue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Bool;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Int;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Float;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::String;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Name::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Name;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Vector;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Rotator;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Enum;
-		CurrentEnum = ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_NativeEnum::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::NativeEnum;
-		CurrentEnum = ((UBlackboardKeyType_NativeEnum*)(EntryInfo->KeyType))->EnumType;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Object;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Class::StaticClass())
-	{
-		CurrentBBKeyValueType = ESetBBValueTypes::Class;
-	}
+	CurrentBBKeyValueType = UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(BlackboardKey);
 }
 
 TArray<FString> UBTT_SetBBValue::GetEnumOptions()
