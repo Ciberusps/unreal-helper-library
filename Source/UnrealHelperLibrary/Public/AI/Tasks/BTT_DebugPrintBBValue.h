@@ -21,6 +21,8 @@ public:
 	// FString Line1;
 	UPROPERTY(Category=Decorator, EditAnywhere)
 	FBlackboardKeySelector BlackboardKey;
+	UPROPERTY(Category=Decorator, EditAnywhere)
+	float Duration = 3.5f;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	FString GetBBKeyDescription(UBehaviorTreeComponent& OwnerComp);

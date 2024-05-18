@@ -38,7 +38,7 @@ FString UUnrealHelperLibraryBPLibrary::GetProjectVersion()
 }
 
 void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FString& B, const FString& C,
-	const FString& D, const FString& E, const bool bEnabled)
+	const FString& D, const FString& E, const bool bEnabled, float Duration)
 {
 	FString StringResult;
 	StringResult.Empty(A.Len() + B.Len() + C.Len() + D.Len() + E.Len() + 1); // adding one for the string terminator
@@ -50,7 +50,11 @@ void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FS
 
 	if (!bEnabled) return;
 	
-	UKismetSystemLibrary::PrintString(nullptr, StringResult);
+	UKismetSystemLibrary::PrintString(
+		nullptr, StringResult,
+		true, true,
+		FLinearColor(0, 0.66, 1), Duration
+	);
 }
 
 EBBValueType UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(

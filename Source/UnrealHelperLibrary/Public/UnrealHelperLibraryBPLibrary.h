@@ -38,7 +38,7 @@ class UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintPure, meta = (Keywords = "UnrealHelperLibrary version"), Category = "UnrealHelperLibrary")
 	static FString GetProjectVersion();
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
-	static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const bool bEnabled = true);
+	static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const bool bEnabled = true, float Duration = 2.0f);
 
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 };
