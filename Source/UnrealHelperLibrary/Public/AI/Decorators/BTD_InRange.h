@@ -16,7 +16,7 @@ struct FBTInRangeMemory
 /**
  * 
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTD_InRange : public UBTD_Base
 {
 	GENERATED_BODY()
@@ -40,17 +40,20 @@ public:
 	/** if set, radius of Target's capsule will be added to threshold between AI and goal location  */
 	UPROPERTY(Category=Decorator, EditAnywhere)
 	bool bIncludeTargetCapsuleRadius = false;
+	UPROPERTY(Category=Decorator, EditAnywhere)
+	bool bDrawDebug = false;
 
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
+	virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
 	virtual uint16 GetInstanceMemorySize() const override;
 	
 	virtual FString GetStaticDescription() const override;
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 	virtual FName GetNodeIconName() const override;
 
-	float GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp) const;
+	float GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, bool bDrawDebug_In = false) const;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

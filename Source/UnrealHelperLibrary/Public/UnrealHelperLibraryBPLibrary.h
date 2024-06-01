@@ -37,8 +37,10 @@ class UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
 	// Get project version from "Project Settings"
 	UFUNCTION(BlueprintPure, meta = (Keywords = "UnrealHelperLibrary version"), Category = "UnrealHelperLibrary")
 	static FString GetProjectVersion();
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
-	static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const bool bEnabled = true, float Duration = 2.0f);
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
+	static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const bool bEnabled = true);
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
+	static float RelativeAngleToActor(AActor* ActorRelativeWhomAngleCalculated, AActor* TargetActor);
 
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 };

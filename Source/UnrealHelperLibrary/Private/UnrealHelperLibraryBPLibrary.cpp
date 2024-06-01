@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UnrealHelperLibraryBPLibrary.h"
+
+#include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
@@ -38,7 +40,8 @@ FString UUnrealHelperLibraryBPLibrary::GetProjectVersion()
 }
 
 void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FString& B, const FString& C,
-	const FString& D, const FString& E, const bool bEnabled, float Duration)
+	const FString& D, const FString& E, const FString& F, const FString& G, const FString& H, const FString& I,
+	const FString& J, float Duration, const bool bEnabled)
 {
 	FString StringResult;
 	StringResult.Empty(A.Len() + B.Len() + C.Len() + D.Len() + E.Len() + 1); // adding one for the string terminator
@@ -54,6 +57,15 @@ void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FS
 		nullptr, StringResult,
 		true, true,
 		FLinearColor(0, 0.66, 1), Duration
+	);
+}
+
+float UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(AActor* ActorRelativeWhomAngleCalculated,
+	AActor* TargetActor)
+{
+	return UKismetAnimationLibrary::CalculateDirection(
+		ActorRelativeWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
+		(ActorRelativeWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
 	);
 }
 
