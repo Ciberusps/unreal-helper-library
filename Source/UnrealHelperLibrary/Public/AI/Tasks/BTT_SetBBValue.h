@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "BTT_SetBBValue.generated.h"
-
 
 
 /**
@@ -24,29 +24,29 @@ public:
 	UBTT_SetBBValue(const FObjectInitializer& ObjectInitializer);
 	
 	/** blackboard key selector */
-	UPROPERTY(EditAnywhere, Category=Blackboard)
-	FBlackboardKeySelector BlackboardKey;
+	UPROPERTY(EditAnywhere, Category="Blackboard")
+	struct FBlackboardKeySelector BlackboardKey;
 	
 	/** Values */
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Bool", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Bool", EditConditionHides))
 	bool BoolValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Int", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Int", EditConditionHides))
 	int32 IntValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Float", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Float", EditConditionHides))
 	float FloatValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::String", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::String", EditConditionHides))
 	FString StringValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Name", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Name", EditConditionHides))
 	FName NameValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Vector", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Vector", EditConditionHides))
 	FVector VectorValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Rotator", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Rotator", EditConditionHides))
 	FRotator RotatorValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Enum || CurrentBBKeyValueType==ESetBBValueTypes::NativeEnum", EditConditionHides, GetOptions="GetEnumOptions"))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Enum || CurrentBBKeyValueType==ESetBBValueTypes::NativeEnum", EditConditionHides, GetOptions="GetEnumOptions"))
 	FString EnumStringValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Object", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Object", EditConditionHides))
 	FBlackboardKeySelector ObjectValue;
-	UPROPERTY(Category=Blackboard, EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Class", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Key Value", EditCondition="CurrentBBKeyValueType==ESetBBValueTypes::Class", EditConditionHides))
 	UClass* ClassValue;
 	/** ~Values */
 	
@@ -66,7 +66,6 @@ public:
 #endif
 
 #if WITH_EDITOR
-protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 

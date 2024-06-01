@@ -51,10 +51,12 @@ void UBTD_InAngle::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp
 	Values.Add(FString::Printf(TEXT("CurrentAngle: %f"), GetCurrentAngle(OwnerComp, NodeMemory)));
 }
 
+#if WITH_EDITOR
 FName UBTD_InAngle::GetNodeIconName() const
 {	
 	return FName("GenericCommands.Redo");
 }
+#endif
 
 EBlackboardNotificationResult UBTD_InAngle::OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard,
                                                                        FBlackboard::FKey ChangedKeyID)

@@ -25,11 +25,12 @@ uint16 UBTD_InRange::GetInstanceMemorySize() const
 {
 	return sizeof(FBTInRangeMemory);
 }
-
+#if WITH_EDITOR
 FName UBTD_InRange::GetNodeIconName() const
 {
 	return FName("SoftwareCursor_UpDown");
 }
+#endif
 
 float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, bool bDrawDebug_In) const
 {

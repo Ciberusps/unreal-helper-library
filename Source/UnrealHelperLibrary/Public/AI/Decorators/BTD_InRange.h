@@ -51,8 +51,10 @@ public:
 	
 	virtual FString GetStaticDescription() const override;
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
+#if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
-
+#endif
+	
 	float GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, bool bDrawDebug_In = false) const;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

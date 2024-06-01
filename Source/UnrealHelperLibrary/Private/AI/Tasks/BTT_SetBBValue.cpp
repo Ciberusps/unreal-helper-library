@@ -19,7 +19,9 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 
-UBTT_SetBBValue::UBTT_SetBBValue(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+
+UBTT_SetBBValue::UBTT_SetBBValue(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	ObjectValue.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_SetBBValue, ObjectValue), UObject::StaticClass());
 }
@@ -135,18 +137,21 @@ FString UBTT_SetBBValue::GetStaticDescription() const
 	return FString::Printf(TEXT("%s"), *Description);
 }
 
+#if WITH_EDITOR
 void UBTT_SetBBValue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	const UBlackboardData* BlackboardAsset = GetBlackboardAsset();
 	if (!BlackboardAsset) return;
-		
+
+	if (!BlackboardKey.IsSet()) return;
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
 	CurrentBBKeyValueType = UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(BlackboardKey);
 }
+#endif
 
 TArray<FString> UBTT_SetBBValue::GetEnumOptions()
 {

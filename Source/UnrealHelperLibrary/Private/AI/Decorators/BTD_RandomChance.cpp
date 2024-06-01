@@ -43,8 +43,10 @@ FString UBTD_RandomChance::GetStaticDescription() const
 	return FString::Printf(TEXT("Chance - %.2f%% (%.2f)"), Chance * 100.0f, Chance);
 }
 
+#if WITH_EDITOR
 FName UBTD_RandomChance::GetNodeIconName() const
 {
 	// return FName("CodeView.ClassIcon");
 	return FName("GraphEditor.StructGlyph");
 }
+#endif // WITH_EDITOR
