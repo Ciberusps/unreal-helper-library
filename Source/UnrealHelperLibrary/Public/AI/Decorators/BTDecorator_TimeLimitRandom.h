@@ -20,17 +20,10 @@ struct FBTimeLimitMemoryRandom
  * In UE5.4 changed completely now we can't nest from "TimeLimit" and forced to copy-paste same functionality
  */
 UCLASS(hidecategories=Decorator)
-#if UE_VERSION_NEWER_THAN(5, 4, 0)
 class UNREALHELPERLIBRARY_API UBTDecorator_TimeLimitRandom :
     public UBTDecorator
 {
 	GENERATED_BODY()
-#else
-class UNREALHELPERLIBRARY_API UBTDecorator_TimeLimitRandom :
-    public UBTDecorator_TimeLimit
-{
-	GENERATED_BODY()
-#endif
 
 public:
     UBTDecorator_TimeLimitRandom(const FObjectInitializer& ObjectInitializer);
