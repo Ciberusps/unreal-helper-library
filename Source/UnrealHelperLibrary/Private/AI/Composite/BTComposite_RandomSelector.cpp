@@ -88,6 +88,25 @@ FName UBTComposite_RandomSelector::GetNodeIconName() const
 }
 #endif
 
+#if UE_VERSION_NEWER_THAN(5, 4, 0)
+uint16 UBTComposite_RandomSelector::GetInstanceMemorySize() const
+{
+    return sizeof(FBTRandomSelectorMemory);
+}
+
+void UBTComposite_RandomSelector::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+                                                   EBTMemoryInit::Type InitType) const
+{
+    InitializeNodeMemory<FBTRandomSelectorMemory>(NodeMemory, InitType);
+}
+
+void UBTComposite_RandomSelector::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+    EBTMemoryClear::Type CleanupType) const
+{
+    CleanupNodeMemory<FBTRandomSelectorMemory>(NodeMemory, CleanupType);
+}
+#endif
+
 FString UBTComposite_RandomSelector::GetErrorOrWarning() const
 {
     if (!IsValidSelector())
