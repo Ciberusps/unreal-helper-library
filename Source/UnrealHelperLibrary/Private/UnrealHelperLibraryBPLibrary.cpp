@@ -14,18 +14,10 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_String.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "Engine/SCS_Node.h"
+#include "Engine/SimpleConstructionScript.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-UUnrealHelperLibraryBPLibrary::UUnrealHelperLibraryBPLibrary(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer)
-{
-
-}
-
-float UUnrealHelperLibraryBPLibrary::UnrealHelperLibrarySampleFunction(float Param)
-{
-	return -1;
-}
 
 FString UUnrealHelperLibraryBPLibrary::GetProjectVersion()
 {
@@ -60,12 +52,61 @@ void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FS
 	);
 }
 
-float UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(AActor* ActorRelativeWhomAngleCalculated,
+void UUnrealHelperLibraryBPLibrary::DrawDebugBar()
+{
+}
+
+FGameplayEffectSpec UUnrealHelperLibraryBPLibrary::CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser,
+    const FHitResult& HitResult, const UObject* SourceObject)
+{
+    const UGameplayEffect* GameplayEffect = GameplayEffectClass->GetDefaultObject<UGameplayEffect>();
+    FGameplayEffectContext* GameplayEffectContext = new FGameplayEffectContext(HitInstigator, InEffectCauser);
+    FGameplayEffectContextHandle GameplayEffectContextHandle(GameplayEffectContext);
+    GameplayEffectContextHandle.AddHitResult(HitResult);
+    GameplayEffectContextHandle.AddSourceObject(SourceObject);
+    FGameplayEffectSpec GameplayEffectSpec(GameplayEffect, GameplayEffectContextHandle);
+    return GameplayEffectSpec;
+}
+
+TArray<FString> UUnrealHelperLibraryBPLibrary::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
+{
+    TArray<FString> Result = {};
+
+    UBlueprintGeneratedClass* BlueprintGeneratedClass = OwnerObject->IsA<UBlueprintGeneratedClass>()
+        ? Cast<UBlueprintGeneratedClass>(OwnerObject)
+        : Cast<UBlueprintGeneratedClass>(OwnerObject->GetClass());
+    if (!BlueprintGeneratedClass) return Result;
+
+    TArray<UObject*> DefaultObjectSubobjects;
+    BlueprintGeneratedClass->GetDefaultObjectSubobjects(DefaultObjectSubobjects);
+
+    // Search for ActorComponents created from C++
+    for (UObject* DefaultSubObject : DefaultObjectSubobjects)
+    {
+        if (DefaultSubObject->IsA(Class))
+        {
+            Result.Add(DefaultSubObject->GetName());
+        }
+    }
+
+    // Search for ActorComponents created in Blueprint
+    for (USCS_Node* Node : BlueprintGeneratedClass->SimpleConstructionScript->GetAllNodes())
+    {
+        if (Node->ComponentClass->IsChildOf(Class))
+        {
+            Result.Add(Node->GetVariableName().ToString());
+        }
+    }
+
+    return Result;
+}
+
+float UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
 	AActor* TargetActor)
 {
 	return UKismetAnimationLibrary::CalculateDirection(
-		ActorRelativeWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
-		(ActorRelativeWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
+		ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
+		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
 	);
 }
 

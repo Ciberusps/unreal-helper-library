@@ -3,11 +3,13 @@
 #pragma once
 
 #include "GameplayEffect.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "UnrealHelperLibraryBPLibrary.generated.h"
 
 struct FBlackboardKeySelector;
+
 /*
 *	Function library class.
 *	Each function in it is expected to be static and represents blueprint node that can be called in any blueprint.
@@ -26,22 +28,58 @@ struct FBlackboardKeySelector;
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
 UCLASS()
-class UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
+class UNREALHELPERLIBRARY_API UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibrary")
-	static float UnrealHelperLibrarySampleFunction(float Param);
+public:
 	// UFUNCTION(BlueprintCallable, meta = (Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
-	// Get project version from "Project Settings"
-	UFUNCTION(BlueprintPure, meta = (Keywords = "UnrealHelperLibrary version"), Category = "UnrealHelperLibrary")
-	static FString GetProjectVersion();
+/** Gameplay **/
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
-	static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const bool bEnabled = true);
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
-	static float RelativeAngleToActor(AActor* ActorRelativeWhomAngleCalculated, AActor* TargetActor);
+	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor);
+/** Gameplay **/
 
+/** Debug **/
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
+    static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const bool bEnabled = true);
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
+    static void DrawDebugBar();
+/** ~Debug **/
+
+/** GAS **/
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug GAS Development"))
+    static FGameplayEffectSpec CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser, const FHitResult& HitResult, const UObject* SourceObject);
+/** ~GAS **/
+
+/** Utils **/
+    // Get project version from "Project Settings"
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary version"))
+    static FString GetProjectVersion();
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
+    static TArray<FString> GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class);
+
+    // return all assets of specified class in template
+    template<typename T>
+    UFUNCTION(BlueprintPure)
+    static void GetAssetsOfClass(TArray<T*>& OutArray);
+/** ~Utils **/
+
+/** AI **/
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
+/** ~AI **/
 };
+
+template <typename T>
+void UUnrealHelperLibraryBPLibrary::GetAssetsOfClass(TArray<T*>& OutArray)
+{
+    FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+    TArray<FAssetData> AssetData;
+    AssetRegistryModule.Get().GetAssetsByClass(T::StaticClass()->GetFName(), AssetData);
+    for (int i = 0; i < AssetData.Num(); i++) {
+        T* Object = Cast<T>(AssetData[i].GetAsset());
+        OutArray.Add(Object);
+    }
+}
+
