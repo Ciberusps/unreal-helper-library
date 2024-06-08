@@ -52,7 +52,7 @@ void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FS
 	StringResult += E;
 
 	if (!bEnabled) return;
-	
+
 	UKismetSystemLibrary::PrintString(
 		nullptr, StringResult,
 		true, true,
@@ -73,7 +73,7 @@ EBBValueType UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
 	EBBValueType Result = EBBValueType::None;
-	
+
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
 	{
 		Result = EBBValueType::Bool;

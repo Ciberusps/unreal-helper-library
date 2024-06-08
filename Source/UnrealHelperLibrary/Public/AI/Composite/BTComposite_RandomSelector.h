@@ -4,10 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTCompositeNode.h"
+#include "Misc/EngineVersionComparison.h"
 #include "BTComposite_RandomSelector.generated.h"
 
+struct FBTRandomSelectorMemory
+{
+};
+
 /**
- * 
+ *
  */
 UCLASS()
 class UNREALHELPERLIBRARY_API UBTComposite_RandomSelector : public UBTCompositeNode
@@ -39,6 +44,13 @@ protected:
 	virtual FName GetNodeIconName() const override;
 #endif
 
+#if UE_VERSION_NEWER_THAN(5, 4, 0)
+    // 5.4.0 and up only code
+    virtual uint16 GetInstanceMemorySize() const override;
+    virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
+    virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
+#endif
+
 private:
 	UFUNCTION()
 	bool IsValidSelector() const { return GetChildrenNum() <= ChancesArray.Num(); };
@@ -46,5 +58,5 @@ private:
 	FString GetErrorOrWarning() const;
 	UFUNCTION()
 	int32 GetRandomChildIdx() const;
-	
+
 };
