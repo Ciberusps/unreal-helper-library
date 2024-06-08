@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-UENUM(BlueprintType)
-enum EBBValueType
+UENUM()
+enum class EBBValueType
 {
 	None,
 	Bool,

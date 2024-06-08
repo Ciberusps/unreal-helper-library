@@ -26,7 +26,7 @@ public:
 };
 
 /**
- * 
+ *
  */
 UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTD_InAngle : public UBTD_Base
@@ -35,7 +35,7 @@ class UNREALHELPERLIBRARY_API UBTD_InAngle : public UBTD_Base
 
 public:
 	UBTD_InAngle(const FObjectInitializer& ObjectInitializer);
-	
+
 	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	FBlackboardKeySelector Target;
 	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
@@ -43,9 +43,14 @@ public:
 	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	// TArray<FAngleRange> ExcludeRanges;
 
-	UPROPERTY(Category=Decorator, EditAnywhere)
+	UPROPERTY(Category="Decorator", EditAnywhere)
 	bool bDrawDebug = false;
-	
+    // helpful for testing ranges
+    UPROPERTY(Category="Decorator", EditAnywhere)
+    bool bDebugForceFalseCondition = false;
+    UPROPERTY(Category="Decorator", EditAnywhere)
+    float OverrideDebugLinesDistance = 0.0f;
+
 	// virtual void SetOwner(AActor* ActorOwner) override;
 	// virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
@@ -57,7 +62,7 @@ public:
 #endif
 
 	virtual EBlackboardNotificationResult OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID) override;
-	
+
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 	float GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, bool bDrawDebug_In = false) const;
 	bool IsInAngle(float CurrentAngle) const;
