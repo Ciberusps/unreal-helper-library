@@ -31,9 +31,9 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	const UBlackboardData* BlackboardAsset = GetBlackboardAsset();
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardAsset) return EBTNodeResult::Failed;
-		
+
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
-	
+
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
@@ -42,7 +42,26 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
 	{
-		BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, IntValue);
+	    int32 ResultInt = 0;
+	    if (IsMathOperationRequired())
+	    {
+	        ResultInt = MathOperation == ESetBBValue_MathOperations::Set
+	            ? IntValue
+	            : BlackboardComponent->GetValueAsInt(BlackboardKey.SelectedKeyName);
+		    if (MathOperation == ESetBBValue_MathOperations::Add)
+		    {
+		        ResultInt += IntValue;
+		    }
+		    else if (MathOperation == ESetBBValue_MathOperations::Multiply)
+		    {
+		        ResultInt *= IntValue;
+		    }
+		    else if (MathOperation == ESetBBValue_MathOperations::Divide)
+		    {
+		        ResultInt /= IntValue;
+		    }
+	    }
+		BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, ResultInt);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
 	{
@@ -150,6 +169,7 @@ void UBTT_SetBBValue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
 	CurrentBBKeyValueType = UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(BlackboardKey);
+    MathOperation = ESetBBValue_MathOperations::Set;
 }
 #endif
 
@@ -159,15 +179,15 @@ TArray<FString> UBTT_SetBBValue::GetEnumOptions()
 
 	const UBlackboardData* BlackboardAsset = GetBlackboardAsset();
 	if (!BlackboardAsset) return Result;
-		
+
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
-		
+
 	const UEnum* Enum = (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 		                    ? ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType
 		                    : ((UBlackboardKeyType_NativeEnum*)(EntryInfo->KeyType))->EnumType;
 
-	if (Enum == nullptr)
+	if (!Enum || !Enum->IsValidLowLevel())
 	{
 		return Result;
 	}
@@ -176,6 +196,6 @@ TArray<FString> UBTT_SetBBValue::GetEnumOptions()
 	{
 		Result.Add(Enum->GetNameByIndex(i).ToString());
 	}
-		
+
 	return Result;
 }

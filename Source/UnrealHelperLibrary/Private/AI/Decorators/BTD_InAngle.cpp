@@ -26,8 +26,8 @@ UBTD_InAngle::UBTD_InAngle(const FObjectInitializer& ObjectInitializer)
 bool UBTD_InAngle::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	float CurrentAngle = GetCurrentAngle(OwnerComp, NodeMemory, bDrawDebug);
-	
-	return IsInAngle(CurrentAngle);
+
+	return bDebugForceFalseCondition ? false : IsInAngle(CurrentAngle);
 }
 
 void UBTD_InAngle::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
@@ -53,7 +53,7 @@ void UBTD_InAngle::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp
 
 #if WITH_EDITOR
 FName UBTD_InAngle::GetNodeIconName() const
-{	
+{
 	return FName("GenericCommands.Redo");
 }
 #endif
@@ -64,20 +64,20 @@ EBlackboardNotificationResult UBTD_InAngle::OnBlackboardKeyValueChange(const UBl
 	if (ChangedKeyID == Target.GetSelectedKeyID())
 	{
 		UBehaviorTreeComponent* BehaviorComp = Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent());
-		
+
 		const int32 NodeInstanceIdx = BehaviorComp->FindInstanceContainingNode(this);
 		FBTInAngleMemory* Memory = CastInstanceNodeMemory<FBTInAngleMemory>(BehaviorComp->GetNodeMemory(this, NodeInstanceIdx));
 
 		TryCacheTargetCharacter(&Blackboard, Memory);
 	}
-	
+
 	return Super::OnBlackboardKeyValueChange(Blackboard, ChangedKeyID);
 }
 
 float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, bool bDrawDebug_In) const
 {
 	float CurrentAngle = 0.0f;
-	
+
 	const UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComponent) return CurrentAngle;
 
@@ -100,22 +100,23 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 		// TargetCharacter = Cast<ACharacter>(TargetActor);
 		// Memory->TargetCharacter = TargetCharacter;
 	}
-	
+
 	if (!IsValid(SelfActor) || !IsValid(Memory->TargetCharacter.Get())) return CurrentAngle;
-	
+
 	CurrentAngle = UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(SelfActor, Memory->TargetCharacter.Get());
-	
+
 	if (bDrawDebug)
 	{
 		FVector LineStart = SelfActor->GetActorLocation();
 		FVector LineEnd = Memory->TargetCharacter->GetActorLocation();
 		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
-		bool bInAngle = false;
-		// bool bInAngle = UKismetMathLibrary::InRange_FloatFloat(CurrentAngle, Min, Max);
-		
+		bool bInAngle = IsInAngle(CurrentAngle);
+
 		if(IsValid(OwnerCharacter))
 		{
-			float AngleLineLength = OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius() * 6.0f;
+			float AngleLineLength = OverrideDebugLinesDistance > 0.0f
+		        ? OverrideDebugLinesDistance
+		        : OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius() * 6.0f;
 			// CurrentDistance -= OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
 			for (FAngleRange IncludeRange : IncludeRanges)
 			{
@@ -123,7 +124,7 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 				float RangeAngle = IncludeRange.Range.GetLowerBoundValue() > 0.0f
 					? IncludeRange.Range.GetUpperBoundValue() / 2
 					: IncludeRange.Range.GetLowerBoundValue() / 2;
-				
+
 				FVector StartRangeLine = LineStart + OwnerCharacter->GetActorForwardVector().RotateAngleAxis(IncludeRange.Range.GetLowerBoundValue(), FVector(0, 0, 1)) * AngleLineLength;
 				FVector EndRangeLine = LineStart + OwnerCharacter->GetActorForwardVector().RotateAngleAxis(IncludeRange.Range.GetUpperBoundValue(), FVector(0, 0, 1)) * AngleLineLength;
 				// FVector RangeDirection = LineStart + CachedOwnerCharacter->GetActorForwardVector().RotateAngleAxis(RangeAngle, FVector(0, 0, 1)) * AngleLineLength * 0.3f;
@@ -138,7 +139,7 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInAngle ? FColor::Green : FColor::Red, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
-		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %f"), CurrentAngle), nullptr, FColor::White, 0, true);
+		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %f"), CurrentAngle), nullptr,  bInAngle ? FColor::Green : FColor::White, 0, true);
 	}
 
 	return CurrentAngle;
@@ -165,7 +166,7 @@ void UBTD_InAngle::TryCacheTargetCharacter(const UBlackboardComponent* Blackboar
 
 	AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName));
 	if (!IsValid(TargetActor)) return;
-	
+
 	// if (Target.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 	// {
 		// UObject* KeyValue = Blackboard->GetValue<UBlackboardKeyType_Object>(Target.GetSelectedKeyID());

@@ -32,7 +32,7 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
 	EBBValueType BBValueType = UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(BlackboardKey);
-	
+
 	FString Description = FString();
 
 	switch (BBValueType)
@@ -40,43 +40,43 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 		case EBBValueType::Bool:
 			{
 				bool BoolValue = BlackboardComponent->GetValueAsBool(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %hhd"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue);	
+				Description = FString::Printf(TEXT("\"%s\" is %hhd"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue);
 			}
 			break;
 		case EBBValueType::Int:
 			{
 				int32 IntValue = BlackboardComponent->GetValueAsInt(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %d"), *BlackboardKey.SelectedKeyName.ToString(), IntValue);	
+				Description = FString::Printf(TEXT("\"%s\" is %d"), *BlackboardKey.SelectedKeyName.ToString(), IntValue);
 			}
 			break;
 		case EBBValueType::Float:
 			{
 				float FloatValue = BlackboardComponent->GetValueAsFloat(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %f"), *BlackboardKey.SelectedKeyName.ToString(), FloatValue);
+				Description = FString::Printf(TEXT("\"%s\" is %f"), *BlackboardKey.SelectedKeyName.ToString(), FloatValue);
 			}
 			break;
 		case EBBValueType::String:
 			{
 				FString StringValue = BlackboardComponent->GetValueAsString(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *StringValue);
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *StringValue);
 			}
 			break;
 		case EBBValueType::Name:
 			{
 				FName NameValue = BlackboardComponent->GetValueAsName(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *NameValue.ToString());
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *NameValue.ToString());
 			}
 			break;
 		case EBBValueType::Vector:
 			{
 				FVector VectorValue = BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *VectorValue.ToString());
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *VectorValue.ToString());
 			}
 			break;
 		case EBBValueType::Rotator:
 			{
 				FRotator RotatorValue = BlackboardComponent->GetValueAsRotator(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *RotatorValue.ToString());
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *RotatorValue.ToString());
 			}
 			break;
 		case EBBValueType::Enum:
@@ -85,9 +85,9 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 							   ? ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType
 							   : ((UBlackboardKeyType_NativeEnum*)(EntryInfo->KeyType))->EnumType;
 				uint8 EnumValue = BlackboardComponent->GetValueAsEnum(BlackboardKey.SelectedKeyName);
-				
+
 				FString EnumStringValue = Enum->GetNameStringByValue(EnumValue);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			}
 			break;
 		case EBBValueType::NativeEnum:
@@ -97,19 +97,19 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 							   : ((UBlackboardKeyType_NativeEnum*)(EntryInfo->KeyType))->EnumType;
 				uint8 EnumValue = BlackboardComponent->GetValueAsEnum(BlackboardKey.SelectedKeyName);
 				FString EnumStringValue = Enum->GetNameStringByValue(EnumValue);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			}
 			break;
 		case EBBValueType::Object:
 			{
 				FBlackboardKeySelector ObjectValue = BlackboardKey;
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *ObjectValue.SelectedKeyName.ToString());
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *ObjectValue.SelectedKeyName.ToString());
 			}
 			break;
 		case EBBValueType::Class:
 			{
 				UClass* ClassValue = BlackboardComponent->GetValueAsClass(BlackboardKey.SelectedKeyName);
-				Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), ClassValue ? *ClassValue->GetName() : TEXT(""));
+				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), ClassValue ? *ClassValue->GetName() : TEXT(""));
 			}
 			break;
 
