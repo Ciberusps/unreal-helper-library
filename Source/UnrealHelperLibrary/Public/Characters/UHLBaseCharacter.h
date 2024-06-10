@@ -9,7 +9,7 @@
 #include "GameFramework/Character.h"
 #include "UHLBaseCharacter.generated.h"
 
-class UAbilitySystemTestAttributeSet;
+class UUHLBaseCharacterAttributeSet;
 
 UCLASS()
 class UNREALHELPERLIBRARY_API AUHLBaseCharacter : public ACharacter,
@@ -44,7 +44,7 @@ protected:
     UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
     UUHLAbilitySystemComponent* AbilitySystemComponent;
     UPROPERTY()
-    const UAbilitySystemTestAttributeSet* AbilitySystemTestAttributeSet;
+    const UUHLBaseCharacterAttributeSet* AbilitySystemTestAttributeSet;
 /** ~GameplayAbilities */
 
 };

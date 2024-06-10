@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
+#include "AIController.h"
 #include "UnrealHelperLibraryBPLibrary.h"
 
 UBTT_InvokeGameplayAbility::UBTT_InvokeGameplayAbility(const FObjectInitializer& ObjectInitializer)
@@ -17,13 +18,15 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
 {
     EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
-    AActor* OwnerActor = OwnerComp.GetOwner();
-    IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OwnerActor);
+    AIOwner = OwnerComp.GetAIOwner();
+    OwnerComponent = &OwnerComp;
+
+    IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(AIOwner->GetPawn());
     if (!AbilitySystemInterface)
     {
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("OwnerActor \"%s\" don't have AbilitySystem(implements IAbilitySystemInterface) add it"), *OwnerActor->GetName()));
+            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] OwnerActor \"%s\" don't have AbilitySystem(implements IAbilitySystemInterface) add it"), *AIOwner->GetPawn()->GetName()));
         }
         return EBTNodeResult::Failed;
     }
@@ -35,21 +38,29 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     AbilitySpec = MatchingGameplayAbilities[0];
     if (AbilitySpec != nullptr)
     {
-        ASC->OnAbilityEnded.AddUObject(this, &UBTT_InvokeGameplayAbility::OnAbilityEnded);
+        if (bWaitForFinishing)
+        {
+            ASC->OnAbilityEnded.AddUObject(this, &UBTT_InvokeGameplayAbility::OnAbilityEnded);
+        }
         bool bAbilityActivated = ASC->TryActivateAbility(AbilitySpec->Handle, true);
 
         Result = bAbilityActivated ? EBTNodeResult::InProgress : EBTNodeResult::Failed;
 
+        if (!bWaitForFinishing)
+        {
+            Result = EBTNodeResult::Succeeded;
+        }
+
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("TryActivateAbility - \"%s\" - %hhd"), *GameplayTag.ToString(), bAbilityActivated));
+            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
         }
     }
     else
     {
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
+            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
         }
     }
 
@@ -62,9 +73,14 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::AbortTask(UBehaviorTreeComponent
     if (ASC.IsValid())
     {
         ASC->CancelAbilityHandle(AbilitySpec->Handle);
+        if (bWaitForFinishing)
+        {
+            ASC->OnAbilityEnded.RemoveAll(this);
+        }
+
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("Task was aborted, CancelAbility - %s"), *GameplayTag.ToString()));
+            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Task was aborted, CancelAbility - %s"), *GameplayTag.ToString()));
         }
     }
     return Super::AbortTask(OwnerComp, NodeMemory);
@@ -80,15 +96,18 @@ void UBTT_InvokeGameplayAbility::OnAbilityEnded(const FAbilityEndedData& Ability
     // if not works check "AbilitySystemComponentTests.IsSameAbility"
     if (AbilityEndedData.AbilitySpecHandle != AbilitySpec->Handle) return;
 
-    UBehaviorTreeComponent* OwnerComp = Cast<UBehaviorTreeComponent>(GetOuter());
     const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
 
-    if (OwnerComp && !bIsAborting)
+    if (OwnerComponent.IsValid() && !bIsAborting)
     {
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("Ability ended - %s"), *GameplayTag.ToString()));
+            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability ended - %s"), *GameplayTag.ToString()));
         }
-        FinishLatentTask(*OwnerComp, NodeResult);
+        FinishLatentTask(*OwnerComponent, NodeResult);
+    }
+    if (bWaitForFinishing)
+    {
+        ASC->OnAbilityEnded.RemoveAll(this);
     }
 }

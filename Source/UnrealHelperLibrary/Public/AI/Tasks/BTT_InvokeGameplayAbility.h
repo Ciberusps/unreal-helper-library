@@ -38,6 +38,10 @@ private:
     bool bIsAborting = false;
     FGameplayAbilitySpec* AbilitySpec = nullptr;
     TWeakObjectPtr<UAbilitySystemComponent> ASC;
+    /** Cached AIController owner of BehaviorTreeComponent. */
+    UPROPERTY(Transient)
+    TObjectPtr<AAIController> AIOwner;
+    TWeakObjectPtr<UBehaviorTreeComponent> OwnerComponent;
 
     UFUNCTION()
     void OnAbilityEnded(const FAbilityEndedData& AbilityEndedData);

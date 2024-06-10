@@ -4,8 +4,8 @@
 #include "Characters/UHLBaseCharacter.h"
 
 #include "AbilitySystemComponent.h"
-#include "AbilitySystemTestAttributeSet.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSets/UHLBaseCharacterAttributeSet.h"
 
 // Sets default values
 AUHLBaseCharacter::AUHLBaseCharacter()
@@ -44,7 +44,7 @@ void AUHLBaseCharacter::PossessedBy(AController* NewController)
     AbilitySystemComponent->InitAbilitySystem(NewController, this);
     if (IsValid(AbilitySystemComponent))
     {
-        AbilitySystemTestAttributeSet = AbilitySystemComponent->AddSet<UAbilitySystemTestAttributeSet>();
+        AbilitySystemTestAttributeSet = AbilitySystemComponent->AddSet<UUHLBaseCharacterAttributeSet>();
     }
     AbilitySystemComponent->InitAttributes();
     AbilitySystemComponent->ActivateInitialAbilities();
