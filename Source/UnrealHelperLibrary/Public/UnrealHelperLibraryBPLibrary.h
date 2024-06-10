@@ -43,7 +43,7 @@ public:
 
 /** Debug **/
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
-    static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const bool bEnabled = true);
+    static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const FName Key = NAME_None, const bool bEnabled = true);
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
     static void DrawDebugBar();
 /** ~Debug **/

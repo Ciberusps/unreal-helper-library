@@ -7,7 +7,7 @@
 #include "BTT_PlayAnimMontage.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class UNREALHELPERLIBRARY_API UBTT_PlayAnimMontage : public UBTTaskNode
@@ -16,7 +16,7 @@ class UNREALHELPERLIBRARY_API UBTT_PlayAnimMontage : public UBTTaskNode
 
 public:
 	UBTT_PlayAnimMontage(const FObjectInitializer& ObjectInitializer);
-	
+
 	UPROPERTY(Category=Blackboard, EditAnywhere)
 	UAnimMontage* AnimMontage = nullptr;
 	UPROPERTY(Category=Blackboard, EditAnywhere)
@@ -25,6 +25,9 @@ public:
 	float StartingPosition = 0.0f;
 	UPROPERTY(Category=Blackboard, EditAnywhere)
 	FName StartSectionName = NAME_None;
+    // TODO probably should be true by default
+    UPROPERTY(Category=Blackboard, EditAnywhere)
+    bool StopMontageOnAbort = false;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
@@ -33,7 +36,8 @@ public:
 
 private:
 	bool bIsAborting = false;
-	
+    TWeakObjectPtr<ACharacter> Character;
+
 	UFUNCTION()
 	void OnPlayMontageEnded(FName NotifyName);
 };

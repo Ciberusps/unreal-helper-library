@@ -18,7 +18,7 @@ UBTT_DebugPrintBBValue::UBTT_DebugPrintBBValue(const FObjectInitializer& ObjectI
 EBTNodeResult::Type UBTT_DebugPrintBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	// UUnrealHelperLibraryBPLibrary::DebugPrintStrings(Line1, GetBBKeyDescription(OwnerComp));
-	UUnrealHelperLibraryBPLibrary::DebugPrintStrings(GetBBKeyDescription(OwnerComp), "", "", "", "", "","","","","",Duration, true);
+	UUnrealHelperLibraryBPLibrary::DebugPrintStrings(GetBBKeyDescription(OwnerComp), "", "", "", "", "","","","","",Duration, NAME_None, true);
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }
 

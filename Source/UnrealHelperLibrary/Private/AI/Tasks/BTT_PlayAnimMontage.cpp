@@ -14,8 +14,8 @@ UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectIniti
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ACharacter* Character = Cast<ACharacter>(OwnerComp.GetOwner());
-	if (!IsValid(Character)) return EBTNodeResult::Failed;
+	Character = Cast<ACharacter>(OwnerComp.GetOwner());
+	if (!Character.IsValid()) return EBTNodeResult::Failed;
 
 	UPlayMontageCallbackProxy* PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
 		Character->GetMesh(),
@@ -27,13 +27,17 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& Ow
 	PlayMontageCallbackProxy->OnCompleted.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
 	PlayMontageCallbackProxy->OnInterrupted.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
 	PlayMontageCallbackProxy->OnBlendOut.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-	
+
 	return EBTNodeResult::InProgress;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	bIsAborting = true;
+    if (StopMontageOnAbort && Character.IsValid())
+    {
+        Character.Get()->StopAnimMontage();
+    }
 	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 
@@ -46,7 +50,7 @@ void UBTT_PlayAnimMontage::OnPlayMontageEnded(FName NotifyName)
 {
 	UBehaviorTreeComponent* OwnerComp = Cast<UBehaviorTreeComponent>(GetOuter());
 	const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
-	
+
 	if (OwnerComp && !bIsAborting)
 	{
 		FinishLatentTask(*OwnerComp, NodeResult);

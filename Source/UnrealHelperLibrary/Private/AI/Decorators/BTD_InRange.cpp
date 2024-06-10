@@ -35,14 +35,14 @@ FName UBTD_InRange::GetNodeIconName() const
 float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, bool bDrawDebug_In) const
 {
 	float CurrentDistance = 0.0f;
-	
+
 	const UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComponent) return CurrentDistance;
 
 	AActor* SelfActor = OwnerComp.GetOwner();
-	AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName)); 
+	AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName));
 	if (!IsValid(SelfActor) || !IsValid(TargetActor)) return CurrentDistance;
-	
+
 	CurrentDistance = SelfActor->GetDistanceTo(TargetActor);
 
 	ACharacter* OwnerCharacter = nullptr;
@@ -75,10 +75,10 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 		FVector LineEnd = TargetActor->GetActorLocation();
 		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
 		bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Min, Max);
-		
+
 		if (bIncludeSelfCapsuleRadius && IsValid(OwnerCharacter))
 		{
-			UCapsuleComponent* OwnerCharacterCapsule = OwnerCharacter->GetCapsuleComponent(); 
+			UCapsuleComponent* OwnerCharacterCapsule = OwnerCharacter->GetCapsuleComponent();
 			DrawDebugCapsule(OwnerComp.GetWorld(), OwnerCharacterCapsule->GetComponentLocation(),
 				OwnerCharacterCapsule->GetScaledCapsuleHalfHeight(),
 				OwnerCharacterCapsule->GetScaledCapsuleRadius(),
@@ -89,7 +89,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 
 		if (bIncludeTargetCapsuleRadius && IsValid(TargetCharacter))
 		{
-			UCapsuleComponent* TargetCharacterCapsule = TargetCharacter->GetCapsuleComponent(); 
+			UCapsuleComponent* TargetCharacterCapsule = TargetCharacter->GetCapsuleComponent();
 			DrawDebugCapsule(OwnerComp.GetWorld(), TargetCharacterCapsule->GetComponentLocation(),
 				TargetCharacterCapsule->GetScaledCapsuleHalfHeight(),
 				TargetCharacterCapsule->GetScaledCapsuleRadius(),
@@ -102,6 +102,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 5.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 5.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance: %f"), CurrentDistance), nullptr, FColor::White, 0, true);
+	    DrawDebugString(OwnerComp.GetWorld(), SelfActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s"), *GetParentNode()->NodeName), nullptr,  FColor::White, 0, true);
 	}
 
 	return CurrentDistance;
@@ -146,7 +147,7 @@ FString UBTD_InRange::GetStaticDescription() const
 	// NodeDescription += FString::Printf(TEXT("bIncludeSelfCapsuleRadius: %hs\n"), BTOA(bIncludeSelfCapsuleRadius));
 	// NodeDescription += FString::Printf(TEXT("bIncludeTargetCapsuleRadius: %hs\n"), BTOA(bIncludeTargetCapsuleRadius));
 	return FString::Printf(TEXT("%s%s"), *Super::GetStaticDescription(), *NodeDescription);
-}	
+}
 
 void UBTD_InRange::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const

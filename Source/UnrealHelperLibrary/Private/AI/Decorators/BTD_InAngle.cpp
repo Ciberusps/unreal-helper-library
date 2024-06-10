@@ -6,6 +6,7 @@
 #include "KismetAnimationLibrary.h"
 #include "UnrealHelperLibraryBPLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BTCompositeNode.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
@@ -140,6 +141,7 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %f"), CurrentAngle), nullptr,  bInAngle ? FColor::Green : FColor::White, 0, true);
+	    DrawDebugString(OwnerComp.GetWorld(), SelfActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s"), *GetParentNode()->NodeName), nullptr,  FColor::White, 0, true);
 	}
 
 	return CurrentAngle;
