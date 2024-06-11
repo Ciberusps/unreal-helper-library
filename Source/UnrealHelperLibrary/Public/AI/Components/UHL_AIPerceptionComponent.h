@@ -6,7 +6,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "UHL_AIPerceptionComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSightStimulusExpired, FAIStimulus&, StimulusStore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSightStimulusExpired, const FAIStimulus&, StimulusStore);
 
 /**
  *
