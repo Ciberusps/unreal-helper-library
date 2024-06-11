@@ -19,11 +19,9 @@ UBTD_CheckGASGameplayTagsOnActor::UBTD_CheckGASGameplayTagsOnActor(const FObject
 	// Default to using Self Actor
 	ActorToCheck.SelectedKeyName = FBlackboard::KeySelf;
 
-    // TODO add support
-	// For now, don't allow users to select any "Abort Observers", because it's currently not supported.
-	bAllowAbortNone = false;
-	bAllowAbortLowerPri = false;
-	bAllowAbortChildNodes = false;
+	bAllowAbortNone = true;
+	bAllowAbortLowerPri = true;
+	bAllowAbortChildNodes = true;
 }
 
 bool UBTD_CheckGASGameplayTagsOnActor::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const

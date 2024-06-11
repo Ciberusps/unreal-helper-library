@@ -116,7 +116,7 @@ FString UBTT_SetBBValue::GetStaticDescription() const
 	switch (CurrentBBKeyValueType)
 	{
 		case EBBValueType::Bool:
-			Description = FString::Printf(TEXT("Set \"%s\" to %hhd"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue);
+			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue ? TEXT("true") : TEXT("false"));
 			break;
 		case EBBValueType::Int:
 			Description = FString::Printf(TEXT("Set \"%s\" to %d"), *BlackboardKey.SelectedKeyName.ToString(), IntValue);

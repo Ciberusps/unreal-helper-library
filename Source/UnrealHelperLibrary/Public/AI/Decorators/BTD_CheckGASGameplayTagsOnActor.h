@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BTD_Base.h"
 #include "BehaviorTree/BTDecorator.h"
 #include "BTD_CheckGASGameplayTagsOnActor.generated.h"
 
@@ -10,7 +11,7 @@
  *
  */
 UCLASS(Category = "UnrealHelperLibrary", DisplayName="Check GAS Gameplay Tags On Actor")
-class UNREALHELPERLIBRARY_API UBTD_CheckGASGameplayTagsOnActor : public UBTDecorator
+class UNREALHELPERLIBRARY_API UBTD_CheckGASGameplayTagsOnActor : public UBTD_Base
 {
 	GENERATED_BODY()
 

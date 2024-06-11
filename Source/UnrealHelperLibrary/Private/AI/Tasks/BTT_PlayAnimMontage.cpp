@@ -3,6 +3,7 @@
 
 #include "AI/Tasks/BTT_PlayAnimMontage.h"
 
+#include "AIController.h"
 #include "PlayMontageCallbackProxy.h"
 #include "GameFramework/Character.h"
 
@@ -14,8 +15,22 @@ UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectIniti
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	Character = Cast<ACharacter>(OwnerComp.GetOwner());
-	if (!Character.IsValid()) return EBTNodeResult::Failed;
+    EBTNodeResult::Type Result = EBTNodeResult::Failed;
+
+    AIOwner = OwnerComp.GetAIOwner();
+    OwnerComponent = &OwnerComp;
+    if (!AIOwner.Get())
+    {
+        Result = EBTNodeResult::Failed;
+        return Result;
+    }
+
+	Character = Cast<ACharacter>(AIOwner->GetCharacter());
+	if (!Character.IsValid())
+	{
+	    Result = EBTNodeResult::Failed;
+	    return Result;
+	}
 
 	UPlayMontageCallbackProxy* PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
 		Character->GetMesh(),
@@ -28,7 +43,8 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& Ow
 	PlayMontageCallbackProxy->OnInterrupted.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
 	PlayMontageCallbackProxy->OnBlendOut.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
 
-	return EBTNodeResult::InProgress;
+	Result = EBTNodeResult::InProgress;
+    return Result;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -48,12 +64,11 @@ FString UBTT_PlayAnimMontage::GetStaticDescription() const
 
 void UBTT_PlayAnimMontage::OnPlayMontageEnded(FName NotifyName)
 {
-	UBehaviorTreeComponent* OwnerComp = Cast<UBehaviorTreeComponent>(GetOuter());
 	const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
 
-	if (OwnerComp && !bIsAborting)
+	if (OwnerComponent.IsValid() && !bIsAborting)
 	{
-		FinishLatentTask(*OwnerComp, NodeResult);
+		FinishLatentTask(*OwnerComponent, NodeResult);
 	}
 }
 

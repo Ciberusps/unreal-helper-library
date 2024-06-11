@@ -7,7 +7,7 @@
 #include "BTD_Base.generated.h"
 
 /**
- *
+ * Used to add abort functionality to BTDecorators
  */
 UCLASS(Category = "UnrealHelperLibrary", Abstract)
 class UNREALHELPERLIBRARY_API UBTD_Base : public UBTDecorator
