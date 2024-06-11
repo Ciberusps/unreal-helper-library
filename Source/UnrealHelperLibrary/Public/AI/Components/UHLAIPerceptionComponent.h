@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "UHL_AIPerceptionComponent.generated.h"
+#include "UHLAIPerceptionComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSightStimulusExpired, const FAIStimulus&, StimulusStore);
 
@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSightStimulusExpired, const FAISt
  *
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class UNREALHELPERLIBRARY_API UUHL_AIPerceptionComponent : public UAIPerceptionComponent
+class UNREALHELPERLIBRARY_API UUHLAIPerceptionComponent : public UAIPerceptionComponent
 {
 	GENERATED_BODY()
 

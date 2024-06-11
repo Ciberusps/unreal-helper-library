@@ -12,7 +12,7 @@ class IAbilitySystemInterface;
 /**
  * TODO Invoke by Class option
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_InvokeGameplayAbility : public UBTTaskNode
 {
 	GENERATED_BODY()

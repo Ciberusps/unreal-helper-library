@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Components/UHL_AIPerceptionComponent.h"
+#include "AI/Components/UHLAIPerceptionComponent.h"
 
 #include "Perception/AISense_Sight.h"
 
-void UUHL_AIPerceptionComponent::HandleExpiredStimulus(FAIStimulus& StimulusStore)
+void UUHLAIPerceptionComponent::HandleExpiredStimulus(FAIStimulus& StimulusStore)
 {
     Super::HandleExpiredStimulus(StimulusStore);
 

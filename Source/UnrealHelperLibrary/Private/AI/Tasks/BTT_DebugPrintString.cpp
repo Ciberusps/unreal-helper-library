@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTT_DebugPrintString::ExecuteTask(UBehaviorTreeComponent& O
     UKismetSystemLibrary::PrintString(
         nullptr, GetFinalString(),
         true, true,
-        Color, Duration
+        Color, Duration, Key
     );
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }

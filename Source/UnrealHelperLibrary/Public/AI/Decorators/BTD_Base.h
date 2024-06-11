@@ -7,20 +7,20 @@
 #include "BTD_Base.generated.h"
 
 /**
- * 
+ *
  */
-UCLASS(Abstract)
+UCLASS(Category = "UnrealHelperLibrary", Abstract)
 class UNREALHELPERLIBRARY_API UBTD_Base : public UBTDecorator
 {
 	GENERATED_BODY()
 
 public:
 	UBTD_Base(const FObjectInitializer& ObjectInitializer);
-	
+
 	FString GetPropertiesDetails() const;
 	/** notify about changes in blackboard */
 	virtual EBlackboardNotificationResult OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID);
-	
+
 protected:
 	// BTDecorator_BlueprintBase
 	enum class EAbortType : uint8
@@ -43,7 +43,7 @@ protected:
 	/** return this decorator abort type in current circumstances */
 	EAbortType EvaluateAbortType(UBehaviorTreeComponent& OwnerComp) const;
 	void RequestAbort(UBehaviorTreeComponent& OwnerComp, const EAbortType Type);
-	
+
 	virtual void PostLoad() override;
 	virtual void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 

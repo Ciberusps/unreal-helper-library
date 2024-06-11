@@ -9,7 +9,7 @@
 #include "UObject/ObjectMacros.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Misc/EngineVersionComparison.h"
-#include "BTDecorator_TimeLimitRandom.generated.h"
+#include "BTD_TimeLimitRandom.generated.h"
 
 
 struct FBTimeLimitMemoryRandom
@@ -20,13 +20,12 @@ struct FBTimeLimitMemoryRandom
  * In UE5.4 changed completely now we can't nest from "TimeLimit" and forced to copy-paste same functionality
  */
 UCLASS(Category = "UnrealHelperLibrary", hidecategories="Decorator")
-class UNREALHELPERLIBRARY_API UBTDecorator_TimeLimitRandom :
-    public UBTDecorator
+class UNREALHELPERLIBRARY_API UBTD_TimeLimitRandom : public UBTDecorator
 {
 	GENERATED_BODY()
 
 public:
-    UBTDecorator_TimeLimitRandom(const FObjectInitializer& ObjectInitializer);
+    UBTD_TimeLimitRandom(const FObjectInitializer& ObjectInitializer);
 
 	/** TimeLimit */
 	UPROPERTY(EditAnywhere, meta=(ClampMin="0"))

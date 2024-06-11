@@ -16,7 +16,7 @@
 /**
  *
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UUHLBaseCharacterAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()

@@ -14,7 +14,7 @@ struct FBTRandomSelectorMemory
 /**
  *
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTComposite_RandomSelector : public UBTCompositeNode
 {
 	GENERATED_BODY()

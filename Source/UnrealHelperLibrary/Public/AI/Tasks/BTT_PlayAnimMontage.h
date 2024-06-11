@@ -9,7 +9,7 @@
 /**
  *
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_PlayAnimMontage : public UBTTaskNode
 {
 	GENERATED_BODY()

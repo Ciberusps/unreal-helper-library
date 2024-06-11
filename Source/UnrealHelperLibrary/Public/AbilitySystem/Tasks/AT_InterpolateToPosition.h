@@ -11,7 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterpolateToPositionSimpleDelegate);
 /**
  * Based on "AbilityTask_MoveToLocation"
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UAT_InterpolateToPosition : public UAbilityTask
 {
 	GENERATED_BODY()
@@ -55,5 +55,5 @@ private:
 	UPROPERTY(Replicated)
 	TObjectPtr<UCurveFloat> LerpCurve;
 	UPROPERTY(Replicated)
-	TObjectPtr<UCurveVector> LerpCurveVector;	
+	TObjectPtr<UCurveVector> LerpCurveVector;
 };

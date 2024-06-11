@@ -7,16 +7,16 @@
 #include "BTD_RandomChance.generated.h"
 
 /**
- * 
+ *
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTD_RandomChance : public UBTDecorator
 {
 	GENERATED_BODY()
 
 public:
 	UBTD_RandomChance(const FObjectInitializer& ObjectInitializer);
-	
+
 	UPROPERTY(Category=Decorator, EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f, EditCondition="!bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
 	float Chance;
 	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
@@ -34,7 +34,7 @@ public:
 	virtual FString GetStaticDescription() const override;
 	// TODO value preview?
 	// virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
-	
+
 #if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
 #endif // WITH_EDITOR

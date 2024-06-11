@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Decorators/BTDecorator_TimeLimitRandom.h"
+#include "AI/Decorators/BTD_TimeLimitRandom.h"
 
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
 struct FBTimeLimitRandomMemory
@@ -10,7 +10,7 @@ struct FBTimeLimitRandomMemory
 };
 #endif
 
-UBTDecorator_TimeLimitRandom::UBTDecorator_TimeLimitRandom(const FObjectInitializer& ObjectInitializer)
+UBTD_TimeLimitRandom::UBTD_TimeLimitRandom(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	NodeName = "TimeLimit_Random";
@@ -27,7 +27,7 @@ UBTDecorator_TimeLimitRandom::UBTDecorator_TimeLimitRandom(const FObjectInitiali
 #endif
 }
 
-FString UBTDecorator_TimeLimitRandom::GetStaticDescription() const
+FString UBTD_TimeLimitRandom::GetStaticDescription() const
 {
 	// basic info: result after time
 	return FString::Printf(TEXT("TimeLimit: %s after %.1fs-%.1fs"),
@@ -35,7 +35,7 @@ FString UBTDecorator_TimeLimitRandom::GetStaticDescription() const
 }
 
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
-void UBTDecorator_TimeLimitRandom::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const
+void UBTD_TimeLimitRandom::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const
 {
     Super::DescribeRuntimeValues(OwnerComp, NodeMemory, Verbosity, Values);
 
@@ -50,14 +50,14 @@ void UBTDecorator_TimeLimitRandom::DescribeRuntimeValues(const UBehaviorTreeComp
 }
 
 #if WITH_EDITOR
-FName UBTDecorator_TimeLimitRandom::GetNodeIconName() const
+FName UBTD_TimeLimitRandom::GetNodeIconName() const
 {
     return FName("BTEditor.Graph.BTNode.Decorator.TimeLimit.Icon");
 }
 #endif
 #endif
 
-void UBTDecorator_TimeLimitRandom::OnNodeActivation(FBehaviorTreeSearchData& SearchData)
+void UBTD_TimeLimitRandom::OnNodeActivation(FBehaviorTreeSearchData& SearchData)
 {
 	TimeLimit = bUseIntegers
 		? FMath::RandRange((int32)TimeLimitRange.Min, (int32)TimeLimitRange.Max)
@@ -66,26 +66,26 @@ void UBTDecorator_TimeLimitRandom::OnNodeActivation(FBehaviorTreeSearchData& Sea
 }
 
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
-void UBTDecorator_TimeLimitRandom::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+void UBTD_TimeLimitRandom::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     Super::OnBecomeRelevant(OwnerComp, NodeMemory);
 
     SetNextTickTime(NodeMemory, TimeLimit);
 }
 
-void UBTDecorator_TimeLimitRandom::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+void UBTD_TimeLimitRandom::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     Super::OnCeaseRelevant(OwnerComp, NodeMemory);
 
     reinterpret_cast<FBTimeLimitRandomMemory*>(NodeMemory)->bElapsed = false;
 }
 
-bool UBTDecorator_TimeLimitRandom::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
+bool UBTD_TimeLimitRandom::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
     return !reinterpret_cast<FBTimeLimitRandomMemory*>(NodeMemory)->bElapsed;
 }
 
-void UBTDecorator_TimeLimitRandom::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTD_TimeLimitRandom::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
     ensureMsgf(DeltaSeconds >= TimeLimit || FMath::IsNearlyEqual(DeltaSeconds, TimeLimit, UE_KINDA_SMALL_NUMBER),
         TEXT("Using SetNextTickTime in OnBecomeRelevant should guarantee that we are only getting ticked when the time limit is finished. DT=%f, TimeLimit=%f"),
@@ -102,17 +102,17 @@ void UBTDecorator_TimeLimitRandom::TickNode(UBehaviorTreeComponent& OwnerComp, u
     OwnerComp.RequestExecution(this);
 }
 
-uint16 UBTDecorator_TimeLimitRandom::GetInstanceMemorySize() const
+uint16 UBTD_TimeLimitRandom::GetInstanceMemorySize() const
 {
     return sizeof(FBTimeLimitMemoryRandom);
 }
 
-void UBTDecorator_TimeLimitRandom::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, const EBTMemoryInit::Type InitType) const
+void UBTD_TimeLimitRandom::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, const EBTMemoryInit::Type InitType) const
 {
     InitializeNodeMemory<FBTimeLimitMemoryRandom>(NodeMemory, InitType);
 }
 
-void UBTDecorator_TimeLimitRandom::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, const EBTMemoryClear::Type CleanupType) const
+void UBTD_TimeLimitRandom::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, const EBTMemoryClear::Type CleanupType) const
 {
     CleanupNodeMemory<FBTimeLimitMemoryRandom>(NodeMemory, CleanupType);
 }

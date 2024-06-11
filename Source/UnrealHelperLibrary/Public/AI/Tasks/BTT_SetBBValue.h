@@ -23,7 +23,7 @@ enum class ESetBBValue_MathOperations : uint8
  *
  * TODO arithmetic operations like A + B, A * B ...
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_SetBBValue : public UBTTaskNode
 {
 	GENERATED_BODY()

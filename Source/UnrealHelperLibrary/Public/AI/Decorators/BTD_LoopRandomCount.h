@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Decorators/BTDecorator_Loop.h"
-#include "BTDecorator_LoopRandomCount.generated.h"
+#include "BTD_LoopRandomCount.generated.h"
 
 /**
  *
  */
 UCLASS(Category = "UnrealHelperLibrary", hidecategories="Decorator")
-class UNREALHELPERLIBRARY_API UBTDecorator_LoopRandomCount : public UBTDecorator_Loop
+class UNREALHELPERLIBRARY_API UBTD_LoopRandomCount : public UBTDecorator_Loop
 {
 	GENERATED_BODY()
 
 public:
-	UBTDecorator_LoopRandomCount(const FObjectInitializer& ObjectInitializer);
+	UBTD_LoopRandomCount(const FObjectInitializer& ObjectInitializer);
 
 	/** number of executions */
 	UPROPERTY(EditAnywhere, meta=(EditCondition="!bInfiniteLoop", ClampMin="1", ClampMax="255"))

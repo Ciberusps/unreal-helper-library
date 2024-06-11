@@ -9,7 +9,7 @@
 /**
  *
  */
-UCLASS()
+UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UUHLAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
