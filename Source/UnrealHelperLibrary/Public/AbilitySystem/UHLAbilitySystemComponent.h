@@ -21,12 +21,17 @@ public:
     bool bGiveAbilitiesOnStart = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bActivateAbilitiesOnStart = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bGiveInitialGameplayTags = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bInitializeGameplayAttributes"))
     TMap<FGameplayAttribute, float> InitialGameplayAttributes = {};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAbilitiesOnStart"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bActivateAbilitiesOnStart"))
 	TArray<FGameplayTagContainer> InitialActiveAbilities;
+    // TODO initial GameplayEffects?
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveInitialGameplayTags"))
+    FGameplayTagContainer InitialGameplayTags;
 
 	virtual void BeginPlay() override;
 	virtual void InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor);

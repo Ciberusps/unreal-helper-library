@@ -7,13 +7,13 @@
 #include "BTDecorator_LoopRandomCount.generated.h"
 
 /**
- * 
+ *
  */
-UCLASS(hidecategories=Decorator)
+UCLASS(Category = "UnrealHelperLibrary", hidecategories="Decorator")
 class UNREALHELPERLIBRARY_API UBTDecorator_LoopRandomCount : public UBTDecorator_Loop
 {
 	GENERATED_BODY()
-	
+
 public:
 	UBTDecorator_LoopRandomCount(const FObjectInitializer& ObjectInitializer);
 

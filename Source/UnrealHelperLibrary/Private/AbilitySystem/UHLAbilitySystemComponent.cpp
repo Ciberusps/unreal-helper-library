@@ -157,6 +157,10 @@ void UUHLAbilitySystemComponent::InitAttributes()
     {
 	    SetAttributes(InitialGameplayAttributes);
     }
+    if (bGiveInitialGameplayTags)
+    {
+        AddLooseGameplayTags(InitialGameplayTags, 1);
+    }
 }
 
 void UUHLAbilitySystemComponent::SetAttributes(TMap<FGameplayAttribute, float> Attributes_In)
