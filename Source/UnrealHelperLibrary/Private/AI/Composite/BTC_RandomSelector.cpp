@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Composite/BTComposite_RandomSelector.h"
+#include "AI/Composite/BTC_RandomSelector.h"
 
 #include "BehaviorTree/BTTaskNode.h"
 #include "Kismet/KismetMathLibrary.h"
 
-UBTComposite_RandomSelector::UBTComposite_RandomSelector(const FObjectInitializer& ObjectInitializer)
+UBTC_RandomSelector::UBTC_RandomSelector(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
     NodeName = "RandomSelector";
 }
 
-int32 UBTComposite_RandomSelector::GetNextChildHandler(FBehaviorTreeSearchData& SearchData, int32 PrevChild, EBTNodeResult::Type LastResult) const
+int32 UBTC_RandomSelector::GetNextChildHandler(FBehaviorTreeSearchData& SearchData, int32 PrevChild, EBTNodeResult::Type LastResult) const
 {
     // success = quit
     int32 NextChildIdx = BTSpecialChild::ReturnToParent;
@@ -31,7 +31,7 @@ int32 UBTComposite_RandomSelector::GetNextChildHandler(FBehaviorTreeSearchData& 
     return NextChildIdx;
 }
 
-FString UBTComposite_RandomSelector::GetStaticDescription() const
+FString UBTC_RandomSelector::GetStaticDescription() const
 {
     // Chances Map
     // FString Result = "";
@@ -82,32 +82,32 @@ FString UBTComposite_RandomSelector::GetStaticDescription() const
 }
 
 #if WITH_EDITOR
-FName UBTComposite_RandomSelector::GetNodeIconName() const
+FName UBTC_RandomSelector::GetNodeIconName() const
 {
     return IsValidSelector() ? FName("BTEditor.Graph.BTNode.Composite.Selector.Icon") : FName("Graph.ConnectorFeedback.Error");
 }
 #endif
 
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
-uint16 UBTComposite_RandomSelector::GetInstanceMemorySize() const
+uint16 UBTC_RandomSelector::GetInstanceMemorySize() const
 {
     return sizeof(FBTRandomSelectorMemory);
 }
 
-void UBTComposite_RandomSelector::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+void UBTC_RandomSelector::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
                                                    EBTMemoryInit::Type InitType) const
 {
     InitializeNodeMemory<FBTRandomSelectorMemory>(NodeMemory, InitType);
 }
 
-void UBTComposite_RandomSelector::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+void UBTC_RandomSelector::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     EBTMemoryClear::Type CleanupType) const
 {
     CleanupNodeMemory<FBTRandomSelectorMemory>(NodeMemory, CleanupType);
 }
 #endif
 
-FString UBTComposite_RandomSelector::GetErrorOrWarning() const
+FString UBTC_RandomSelector::GetErrorOrWarning() const
 {
     if (!IsValidSelector())
     {
@@ -125,7 +125,7 @@ FString UBTComposite_RandomSelector::GetErrorOrWarning() const
     return FString();
 }
 
-int32 UBTComposite_RandomSelector::GetRandomChildIdx() const
+int32 UBTC_RandomSelector::GetRandomChildIdx() const
 {
     int32 ResultIdx = BTSpecialChild::ReturnToParent;
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTCompositeNode.h"
 #include "Misc/EngineVersionComparison.h"
-#include "BTComposite_RandomSelector.generated.h"
+#include "BTC_RandomSelector.generated.h"
 
 struct FBTRandomSelectorMemory
 {
@@ -15,12 +15,12 @@ struct FBTRandomSelectorMemory
  *
  */
 UCLASS(Category = "UnrealHelperLibrary")
-class UNREALHELPERLIBRARY_API UBTComposite_RandomSelector : public UBTCompositeNode
+class UNREALHELPERLIBRARY_API UBTC_RandomSelector : public UBTCompositeNode
 {
 	GENERATED_BODY()
 
 public:
-	explicit UBTComposite_RandomSelector(const FObjectInitializer& ObjectInitializer);
+	explicit UBTC_RandomSelector(const FObjectInitializer& ObjectInitializer);
 
 	// if no chance specified, node without chance will win always
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, meta=(DeprecatedProperty))
