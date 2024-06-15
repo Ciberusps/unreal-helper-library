@@ -6,6 +6,7 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_PlayAnimMontage.generated.h"
 
+class UPlayMontageCallbackProxy;
 /**
  *
  */
@@ -41,7 +42,10 @@ private:
     UPROPERTY(Transient)
     TObjectPtr<AAIController> AIOwner;
     TWeakObjectPtr<UBehaviorTreeComponent> OwnerComponent;
+    UPROPERTY()
+    UPlayMontageCallbackProxy* PlayMontageCallbackProxy;
 
 	UFUNCTION()
 	void OnPlayMontageEnded(FName NotifyName);
+    void ClearCallbacks();
 };

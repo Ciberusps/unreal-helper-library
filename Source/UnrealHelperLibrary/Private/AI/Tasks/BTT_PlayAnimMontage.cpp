@@ -32,16 +32,16 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& Ow
 	    return Result;
 	}
 
-	UPlayMontageCallbackProxy* PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
+	PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
 		Character->GetMesh(),
 		AnimMontage,
 		PlayRate,
 		StartingPosition,
 		StartSectionName
 	);
-	PlayMontageCallbackProxy->OnCompleted.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-	PlayMontageCallbackProxy->OnInterrupted.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-	PlayMontageCallbackProxy->OnBlendOut.AddDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+	PlayMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+	PlayMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+	PlayMontageCallbackProxy->OnBlendOut.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
 
 	Result = EBTNodeResult::InProgress;
     return Result;
@@ -54,6 +54,7 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::AbortTask(UBehaviorTreeComponent& Owne
     {
         Character.Get()->StopAnimMontage();
     }
+    ClearCallbacks();
 	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 
@@ -66,9 +67,18 @@ void UBTT_PlayAnimMontage::OnPlayMontageEnded(FName NotifyName)
 {
 	const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
 
+    ClearCallbacks();
+
 	if (OwnerComponent.IsValid() && !bIsAborting)
 	{
 		FinishLatentTask(*OwnerComponent, NodeResult);
 	}
+}
+
+void UBTT_PlayAnimMontage::ClearCallbacks()
+{
+    PlayMontageCallbackProxy->OnCompleted.RemoveAll(this);
+    PlayMontageCallbackProxy->OnInterrupted.RemoveAll(this);
+    PlayMontageCallbackProxy->OnBlendOut.RemoveAll(this);
 }
 
