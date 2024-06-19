@@ -1,11 +1,14 @@
 # Unreal Helper Library [UHL]
 
+UHL - unreal helper library, toolset to help developers working with AI, GAS and so on
+
 ## Install
 
-From source:
+From source (recommended):
 
 - add git submodule to your plugins folder using - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary`
 - add note to install instruction(`README.md`) on how to update git submodules - `git submodule update --init --recursive`
+- to use in C++ add `"UnrealHelperLibrary"` to file `"<ProjectName>.Build.cs"` in `PublicDependencyModuleNames` section
 
 From marketplace: later this year
 
