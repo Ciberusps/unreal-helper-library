@@ -3,7 +3,7 @@
 
 #include "AI/Tasks/BTT_DebugPrintBBValue.h"
 
-#include "UnrealHelperLibraryBPLibrary.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
@@ -17,7 +17,7 @@ UBTT_DebugPrintBBValue::UBTT_DebugPrintBBValue(const FObjectInitializer& ObjectI
 
 EBTNodeResult::Type UBTT_DebugPrintBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	UUnrealHelperLibraryBPLibrary::DebugPrintStrings(GetBBKeyDescription(OwnerComp), "", "", "", "", "","","","","",Duration, Key, true);
+	UUnrealHelperLibraryBPL::DebugPrintStrings(GetBBKeyDescription(OwnerComp), "", "", "", "", "","","","","",Duration, Key, true);
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }
 
@@ -30,7 +30,7 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
-	EBBValueType BBValueType = UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(BlackboardKey);
+	EBBValueType BBValueType = UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(BlackboardKey);
 
 	FString Description = FString();
 

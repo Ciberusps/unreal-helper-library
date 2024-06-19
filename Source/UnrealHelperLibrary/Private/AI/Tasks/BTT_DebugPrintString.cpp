@@ -2,8 +2,6 @@
 
 
 #include "AI/Tasks/BTT_DebugPrintString.h"
-
-#include "UnrealHelperLibraryBPLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UBTT_DebugPrintString::UBTT_DebugPrintString(const FObjectInitializer& ObjectInitializer)

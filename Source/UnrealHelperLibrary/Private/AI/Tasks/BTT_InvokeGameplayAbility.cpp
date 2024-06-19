@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "AIController.h"
-#include "UnrealHelperLibraryBPLibrary.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 
 UBTT_InvokeGameplayAbility::UBTT_InvokeGameplayAbility(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     {
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] OwnerActor \"%s\" don't have AbilitySystem(implements IAbilitySystemInterface) add it"), *AIOwner->GetPawn()->GetName()));
+            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] OwnerActor \"%s\" don't have AbilitySystem(implements IAbilitySystemInterface) add it"), *AIOwner->GetPawn()->GetName()));
         }
         return EBTNodeResult::Failed;
     }
@@ -53,14 +53,14 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
 
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
+            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
         }
     }
     else
     {
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
+            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
         }
     }
 
@@ -80,7 +80,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::AbortTask(UBehaviorTreeComponent
 
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Task was aborted, CancelAbility - %s"), *GameplayTag.ToString()));
+            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Task was aborted, CancelAbility - %s"), *GameplayTag.ToString()));
         }
     }
     return Super::AbortTask(OwnerComp, NodeMemory);
@@ -102,7 +102,7 @@ void UBTT_InvokeGameplayAbility::OnAbilityEnded(const FAbilityEndedData& Ability
     {
         if (bDebugMessages)
         {
-            UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability ended - %s"), *GameplayTag.ToString()));
+            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability ended - %s"), *GameplayTag.ToString()));
         }
         FinishLatentTask(*OwnerComponent, NodeResult);
     }

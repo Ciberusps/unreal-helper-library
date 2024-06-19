@@ -4,7 +4,7 @@
 #include "AI/Decorators/BTD_InAngle.h"
 
 #include "KismetAnimationLibrary.h"
-#include "UnrealHelperLibraryBPLibrary.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BTCompositeNode.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -104,7 +104,7 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 
 	if (!IsValid(SelfActor) || !IsValid(Memory->TargetCharacter.Get())) return CurrentAngle;
 
-	CurrentAngle = UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(SelfActor, Memory->TargetCharacter.Get());
+	CurrentAngle = UUnrealHelperLibraryBPL::RelativeAngleToActor(SelfActor, Memory->TargetCharacter.Get());
 
 	if (bDrawDebug)
 	{

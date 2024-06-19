@@ -3,7 +3,7 @@
 
 #include "AI/Tasks/BTT_SetBBValue.h"
 
-#include "UnrealHelperLibraryBPLibrary.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
@@ -168,7 +168,7 @@ void UBTT_SetBBValue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
-	CurrentBBKeyValueType = UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(BlackboardKey);
+	CurrentBBKeyValueType = UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(BlackboardKey);
     MathOperation = ESetBBValue_MathOperations::Set;
 }
 #endif

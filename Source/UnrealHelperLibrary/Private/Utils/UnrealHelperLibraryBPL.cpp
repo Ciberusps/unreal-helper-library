@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "UnrealHelperLibraryBPLibrary.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 
 #include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
@@ -19,7 +19,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 
 
-FString UUnrealHelperLibraryBPLibrary::GetProjectVersion()
+FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {
 	FString ProjectVersion;
 	GConfig->GetString(
@@ -31,7 +31,7 @@ FString UUnrealHelperLibraryBPLibrary::GetProjectVersion()
 	return ProjectVersion;
 }
 
-void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FString& B, const FString& C,
+void UUnrealHelperLibraryBPL::DebugPrintStrings(const FString& A, const FString& B, const FString& C,
 	const FString& D, const FString& E, const FString& F, const FString& G, const FString& H, const FString& I,
 	const FString& J, float Duration, const FName Key, const bool bEnabled)
 {
@@ -51,11 +51,11 @@ void UUnrealHelperLibraryBPLibrary::DebugPrintStrings(const FString& A, const FS
 	);
 }
 
-void UUnrealHelperLibraryBPLibrary::DrawDebugBar()
+void UUnrealHelperLibraryBPL::DrawDebugBar()
 {
 }
 
-FGameplayEffectSpec UUnrealHelperLibraryBPLibrary::CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser,
+FGameplayEffectSpec UUnrealHelperLibraryBPL::CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser,
     const FHitResult& HitResult, const UObject* SourceObject)
 {
     const UGameplayEffect* GameplayEffect = GameplayEffectClass->GetDefaultObject<UGameplayEffect>();
@@ -67,7 +67,7 @@ FGameplayEffectSpec UUnrealHelperLibraryBPLibrary::CreateGenericGASGameplayEffec
     return GameplayEffectSpec;
 }
 
-TArray<FString> UUnrealHelperLibraryBPLibrary::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
+TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
 {
     TArray<FString> Result = {};
 
@@ -100,7 +100,7 @@ TArray<FString> UUnrealHelperLibraryBPLibrary::GetNamesOfComponentsOnObject(UObj
     return Result;
 }
 
-float UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
+float UUnrealHelperLibraryBPL::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
 	AActor* TargetActor)
 {
 	return UKismetAnimationLibrary::CalculateDirection(
@@ -109,7 +109,28 @@ float UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(AActor* ActorRelativeT
 	);
 }
 
-FVector UUnrealHelperLibraryBPLibrary::GetHighestPoint(const USceneComponent* Component)
+UActorComponent* UUnrealHelperLibraryBPL::GetActorComponentByName(AActor* Actor, FString Name)
+{
+    if (!IsValid(Actor)) return nullptr;
+
+    for (UActorComponent* Component : Actor->GetComponents())
+    {
+        if (Component->GetName() == Name)
+        {
+            return Component;
+        }
+    }
+    return nullptr;
+}
+
+USceneComponent* UUnrealHelperLibraryBPL::GetSceneComponentByName(AActor* Actor, FString Name)
+{
+    if (!IsValid(Actor)) return nullptr;
+
+    return Cast<USceneComponent>(GetActorComponentByName(Actor, Name));
+}
+
+FVector UUnrealHelperLibraryBPL::GetHighestPoint(const USceneComponent* Component)
 {
     FVector Origin;
     FVector BoxExtent;
@@ -121,7 +142,7 @@ FVector UUnrealHelperLibraryBPLibrary::GetHighestPoint(const USceneComponent* Co
     return FBox(BoxMin, BoxMax).Max;
 }
 
-EBBValueType UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(
+EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
 	EBBValueType Result = EBBValueType::None;

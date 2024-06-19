@@ -6,7 +6,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
-#include "UnrealHelperLibraryBPLibrary.generated.h"
+#include "UnrealHelperLibraryBPL.generated.h"
 
 struct FBlackboardKeySelector;
 
@@ -28,7 +28,7 @@ struct FBlackboardKeySelector;
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
 UCLASS()
-class UNREALHELPERLIBRARY_API UUnrealHelperLibraryBPLibrary : public UBlueprintFunctionLibrary
+class UNREALHELPERLIBRARY_API UUnrealHelperLibraryBPL : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -65,6 +65,11 @@ public:
     UFUNCTION(BlueprintPure)
     static void GetAssetsOfClass(TArray<T*>& OutArray);
 
+    UFUNCTION(BlueprintPure)
+    static UActorComponent* GetActorComponentByName(AActor* Actor, FString Name);
+    UFUNCTION(BlueprintPure)
+    static USceneComponent* GetSceneComponentByName(AActor* Actor, FString Name);
+
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
     static FVector GetHighestPoint(const USceneComponent* Component);
 /** ~Utils **/
@@ -75,7 +80,7 @@ public:
 };
 
 template <typename T>
-void UUnrealHelperLibraryBPLibrary::GetAssetsOfClass(TArray<T*>& OutArray)
+void UUnrealHelperLibraryBPL::GetAssetsOfClass(TArray<T*>& OutArray)
 {
     FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
     TArray<FAssetData> AssetData;
