@@ -33,9 +33,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool bUseIntegers = true;
 
-#if UE_VERSION_NEWER_THAN(5, 4, 0)
-	virtual FString GetStaticDescription() const override;
+    virtual FString GetStaticDescription() const override;
 
+#if UE_VERSION_NEWER_THAN(5, 4, 0)
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 #if WITH_EDITOR
     virtual FName GetNodeIconName() const override;
