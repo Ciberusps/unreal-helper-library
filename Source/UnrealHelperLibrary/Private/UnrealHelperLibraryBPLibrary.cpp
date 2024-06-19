@@ -109,6 +109,18 @@ float UUnrealHelperLibraryBPLibrary::RelativeAngleToActor(AActor* ActorRelativeT
 	);
 }
 
+FVector UUnrealHelperLibraryBPLibrary::GetHighestPoint(const USceneComponent* Component)
+{
+    FVector Origin;
+    FVector BoxExtent;
+    float SphereRadius = 0.0f;
+    UKismetSystemLibrary::GetComponentBounds(Component, Origin, BoxExtent, SphereRadius);
+
+    const FVector BoxMin = Origin - BoxExtent;
+    const FVector BoxMax = Origin + BoxExtent;
+    return FBox(BoxMin, BoxMax).Max;
+}
+
 EBBValueType UUnrealHelperLibraryBPLibrary::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {

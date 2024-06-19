@@ -64,6 +64,9 @@ public:
     template<typename T>
     UFUNCTION(BlueprintPure)
     static void GetAssetsOfClass(TArray<T*>& OutArray);
+
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
+    static FVector GetHighestPoint(const USceneComponent* Component);
 /** ~Utils **/
 
 /** AI **/

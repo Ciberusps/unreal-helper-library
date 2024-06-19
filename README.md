@@ -1,6 +1,7 @@
 # Unreal Helper Library [UHL]
 
-UHL - unreal helper library, toolset to help developers working with AI, GAS and so on
+UHL - unreal helper library, toolset to help developers working with AI, GAS and so on.
+Goal is to became a tool that insta-installed on new project creation
 
 ## Install
 
@@ -45,6 +46,7 @@ From marketplace: later this year
 >   - GetProjectVersion
 >   - GetNamesOfComponentsOnObject
 >   - GetAssetsOfClass
+>   - GetHighestPoint
 
 <a name="UHLAbilitySystemComponent"></a>
 
@@ -136,3 +138,7 @@ with ability to subscribe on
 <a name="GetAssetsOfClass"></a>
 
 #### `GetAssetsOfClass`
+
+<a name="GetHighestPoint"></a>
+
+#### `GetHighestPoint`
