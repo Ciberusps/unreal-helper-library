@@ -7,6 +7,8 @@ From source:
 - add git submodule to your plugins folder using - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary`
 - add note to install instruction(`README.md`) on how to update git submodules - `git submodule update --init --recursive`
 
+From marketplace: later this year
+
 ## Documentation
 
 > - GAS
