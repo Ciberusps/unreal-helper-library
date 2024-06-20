@@ -14,7 +14,7 @@ struct FBTInRangeMemory
 };
 
 /**
- * 
+ *
  */
 UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTD_InRange : public UBTD_Base
@@ -24,23 +24,23 @@ class UNREALHELPERLIBRARY_API UBTD_InRange : public UBTD_Base
 public:
 	UBTD_InRange(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	FBlackboardKeySelector Target;
-	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	float Min = 0.0f;
-	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	float Max = 500.0f;
 	// Should we exclude Self character capsule radius from distance
 	// mostly for big enemies
 	// compliant with "MoveTo"
 	/** if set, radius of AI's capsule will be added to threshold between AI and goal location in destination reach test  */
-	UPROPERTY(Category=Decorator, EditAnywhere)
-	bool bIncludeSelfCapsuleRadius = false;
+	UPROPERTY(Category="Decorator", EditAnywhere)
+	bool bIncludeSelfCapsuleRadius = true;
 	// Should we exclude Target character capsule radius from distance
 	/** if set, radius of Target's capsule will be added to threshold between AI and goal location  */
-	UPROPERTY(Category=Decorator, EditAnywhere)
-	bool bIncludeTargetCapsuleRadius = false;
-	UPROPERTY(Category=Decorator, EditAnywhere)
+	UPROPERTY(Category="Decorator", EditAnywhere)
+	bool bIncludeTargetCapsuleRadius = true;
+	UPROPERTY(Category="Decorator", EditAnywhere)
 	bool bDrawDebug = false;
 
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
@@ -48,13 +48,13 @@ public:
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
 	virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
 	virtual uint16 GetInstanceMemorySize() const override;
-	
+
 	virtual FString GetStaticDescription() const override;
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 #if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
 #endif
-	
+
 	float GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, bool bDrawDebug_In = false) const;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

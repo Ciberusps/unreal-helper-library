@@ -12,7 +12,12 @@ struct FBTRandomSelectorMemory
 };
 
 /**
- *
+ * RandomSelector composite node.
+ * RandomSelector random between child nodes using chances, and will stop executing its children when one of their children succeeds.
+ * If a Selector's child succeeds, the Selector succeeds. If all the Selector's children fail, the Selector fails.
+ * P.S. space for improvement - memory, but not sure that its required,
+ * just random until we get valid node is seems looks like is enough
+ * https://www.youtube.com/watch?v=wI_kwwvc-pw&t=781s&ab_channel=VeryHotShark
  */
 UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTC_RandomSelector : public UBTCompositeNode

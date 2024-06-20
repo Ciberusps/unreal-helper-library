@@ -32,35 +32,55 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     }
 
     ASC = AbilitySystemInterface->GetAbilitySystemComponent();
-    TArray<FGameplayAbilitySpec*> MatchingGameplayAbilities;
-    ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), MatchingGameplayAbilities);
 
-    AbilitySpec = MatchingGameplayAbilities[0];
-    if (AbilitySpec != nullptr)
+    // TODO UHL->FindAbilitySpecByTags?
+    TArray<FGameplayAbilitySpecHandle> GameplayAbilitiesSpecs = {};
+    ASC->GetAllAbilities(GameplayAbilitiesSpecs);
+    for (FGameplayAbilitySpecHandle GameplayAbilitiesSpecSearch : GameplayAbilitiesSpecs)
     {
-        if (bWaitForFinishing)
+        FGameplayAbilitySpec* AbilitySpecSearch = ASC->FindAbilitySpecFromHandle(GameplayAbilitiesSpecSearch);
+        if (AbilitySpecSearch->Ability->AbilityTags.HasAny(GameplayTag.GetSingleTagContainer()))
         {
-            ASC->OnAbilityEnded.AddUObject(this, &UBTT_InvokeGameplayAbility::OnAbilityEnded);
+            AbilitySpec = AbilitySpecSearch;
+            GameplayAbilitiesSpec = &GameplayAbilitiesSpecSearch;
         }
-        bool bAbilityActivated = ASC->TryActivateAbility(AbilitySpec->Handle, true);
+    }
 
-        Result = bAbilityActivated ? EBTNodeResult::InProgress : EBTNodeResult::Failed;
+    if (bActivate)
+    {
+	    if (AbilitySpec != nullptr)
+	    {
+	        if (bWaitForFinishing)
+	        {
+	            ASC->OnAbilityEnded.AddUObject(this, &UBTT_InvokeGameplayAbility::OnAbilityEnded);
+	        }
+	        bool bAbilityActivated = ASC->TryActivateAbility(AbilitySpec->Handle, true);
 
-        if (!bWaitForFinishing)
-        {
-            Result = EBTNodeResult::Succeeded;
-        }
+	        Result = bAbilityActivated ? EBTNodeResult::InProgress : EBTNodeResult::Failed;
 
-        if (bDebugMessages)
-        {
-            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
-        }
+	        if (!bWaitForFinishing)
+	        {
+	            Result = EBTNodeResult::Succeeded;
+	        }
+
+	        if (bDebugMessages)
+	        {
+	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
+	        }
+	    }
+	    else
+	    {
+	        if (bDebugMessages)
+	        {
+	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
+	        }
+	    }
     }
     else
     {
-        if (bDebugMessages)
+        if (GameplayAbilitiesSpec != nullptr)
         {
-            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
+            ASC->CancelAbilityHandle(*GameplayAbilitiesSpec);
         }
     }
 

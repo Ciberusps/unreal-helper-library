@@ -37,6 +37,7 @@ public:
 private:
     bool bIsAborting = false;
     FGameplayAbilitySpec* AbilitySpec = nullptr;
+    FGameplayAbilitySpecHandle* GameplayAbilitiesSpec = nullptr;
     TWeakObjectPtr<UAbilitySystemComponent> ASC;
     /** Cached AIController owner of BehaviorTreeComponent. */
     UPROPERTY(Transient)

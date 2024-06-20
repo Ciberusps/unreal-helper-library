@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSets/UHLBaseCharacterAttributeSet.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AUHLBaseCharacter::AUHLBaseCharacter()
@@ -14,6 +15,11 @@ AUHLBaseCharacter::AUHLBaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
     AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("UHLAbilitySystem"));
+
+    // smooth AI rotation
+    bUseControllerRotationYaw = false;
+    GetCharacterMovement()->bOrientRotationToMovement = 0;
+    GetCharacterMovement()->bUseControllerDesiredRotation = true;
 }
 
 // Called when the game starts or when spawned
