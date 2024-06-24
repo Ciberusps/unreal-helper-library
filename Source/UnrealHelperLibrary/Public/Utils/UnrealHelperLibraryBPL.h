@@ -10,6 +10,10 @@
 
 struct FBlackboardKeySelector;
 
+// TODO improve
+// - validations if Actor1/Actors2 is nullptr - DebugPrintString it
+// - keywords for every method
+
 /*
 *	Function library class.
 *	Each function in it is expected to be static and represents blueprint node that can be called in any blueprint.
@@ -63,15 +67,41 @@ public:
     // return all assets of specified class in template
     template<typename T>
     UFUNCTION(BlueprintPure)
-    static void GetAssetsOfClass(TArray<T*>& OutArray);
+    static void GetAssetsOfClass(TArray<T*>& OutArray)
+    {
+        FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+        TArray<FAssetData> AssetData;
+        AssetRegistryModule.Get().GetAssetsByClass(T::StaticClass()->GetFName(), AssetData);
+        for (int i = 0; i < AssetData.Num(); i++) {
+            T* Object = Cast<T>(AssetData[i].GetAsset());
+            OutArray.Add(Object);
+        }
+    }
 
-    UFUNCTION(BlueprintPure)
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static UActorComponent* GetActorComponentByName(AActor* Actor, FString Name);
-    UFUNCTION(BlueprintPure)
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static USceneComponent* GetSceneComponentByName(AActor* Actor, FString Name);
 
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
     static FVector GetHighestPoint(const USceneComponent* Component);
+    // TODO debug
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn"))
+    static FVector GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance);
+    // TODO debug
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn"))
+    static FVector GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance);
+    // TODO more debug
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug"))
+    static FVector GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false);
+    // TODO more debug
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug"))
+    static FVector GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+    static float DirectionToAngle(const EUHLDirection DirectionIn);
+    // TODO: ???
+    // UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+    // static EUHLDirection AngleToDirection(const float AngleIn);
 /** ~Utils **/
 
 /** AI **/
@@ -79,15 +109,5 @@ public:
 /** ~AI **/
 };
 
-template <typename T>
-void UUnrealHelperLibraryBPL::GetAssetsOfClass(TArray<T*>& OutArray)
-{
-    FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-    TArray<FAssetData> AssetData;
-    AssetRegistryModule.Get().GetAssetsByClass(T::StaticClass()->GetFName(), AssetData);
-    for (int i = 0; i < AssetData.Num(); i++) {
-        T* Object = Cast<T>(AssetData[i].GetAsset());
-        OutArray.Add(Object);
-    }
-}
+
 

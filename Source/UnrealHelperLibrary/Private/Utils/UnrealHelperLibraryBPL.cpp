@@ -132,6 +132,8 @@ USceneComponent* UUnrealHelperLibraryBPL::GetSceneComponentByName(AActor* Actor,
 
 FVector UUnrealHelperLibraryBPL::GetHighestPoint(const USceneComponent* Component)
 {
+    if (!IsValid(Component)) return VECTOR_ERROR;
+
     FVector Origin;
     FVector BoxExtent;
     float SphereRadius = 0.0f;
@@ -140,6 +142,61 @@ FVector UUnrealHelperLibraryBPL::GetHighestPoint(const USceneComponent* Componen
     const FVector BoxMin = Origin - BoxExtent;
     const FVector BoxMax = Origin + BoxExtent;
     return FBox(BoxMin, BoxMax).Max;
+}
+
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance)
+{
+    if (!IsValid(ActorIn)) return VECTOR_ERROR;
+    return ActorIn->GetActorLocation() + ActorIn->GetActorForwardVector().RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance;
+}
+
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance)
+{
+    if (!IsValid(ActorIn)) return VECTOR_ERROR;
+    float Angle = DirectionToAngle(Direction);
+    return GetPointAtRelativeAngle(ActorIn, Angle, Distance);
+}
+
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1, const bool bDebug)
+{
+    if (!IsValid(Actor1) || !IsValid(Actor2)) return VECTOR_ERROR;
+    const FVector Actor1Location = Actor1->GetActorLocation();
+    const FVector Actor2Location = Actor2->GetActorLocation();
+    const FVector DirectionBetweenActors = (Actor2Location - Actor1Location).GetSafeNormal();
+    FVector Result = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance);
+    Result.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
+    if (bDebug)
+    {
+        DrawDebugLine(Actor1->GetWorld(), Actor1Location, Result, FColor::Blue, true, -1, 0, 1);
+        DrawDebugSphere(Actor1->GetWorld(), Result, 5, 12, FColor::Red, true, - 1, 0, 1);
+    }
+    return Result;
+}
+
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1, const bool bDebug)
+{
+    if (!IsValid(Actor1) || !IsValid(Actor2)) return VECTOR_ERROR;
+    float Angle = DirectionToAngle(Direction);
+    FVector Result = GetPointAtRelativeAngleBetweenActors(Actor1, Actor2, Angle, Distance, bTakeZFromActor1, bDebug);
+    if (bDebug)
+    {
+        DebugPrintStrings(FString::Printf(TEXT("Angle - %f"), Angle));
+	    // DrawDebugString(Actor1->GetWorld(), Result, FString::Printf(TEXT("Direction %s")));
+    }
+    return Result;
+}
+
+float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
+{
+    if (DirectionIn == EUHLDirection::Front) return 0.0f;
+    if (DirectionIn == EUHLDirection::Back) return 180.0f;
+    if (DirectionIn == EUHLDirection::Left) return -90.0f;
+    if (DirectionIn == EUHLDirection::Right) return 90.0f;
+    if (DirectionIn == EUHLDirection::FrontLeft) return -45.0f;
+    if (DirectionIn == EUHLDirection::FrontRight) return 45.0f;
+    if (DirectionIn == EUHLDirection::BackLeft) return -135.0f;
+    if (DirectionIn == EUHLDirection::BackRight) return 135.0f;
+    return 0.0f;
 }
 
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(

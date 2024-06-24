@@ -40,13 +40,23 @@ From marketplace: later this year
 >     - DebugPrintString
 >     - InvokeGameplayAbility
 >     - PlayAnimMontage
-> - UnrealHelperLibraryBPLibrary
+> - UnrealHelperLibraryBPL
 >   - RelativeAngleToActor
->   - CreateGenericGASGameplayEffectSpec
->   - GetProjectVersion
->   - GetNamesOfComponentsOnObject
->   - GetAssetsOfClass
 >   - GetHighestPoint
+>   - GetPointAtRelativeAngle
+>   - GetPointAtRelativeDirection
+>   - GetPointAtRelativeAngleBetweenActors
+>   - GetPointAtRelativeDirectionBetweenActors
+>   - DirectionToAngle
+>   - GAS
+>     - CreateGenericGASGameplayEffectSpec
+>   - Misc
+>     - GetProjectVersion
+>     - GetNamesOfComponentsOnObject
+>     - GetAssetsOfClass
+>     - GetActorComponentByName
+>     - GetSceneComponentByName
+
 
 <a name="UHLAbilitySystemComponent"></a>
 
