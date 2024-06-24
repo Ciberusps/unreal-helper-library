@@ -21,7 +21,7 @@ public:
 
 	/** Move to the specified location, using the vector curve (range 0 - 1) if specified, otherwise the float curve (range 0 - 1) or fallback to linear interpolation */
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static UAT_InterpolateToPosition* InterpolateToPosition(UGameplayAbility* OwningAbility, FName TaskInstanceName, FVector Location, FRotator Rotation, float Duration, UCurveFloat* OptionalInterpolationCurve, UCurveVector* OptionalVectorInterpolationCurve);
+	static UAT_InterpolateToPosition* InterpolateToPosition(UGameplayAbility* OwningAbility, FName TaskInstanceName, FVector Location, FRotator Rotation, float Duration, UCurveFloat* OptionalInterpolationCurve, UCurveVector* OptionalVectorInterpolationCurve, AActor* OptionalActorToInterpolate);
 
 	UPROPERTY(BlueprintAssignable)
 	FInterpolateToPositionSimpleDelegate OnTargetLocationReached;
@@ -56,4 +56,6 @@ private:
 	TObjectPtr<UCurveFloat> LerpCurve;
 	UPROPERTY(Replicated)
 	TObjectPtr<UCurveVector> LerpCurveVector;
+    UPROPERTY(Replicated)
+    TObjectPtr<AActor> ActorToInterpolate = nullptr;
 };

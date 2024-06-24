@@ -19,14 +19,15 @@ UAT_InterpolateToPosition::UAT_InterpolateToPosition(const FObjectInitializer& O
 }
 
 UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(UGameplayAbility* OwningAbility, FName TaskInstanceName, FVector Location, FRotator Rotation, float Duration,
-    UCurveFloat* OptionalInterpolationCurve, UCurveVector* OptionalVectorInterpolationCurve)
+    UCurveFloat* OptionalInterpolationCurve, UCurveVector* OptionalVectorInterpolationCurve, AActor* OptionalActorToInterpolate)
 {
     UAT_InterpolateToPosition* MyObj = NewAbilityTask<UAT_InterpolateToPosition>(OwningAbility, TaskInstanceName);
 
-    if (MyObj->GetAvatarActor() != nullptr)
+    MyObj->ActorToInterpolate = OptionalActorToInterpolate != nullptr ? OptionalActorToInterpolate : MyObj->GetAvatarActor();
+    if (MyObj->ActorToInterpolate != nullptr)
     {
-        MyObj->StartLocation = MyObj->GetAvatarActor()->GetActorLocation();
-        MyObj->StartRotation = MyObj->GetAvatarActor()->GetActorRotation();
+        MyObj->StartLocation = MyObj->ActorToInterpolate->GetActorLocation();
+        MyObj->StartRotation = MyObj->ActorToInterpolate->GetActorRotation();
     }
 
     MyObj->TargetLocation = Location;
@@ -62,7 +63,7 @@ void UAT_InterpolateToPosition::TickTask(float DeltaTime)
     }
 
     Super::TickTask(DeltaTime);
-    AActor* MyActor = GetAvatarActor();
+    AActor* MyActor = ActorToInterpolate;
     if (MyActor)
     {
         ACharacter* MyCharacter = Cast<ACharacter>(MyActor);
@@ -147,7 +148,7 @@ void UAT_InterpolateToPosition::GetLifetimeReplicatedProps(TArray< FLifetimeProp
 
 void UAT_InterpolateToPosition::OnDestroy(bool bInOwnerFinished)
 {
-    AActor* MyActor = GetAvatarActor();
+    AActor* MyActor = ActorToInterpolate;
     if (MyActor)
     {
         ACharacter* MyCharacter = Cast<ACharacter>(MyActor);
