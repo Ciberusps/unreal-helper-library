@@ -8,7 +8,7 @@
 #include "BTD_CheckGASGameplayTagsOnActor.generated.h"
 
 /**
- *
+ * Actor should implement "IAbilitySystemInterface" to get AbilitySystemComponent
  */
 UCLASS(Category = "UnrealHelperLibrary", DisplayName="Check GAS Gameplay Tags On Actor")
 class UNREALHELPERLIBRARY_API UBTD_CheckGASGameplayTagsOnActor : public UBTD_Base
