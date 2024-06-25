@@ -141,7 +141,7 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %f"), CurrentAngle), nullptr,  bInAngle ? FColor::Green : FColor::White, 0, true);
-	    DrawDebugString(OwnerComp.GetWorld(), SelfActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s"), *GetParentNode()->NodeName), nullptr,  FColor::White, 0, true);
+	    DrawDebugString(OwnerComp.GetWorld(), SelfActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, 0, true);
 	}
 
 	return CurrentAngle;

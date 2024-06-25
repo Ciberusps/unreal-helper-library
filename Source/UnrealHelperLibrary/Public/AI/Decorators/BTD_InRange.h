@@ -11,6 +11,8 @@
 struct FBTInRangeMemory
 {
 	float CurrentDistance = 0.0f;
+    TWeakObjectPtr<ACharacter> OwnerCharacter;
+    TWeakObjectPtr<ACharacter> TargetCharacter;
 };
 
 /**
@@ -42,6 +44,9 @@ public:
 	bool bIncludeTargetCapsuleRadius = true;
 	UPROPERTY(Category="Decorator", EditAnywhere)
 	bool bDrawDebug = false;
+    // TODO: if -1 or 0, when should be overriden by UHLGlobalSettings.DebugLifeTime, by default should be -1 or 0?
+    UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="bDrawDebug", EditConditionHides))
+    float DebugLifetime = -1.0f;
 
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
@@ -55,7 +60,7 @@ public:
 	virtual FName GetNodeIconName() const override;
 #endif
 
-	float GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, bool bDrawDebug_In = false) const;
+	float GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, bool bDrawDebug_In = false) const;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };
