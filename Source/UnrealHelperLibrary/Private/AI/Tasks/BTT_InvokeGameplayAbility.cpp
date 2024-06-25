@@ -82,6 +82,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
         {
             ASC->CancelAbilityHandle(*GameplayAbilitiesSpec);
         }
+        Result = EBTNodeResult::Succeeded;
     }
 
     return Result;
