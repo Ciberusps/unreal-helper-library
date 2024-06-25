@@ -3,6 +3,8 @@
 UHL - unreal helper library, toolset to help developers working with AI, GAS and so on.
 Goal is to became a tool that insta-installed on new project creation
 
+Supports: UE5.3-5.4
+
 ## Install
 
 From source (recommended):
