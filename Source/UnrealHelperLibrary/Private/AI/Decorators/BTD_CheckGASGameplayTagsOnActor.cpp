@@ -12,6 +12,7 @@ UBTD_CheckGASGameplayTagsOnActor::UBTD_CheckGASGameplayTagsOnActor(const FObject
     : Super(ObjectInitializer)
 {
 	NodeName = "GAS Gameplay Tag Condition";
+    INIT_DECORATOR_NODE_NOTIFY_FLAGS();
 
 	// Accept only actors
 	ActorToCheck.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTD_CheckGASGameplayTagsOnActor, ActorToCheck), AActor::StaticClass());
@@ -106,5 +107,12 @@ void UBTD_CheckGASGameplayTagsOnActor::InitializeFromAsset(UBehaviorTree& Asset)
 #if WITH_EDITOR
 	BuildDescription();
 #endif	// WITH_EDITOR
+}
+
+void UBTD_CheckGASGameplayTagsOnActor::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+    RequestAbort(OwnerComp, EvaluateAbortType(OwnerComp));
 }
 
