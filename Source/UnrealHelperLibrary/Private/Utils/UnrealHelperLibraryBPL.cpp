@@ -16,6 +16,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -144,20 +145,40 @@ FVector UUnrealHelperLibraryBPL::GetHighestPoint(const USceneComponent* Componen
     return FBox(BoxMin, BoxMax).Max;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance)
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
     if (!IsValid(ActorIn)) return VECTOR_ERROR;
-    return ActorIn->GetActorLocation() + ActorIn->GetActorForwardVector().RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance;
+    FVector Result = ActorIn->GetActorLocation() + ActorIn->GetActorForwardVector().RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance;
+    if (bDebug)
+    {
+        DrawDebugString(ActorIn->GetWorld(), Result, FString::Printf(TEXT("Angle %.2f\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        DrawDebugSphere(ActorIn->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        FVector ArrowLineEnd = ActorIn->GetActorLocation() + ActorIn->GetActorForwardVector().RotateAngleAxis(Angle, FVector(0, 0, 1)) * (Distance - 10);
+        DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
+    }
+    return Result;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance)
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
     if (!IsValid(ActorIn)) return VECTOR_ERROR;
     float Angle = DirectionToAngle(Direction);
-    return GetPointAtRelativeAngle(ActorIn, Angle, Distance);
+    FVector Result = GetPointAtRelativeAngle(ActorIn, Angle, Distance);
+    if (bDebug)
+    {
+        const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
+        if (EnumPtr)
+        {
+	        DrawDebugString(ActorIn->GetWorld(), Result, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        }
+        DrawDebugSphere(ActorIn->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        FVector ArrowLineEnd = GetPointAtRelativeAngle(ActorIn, Angle, Distance - 10);
+        DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
+    }
+    return Result;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1, const bool bDebug)
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
     if (!IsValid(Actor1) || !IsValid(Actor2)) return VECTOR_ERROR;
     const FVector Actor1Location = Actor1->GetActorLocation();
@@ -167,21 +188,32 @@ FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngleBetweenActors(const AAct
     Result.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
     if (bDebug)
     {
-        DrawDebugLine(Actor1->GetWorld(), Actor1Location, Result, FColor::Blue, true, -1, 0, 1);
-        DrawDebugSphere(Actor1->GetWorld(), Result, 5, 12, FColor::Red, true, - 1, 0, 1);
+        DrawDebugString(Actor1->GetWorld(), Result, FString::Printf(TEXT("Angle %.2f\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        DrawDebugSphere(Actor1->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        FVector ArrowLineEnd = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * (Distance - 10));
+        Result.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
+        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 1);
+        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
     }
     return Result;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1, const bool bDebug)
+FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
     if (!IsValid(Actor1) || !IsValid(Actor2)) return VECTOR_ERROR;
     float Angle = DirectionToAngle(Direction);
-    FVector Result = GetPointAtRelativeAngleBetweenActors(Actor1, Actor2, Angle, Distance, bTakeZFromActor1, bDebug);
+    FVector Result = GetPointAtRelativeAngleBetweenActors(Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
     if (bDebug)
     {
-        DebugPrintStrings(FString::Printf(TEXT("Angle - %f"), Angle));
-	    // DrawDebugString(Actor1->GetWorld(), Result, FString::Printf(TEXT("Direction %s")));
+        const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
+        if (EnumPtr)
+        {
+            DrawDebugString(Actor1->GetWorld(), Result, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        }
+        DrawDebugSphere(Actor1->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        FVector ArrowLineEnd = GetPointAtRelativeAngleBetweenActors(Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
+        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 1);
+        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
     }
     return Result;
 }

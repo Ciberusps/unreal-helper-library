@@ -104,7 +104,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInRange ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 5.0f, 16, FColor::Blue, false, DebugLifetime, DebugLifetime, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 5.0f, 16, FColor::Blue, false, DebugLifetime, DebugLifetime, 2.0f);
-		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance: %f"), CurrentDistance), nullptr, FColor::White, DebugLifetime < 0 ? 0 : DebugLifetime, true);
+		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance: %.2f"), CurrentDistance), nullptr, FColor::White, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	    DrawDebugString(OwnerComp.GetWorld(), OwnerCharacter->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	}
 
@@ -159,5 +159,5 @@ void UBTD_InRange::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp
 {
 	Super::DescribeRuntimeValues(OwnerComp, NodeMemory, Verbosity, Values);
 	bool bInRange = false;
-	Values.Add(FString::Printf(TEXT("CurrentDistance: %f"), GetCurrentDistance(OwnerComp, NodeMemory)));
+	Values.Add(FString::Printf(TEXT("CurrentDistance: %.2f"), GetCurrentDistance(OwnerComp, NodeMemory)));
 }

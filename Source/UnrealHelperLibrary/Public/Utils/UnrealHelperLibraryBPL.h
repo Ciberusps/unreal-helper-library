@@ -10,6 +10,8 @@
 
 struct FBlackboardKeySelector;
 
+const float RELATIVE_POINT_ARROW_SIZE = 200.0f;
+
 // TODO improve
 // - validations if Actor1/Actors2 is nullptr - DebugPrintString it
 // - keywords for every method
@@ -85,18 +87,14 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
     static FVector GetHighestPoint(const USceneComponent* Component);
-    // TODO debug
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn"))
-    static FVector GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance);
-    // TODO debug
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn"))
-    static FVector GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance);
-    // TODO more debug
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug"))
-    static FVector GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false);
-    // TODO more debug
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug"))
-    static FVector GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay="bDebug,DebugLifetime,DebugColor"))
+    static FVector GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay="bDebug,DebugLifetime,DebugColor"))
+    static FVector GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
+    static FVector GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
+    static FVector GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static float DirectionToAngle(const EUHLDirection DirectionIn);
     // TODO: ???

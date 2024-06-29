@@ -45,11 +45,16 @@ uint16 UBTD_InAngle::GetInstanceMemorySize() const
 	return sizeof(FBTInAngleMemory);
 }
 
+FString UBTD_InAngle::GetStaticDescription() const
+{
+    return Super::GetStaticDescription();
+}
+
 void UBTD_InAngle::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const
 {
 	Super::DescribeRuntimeValues(OwnerComp, NodeMemory, Verbosity, Values);
-	Values.Add(FString::Printf(TEXT("CurrentAngle: %f"), GetCurrentAngle(OwnerComp, NodeMemory)));
+	Values.Add(FString::Printf(TEXT("CurrentAngle: %.2f"), GetCurrentAngle(OwnerComp, NodeMemory)));
 }
 
 #if WITH_EDITOR
@@ -140,7 +145,7 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInAngle ? FColor::Green : FColor::Red, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
-		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %f"), CurrentAngle), nullptr,  bInAngle ? FColor::Green : FColor::White, 0, true);
+		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %.2f"), CurrentAngle), nullptr,  bInAngle ? FColor::Green : FColor::White, 0, true);
 	    DrawDebugString(OwnerComp.GetWorld(), SelfActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, 0, true);
 	}
 
