@@ -1,9 +1,9 @@
 # Unreal Helper Library [UHL]
 
 UHL - unreal helper library, toolset to help developers working with AI, GAS and so on.
-Goal is to became a tool that insta-installed on new project creation
+Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions)
 
-Supports: UE5.3-5.4
+Support: tested `UE5.3 - UE5.4`
 
 ## Install
 
@@ -17,48 +17,55 @@ From marketplace: later this year
 
 ## Documentation
 
-> - GAS
+> - [GAS](#gas)
 >   - Components
->     - [AbilitySystemComponent](#UHLAbilitySystemComponent)
+>     - [AbilitySystemComponent](#uhlabilitysystemcomponent)
 >   - Tasks
->     - InterpolateToPosition
-> - AI
+>     - [InterpolateToPosition](interpolatetoposition)
+> - [AI](#ai)
 >   - Components
->     - [AIPerceptionComponent](#UHLAIPerceptionComponent)
+>     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
 >   - Composite
->     - RandomSelector
+>     - [RandomSelector](#btc_randomselector)
 >   - Decorators
->     - CheckGASGameplayTagsOnActor
->     - InAngle
->     - InRange
->     - LoopRandomCount
->     - RandomChance
->     - TimeLimitRandom
+>     - [CheckGASGameplayTagsOnActor](#btd_checkgasgameplaytagsonactor)
+>     - [InAngle](#btd_inangle)
+>     - [InRange](#btd_inrange)
+>     - [LoopRandomCount](#btd_looprandomcount)
+>     - [RandomChance](#btd_randomchance)
+>     - [TimeLimitRandom](#btd_timelimitrandom)
 >   - Services
->     - GameplayFocus
+>     - [GameplayFocus](#bts_gameplayfocus)
 >   - Tasks
->     - SetBBValue
->     - DebugPrintBBValue
->     - DebugPrintString
->     - InvokeGameplayAbility
->     - PlayAnimMontage
-> - UnrealHelperLibraryBPL
->   - RelativeAngleToActor
->   - GetHighestPoint
->   - GetPointAtRelativeAngle
->   - GetPointAtRelativeDirection
->   - GetPointAtRelativeAngleBetweenActors
->   - GetPointAtRelativeDirectionBetweenActors
->   - DirectionToAngle
+>     - [SetBBValue](#btt_setbbvalue)
+>     - [DebugPrintBBValue](#btt_debugprintbbvalue)
+>     - [DebugPrintString](#btt_debugprintstring)
+>     - [InvokeGameplayAbility](#btt_invokegameplayability)
+>     - [PlayAnimMontage](#btt_playanimmontage)
+> - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
+>   - RelativeAngles
+>     - [RelativeAngleToActor](#relativeangletoactor)
+>     - [GetPointAtRelativeAngle](#getpointatrelativeangle)
+>     - [GetPointAtRelativeDirection](#getpointatrelativedirection)
+>     - [GetPointAtRelativeAngleBetweenActors](#getpointatrelativeanglebetweenactors)
+>     - [GetPointAtRelativeDirectionBetweenActors](#getpointatrelativedirectionbetweenactors)
+>     - [DirectionToAngle](#directiontoangle)
 >   - GAS
->     - CreateGenericGASGameplayEffectSpec
+>     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
 >   - Misc
->     - GetProjectVersion
->     - GetNamesOfComponentsOnObject
->     - GetAssetsOfClass
+>     - [GetProjectVersion](#getprojectversion)
+>     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
+>     - [GetAssetsOfClass](#getassetsofclass)
 >     - GetActorComponentByName
 >     - GetSceneComponentByName
+>   - Other
+>     - [GetHighestPoint](#gethighestpoint)
 
+---
+
+<a name="GAS"></a>
+
+### GAS
 
 <a name="UHLAbilitySystemComponent"></a>
 
@@ -71,6 +78,12 @@ with ability to
 - `InitialActiveAbilities`,
 - `InitialGameplayTags`
 
+<a name="InterpolateToPosition"></a>
+
+#### `InterpolateToPosition`
+
+AT_InterpolateToPosition
+
 <a name="UHLAIPerceptionComponent"></a>
 
 #### `UHLAIPerceptionComponent`
@@ -78,6 +91,12 @@ with ability to
 with ability to subscribe on
 
 - `OnSightStimulusExpired`
+
+---
+
+<a name="AI"></a>
+
+### AI
 
 <a name="BTC_RandomSelector"></a>
 
@@ -131,15 +150,48 @@ with ability to subscribe on
 
 #### `BTT_PlayAnimMontage`
 
+
+<a name="UnrealHelperLibraryBPL"></a>
+
+---
+
+### UnrealHelperLibraryBPL
+
+#### > RelativeAngles
+
 <a name="RelativeAngleToActor"></a>
 
 #### `RelativeAngleToActor`
+
+<a name="GetPointAtRelativeAngle"></a>
+
+#### `GetPointAtRelativeAngle`
+
+<a name="GetPointAtRelativeDirection"></a>
+
+#### `GetPointAtRelativeDirection`
+
+<a name="GetPointAtRelativeAngleBetweenActors"></a>
+
+#### `GetPointAtRelativeAngleBetweenActors`
+
+<a name="GetPointAtRelativeDirectionBetweenActors"></a>
+
+#### `GetPointAtRelativeDirectionBetweenActors`
+
+<a name="DirectionToAngle"></a>
+
+#### `DirectionToAngle`
+
+#### > GAS
 
 <a name="CreateGenericGASGameplayEffectSpec"></a>
 
 #### `CreateGenericGASGameplayEffectSpec`
 
 <a name="GetProjectVersion"></a>
+
+#### > Misc
 
 #### `GetProjectVersion`
 
@@ -150,6 +202,8 @@ with ability to subscribe on
 <a name="GetAssetsOfClass"></a>
 
 #### `GetAssetsOfClass`
+
+#### > Other
 
 <a name="GetHighestPoint"></a>
 
