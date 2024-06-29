@@ -35,8 +35,8 @@ From source:
 >     - [RandomSelector](#btc_randomselector)
 >   - Decorators
 >     - [CheckGASGameplayTagsOnActor](#checkgasgameplaytagsonactor)
->     - [InAngle](#btd_inangle)
->     - [InRange](#btd_inrange)
+>     - [InAngle](#inangle)
+>     - [InRange](#inrange)
 >     - [LoopRandomCount](#looprandomcount)
 >     - [RandomChance](#randomchance)
 >     - [TimeLimitRandom](#timelimitrandom)
@@ -66,6 +66,8 @@ From source:
 >     - GetSceneComponentByName
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
+> - [LoadingUtilLibrary](#loadingutillibrary)
+> - [TraceUtilsBPL](#traceutilsbpl)
 
 ---
 
@@ -267,3 +269,11 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 #### > Other
 
 #### `GetHighestPoint`
+
+### LoadingUtilLibrary
+
+**UHLLoadingUtilLibrary** - loading utils
+
+### TraceUtilsBPL
+
+**UHLTraceUtilsBPL** - trace utils
