@@ -19,7 +19,7 @@ From marketplace: later this year
 
 > - [GAS](#gas)
 >   - Components
->     - [AbilitySystemComponent](#uhlabilitysystemcomponent)
+>     - [AbilitySystemComponent](#abilitysystemcomponent)
 >   - Tasks
 >     - [InterpolateToPosition](interpolatetoposition)
 > - [AI](#ai)
@@ -28,20 +28,20 @@ From marketplace: later this year
 >   - Composite
 >     - [RandomSelector](#btc_randomselector)
 >   - Decorators
->     - [CheckGASGameplayTagsOnActor](#btd_checkgasgameplaytagsonactor)
+>     - [CheckGASGameplayTagsOnActor](#checkgasgameplaytagsonactor)
 >     - [InAngle](#btd_inangle)
 >     - [InRange](#btd_inrange)
->     - [LoopRandomCount](#btd_looprandomcount)
->     - [RandomChance](#btd_randomchance)
->     - [TimeLimitRandom](#btd_timelimitrandom)
+>     - [LoopRandomCount](#looprandomcount)
+>     - [RandomChance](#randomchance)
+>     - [TimeLimitRandom](#timelimitrandom)
 >   - Services
->     - [GameplayFocus](#bts_gameplayfocus)
+>     - [GameplayFocus](#setgameplayfocus)
 >   - Tasks
->     - [SetBBValue](#btt_setbbvalue)
->     - [DebugPrintBBValue](#btt_debugprintbbvalue)
->     - [DebugPrintString](#btt_debugprintstring)
->     - [InvokeGameplayAbility](#btt_invokegameplayability)
->     - [PlayAnimMontage](#btt_playanimmontage)
+>     - [SetBBValue](#setbbvalue)
+>     - [DebugPrintBBValue](#debugprintbbvalue)
+>     - [DebugPrintString](#debugprintstring)
+>     - [InvokeGameplayAbility](#invokegameplayability)
+>     - [PlayAnimMontage](#playanimmontage)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - RelativeAngles
 >     - [RelativeAngleToActor](#relativeangletoactor)
@@ -63,42 +63,36 @@ From marketplace: later this year
 
 ---
 
-<a name="GAS"></a>
-
 ### GAS
 
-<a name="UHLAbilitySystemComponent"></a>
+#### `AbilitySystemComponent`
 
-#### `UHLAbilitySystemComponent`
+![AbilitySystemComponent](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/fc6b751f-fc5d-4394-b133-aea69c9034c5)
 
-with ability to
+**UHLAbilitySystemComponent** - for quick start with GAS. You can nest from it on start and than turn off its functions when you ready to replace them with your custom solution.
 
-- `InitialGameplayAttributes`
-- `Abilities` given on start
-- `InitialActiveAbilities`,
-- `InitialGameplayTags`
+With abilities to
 
-<a name="InterpolateToPosition"></a>
+- set `InitialGameplayAttributes`
+- give `Abilities` on start
+- activate `InitialActiveAbilities`
+- apply `InitialGameplayTags`
 
 #### `InterpolateToPosition`
 
-AT_InterpolateToPosition
+**AT_InterpolateToPosition** - interpolate actor to specified position/rotation at a predetermined amount of time
 
-<a name="UHLAIPerceptionComponent"></a>
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/764ddf72-595e-4316-9149-b7b0accc2b89)
 
 #### `UHLAIPerceptionComponent`
 
-with ability to subscribe on
+<!-- with ability to subscribe on
 
-- `OnSightStimulusExpired`
+- `OnSightStimulusExpired` -->
 
 ---
 
-<a name="AI"></a>
-
 ### AI
-
-<a name="BTC_RandomSelector"></a>
 
 #### `BTC_RandomSelector`
 
@@ -123,15 +117,20 @@ Randoms between child node by weights
 
 </details>
 
-<a name="BTD_CheckGASGameplayTagsOnActor"></a>
+#### `CheckGASGameplayTagsOnActor`
 
-#### `BTD_CheckGASGameplayTagsOnActor`
+**BTD_CheckGASGameplayTagsOnActor** - checks that actor has GAS gameplay tags specified.
 
-<a name="BTD_InAngle"></a>
+> [!WARNING]
+> Don't mess with `UBTDecorator_CheckGameplayTagsOnActor` - its only checks GameplayTags on actor itself not on AbilitySystem.
+
+Requirements:
+
+- actor should implement `IAbilitySystemInterface` to get AbilitySystemComponent
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/f1581009-b9cd-408f-84de-2475b43012ae)
 
 #### `BTD_InAngle`
-
-<a name="BTD_InRange"></a>
 
 #### `BTD_InRange`
 
@@ -139,19 +138,23 @@ Decorator to check distance between actors. Compliant with "MoveTo" node have sa
 
 ![InRange](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/e32b5d05-de82-4dfb-80d1-539c866008ff)
 
-<a name="BTD_LoopRandomCount"></a>
+#### `LoopRandomCount`
 
-#### `BTD_LoopRandomCount`
+**BTD_LoopRandomCount** - randomized version of decorator `Loop`
 
-<a name="BTD_RandomChance"></a>
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/9a97dd83-d5d3-4cfd-a9bb-830ce7f4c450)
 
-#### `BTD_RandomChance`
+#### `TimeLimitRandom`
 
-<a name="BTD_TimeLimitRandom"></a>
+**BTD_TimeLimitRandom** - randomized version of decorator `TimeLimit`
 
-#### `BTD_TimeLimitRandom`
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/4fd5b54f-5066-4b47-9425-fac0f92b1b07)
 
-<a name="BTS_GameplayFocus"></a>
+#### `RandomChance`
+
+**BTD_RandomChance** - commonly used decorator to randomize actions. Fine for single child node, extra bad for multiple nodes due to chance regression, for randomization between multiple child nodes better to use [RandomSelector](#btc_randomselector)
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/b469a200-5655-440a-a754-8f8f544a38a2)
 
 #### `SetGameplayFocus`
 
@@ -174,23 +177,17 @@ Troubleshooting:
 - check that nothing "ClearFocus"
 - check that MoveTo uses "AllowStafe"
 
-<a name="BTT_SetBBValue"></a>
-
 #### `SetBBValue`
 
 **BTT_SetBBValue** - helps settings values in blackboard, supports all blackboard types and for some values event provides opportunity to make calculations like `int`
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/baf4ea25-5d19-482d-a60c-799663def759)
 
-<a name="BTT_DebugPrintBBValue"></a>
-
 #### `DebugPrintBBValue`
 
-**BTT_DebugPrintBBValue** -
+**BTT_DebugPrintBBValue** - prints BB value of any type
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/d138c011-fc9a-438e-bd39-658480cd95bf)
-
-<a name="BTT_DebugPrintString"></a>
 
 #### `DebugPrintString`
 
@@ -198,18 +195,17 @@ Troubleshooting:
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/510e9766-37be-4f43-a60f-e0e012521841)
 
-<a name="BTT_InvokeGameplayAbility"></a>
-
 #### `InvokeGameplayAbility`
 
+**BTT_InvokeGameplayAbility** - activate/deactivate GAS Gameplay Ability by tag, with optional "wait for finishing"
 
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/1916c411-7068-43db-9e69-3e6190874de5)
 
-<a name="BTT_PlayAnimMontage"></a>
+#### `PlayAnimMontage`
 
-#### `BTT_PlayAnimMontage`
+**BTT_PlayAnimMontage** - play anim montage with option to customize PlayRate, Starting Position, Start Section Name and stopping montage on task abort
 
-
-<a name="UnrealHelperLibraryBPL"></a>
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5026ebdc-689d-4dba-a168-22ae8d6850bf)
 
 ---
 
@@ -217,60 +213,46 @@ Troubleshooting:
 
 #### > RelativeAngles
 
-<a name="RelativeAngleToActor"></a>
-
 #### `RelativeAngleToActor`
 
-<a name="GetPointAtRelativeAngle"></a>
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/4a695df4-9583-451c-801b-98e63c8ad5c8)
 
 #### `GetPointAtRelativeAngle`
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/4c2f5e47-9f5c-4e70-8d77-57cb7383290a)
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c0026be0-ce3a-4ee5-84e6-b8e90474fdb9)
 
-<a name="GetPointAtRelativeDirection"></a>
-
 #### `GetPointAtRelativeDirection`
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c1ea6dda-4ccf-4441-a7d0-dc83ac977a9c)
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/a33a93ad-f470-4dec-8c2c-6c76b275207f)
 
-<a name="GetPointAtRelativeAngleBetweenActors"></a>
-
 #### `GetPointAtRelativeAngleBetweenActors`
 
-
-
-<a name="GetPointAtRelativeDirectionBetweenActors"></a>
-
 #### `GetPointAtRelativeDirectionBetweenActors`
-
-<a name="DirectionToAngle"></a>
 
 #### `DirectionToAngle`
 
 #### > GAS
 
-<a name="CreateGenericGASGameplayEffectSpec"></a>
-
 #### `CreateGenericGASGameplayEffectSpec`
-
-<a name="GetProjectVersion"></a>
 
 #### > Misc
 
 #### `GetProjectVersion`
 
-<a name="GetNamesOfComponentsOnObject"></a>
+Get project version from "Project Settings"
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c15d4c68-48d2-4d49-bee6-438f18064f9f)
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/d9e7e53c-b0ba-47cc-b63a-099423a89346)
 
 #### `GetNamesOfComponentsOnObject`
 
-<a name="GetAssetsOfClass"></a>
+Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](https://benui.ca/unreal/uproperty/#getoptions)
 
 #### `GetAssetsOfClass`
 
 #### > Other
-
-<a name="GetHighestPoint"></a>
 
 #### `GetHighestPoint`
