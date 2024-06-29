@@ -15,6 +15,12 @@ From source (recommended):
 
 From marketplace: later this year
 
+## Update
+
+From source:
+
+- `git submodule update --remote` to update library from source
+
 ## Documentation
 
 > - [GAS](#gas)
@@ -130,12 +136,17 @@ Requirements:
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/f1581009-b9cd-408f-84de-2475b43012ae)
 
-#### `BTD_InAngle`
+#### `InAngle`
 
-#### `BTD_InRange`
+**BTD_InAngle** - decorator to check is enemy in of specified angle ranges. Useful for big enemies to detect what attack for example dragon should do if player under the right wing or leg, is player in front of dragon or behind and so on.
 
-Decorator to check distance between actors. Compliant with "MoveTo" node have same settings `bIncludeSelfCapsuleRadius` and `bIncludeTargetCapsuleRadius` to check distance excluding capsules radiuses
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/20f95715-a013-4b5f-8107-cd72d3163f4a)
 
+#### `InRange`
+
+**BTD_InRange** - decorator to check distance between actors. Compliant with "MoveTo" node have same settings `bIncludeSelfCapsuleRadius` and `bIncludeTargetCapsuleRadius` to check distance excluding capsules radiuses
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5ee47572-0fdb-4afa-bbd1-d18eafb86807)
 ![InRange](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/e32b5d05-de82-4dfb-80d1-539c866008ff)
 
 #### `LoopRandomCount`
