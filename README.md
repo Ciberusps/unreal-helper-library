@@ -104,7 +104,7 @@ With abilities to
 
 #### `BTC_RandomSelector`
 
-Randoms between child node by weights
+Select random child node using weights
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/ad19828d-032f-4938-9106-2763ec6fb1fd)
 
@@ -140,7 +140,7 @@ Requirements:
 
 #### `InAngle`
 
-**BTD_InAngle** - decorator to check is enemy in of specified angle ranges. Useful for big enemies to detect what attack for example dragon should do if player under the right wing or leg, is player in front of dragon or behind and so on.
+**BTD_InAngle** - decorator to check is enemy in one of specified angle ranges. Useful in developing big enemies, for example we developing dragon we want to know is player under the right wing or leg, is player in front of dragon or behind and so on.
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/20f95715-a013-4b5f-8107-cd72d3163f4a)
 
