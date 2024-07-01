@@ -21,13 +21,15 @@ public:
 	float Chance;
 	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
 	// float ChanceUnclamped;
-	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseBlackboardValue", EditConditionHides))
-	FBlackboardKeySelector ChanceInBB;
+    // TODO value from blackboard
+	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseBlackboardValue", EditConditionHides))
+	// FBlackboardKeySelector ChanceInBB;
 
 	// UPROPERTY(Category=Decorator, EditAnywhere)
 	// bool bUseUnclamped = false;
-	UPROPERTY(Category=Decorator, EditAnywhere)
-	bool bUseBlackboardValue = false;
+    // TODO value from blackboard
+	// UPROPERTY(Category=Decorator, EditAnywhere)
+	// bool bUseBlackboardValue = false;
 
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 

@@ -27,7 +27,7 @@ From source:
 >   - Components
 >     - [AbilitySystemComponent](#abilitysystemcomponent)
 >   - Tasks
->     - [InterpolateToPosition](interpolatetoposition)
+>     - [InterpolateToPosition](#interpolatetoposition)
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -181,9 +181,11 @@ Requirements:
 
 - turn on `UseControllerDesiredRotation`
 - turn off
+  - `bOrientRotationToMovement`
   - `UseControllerRotationYaw`
   - `UseControllerRotationPitch`
   - `UseControllerRotationRoll`
+
 
 Troubleshooting:
 
