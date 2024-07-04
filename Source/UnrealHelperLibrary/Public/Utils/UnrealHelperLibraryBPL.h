@@ -73,7 +73,7 @@ public:
     {
         FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
         TArray<FAssetData> AssetData;
-        AssetRegistryModule.Get().GetAssetsByClass(T::StaticClass()->GetFName(), AssetData);
+        AssetRegistryModule.Get().GetAssetsByClass(T::StaticClass()->GetClassPathName(), AssetData);
         for (int i = 0; i < AssetData.Num(); i++) {
             T* Object = Cast<T>(AssetData[i].GetAsset());
             OutArray.Add(Object);
