@@ -53,6 +53,9 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
+!Binaries/Win64/
+Binaries/Win64/*
+!Binaries/Win64/UnrealEditor-UnrealHelperLibrary.dll
 
 # Builds
 Build/*
@@ -85,48 +88,12 @@ Plugins/Developer/RiderLink/*
 # Blender
 *.blend1
 
-## Here are *.fbx files located for import, we have *.blend files for export so fbx models are not needed
-RAW_Content/**/__ForImport
-res/2h.fbx
-
-steamworks_sdk/*
-
-
-
-# Fmod Project
-Plugins/FMODStudio/*
-Plugins/FMODStudioNiagara/*
-GodreaperFMOD/.user/
-GodreaperFMOD/.unsaved/
-GodreaperFMOD/.cache/
-GodreaperFMOD/.restore/
-GodreaperFMOD/user/
-GodreaperFMOD/unsaved/
-GodreaperFMOD/restore/
-GodreaperFMOD/fmod.log
-GodreaperFMOD/fmod_editor.log
-
-
 #vscode
 .vscode
 .ignore
-Bogatyr.code-workspace
-
 
 # project-cleanup
 project-cleanup.txt
-
-# houdini engine
-Plugins/HoudiniEngine/*
-Content/HoudiniEngine/*
-## sidefx
-Plugins/SideFX_Labs/*
-
-# Waterfall plugin
-Plugins/GhisWaterfall/*
-
-# Nvidia Ansel
-Plugins/Ansel/*
 
 # Localization keys in unreal engine determenistic, no need to store "gather text" results
 Content/Localization/**/**.archive
