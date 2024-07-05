@@ -10,7 +10,7 @@ Support: tested `UE5.3 - UE5.4`
 From source (recommended):
 
 - add git submodule to your plugins folder using - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary`
-- add note to install instruction(`README.md`) on how to update git submodules - `git submodule update --init --recursive`
+- add note to `README.md` on how to setup submodules - `git submodule update --init --recursive` and how to update them - `git submodule update --remote`
 - to use in C++ add `"UnrealHelperLibrary"` to file `"<ProjectName>.Build.cs"` in `PublicDependencyModuleNames` section
 
 From marketplace: later this year
