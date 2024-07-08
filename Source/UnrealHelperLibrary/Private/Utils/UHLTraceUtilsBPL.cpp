@@ -12,9 +12,11 @@ bool UUHLTraceUtilsBPL::SweepCapsuleSingleByChannel(const UWorld* World, FHitRes
                                                const FCollisionQueryParams& Params,
                                                const FCollisionResponseParams& ResponseParam, bool bDrawDebug,
                                                float DrawTime,
-                                               FColor TraceColor, FColor HitColor)
+                                               FColor TraceColor, FColor HitColor, float FailDrawTime)
 {
 	bool bResult = false;
+
+    FailDrawTime = FailDrawTime == -1.0f ? DrawTime : FailDrawTime;
 
 	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(Radius, HalfHeight);
 	bResult = World->SweepSingleByChannel(OutHit, Start, End, Rot, TraceChannel, CollisionShape, Params, ResponseParam);
@@ -22,9 +24,9 @@ bool UUHLTraceUtilsBPL::SweepCapsuleSingleByChannel(const UWorld* World, FHitRes
 #if ENABLE_DRAW_DEBUG
 	if (bDrawDebug)
 	{
-		DrawDebugCapsule(World, Start, HalfHeight, Radius, Rot, TraceColor, false, DrawTime);
-		DrawDebugCapsule(World, End, HalfHeight, Radius, Rot, TraceColor, false, DrawTime);
-		DrawDebugLine(World, Start, End, TraceColor, false, DrawTime);
+		DrawDebugCapsule(World, Start, HalfHeight, Radius, Rot, TraceColor, false, bResult ? DrawTime : FailDrawTime);
+		DrawDebugCapsule(World, End, HalfHeight, Radius, Rot, TraceColor, false, bResult ? DrawTime : FailDrawTime);
+		DrawDebugLine(World, Start, End, TraceColor, false, bResult ? DrawTime : FailDrawTime);
 
 		if (bResult)
 		{
