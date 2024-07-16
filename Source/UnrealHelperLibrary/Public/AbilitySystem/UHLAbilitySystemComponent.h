@@ -23,7 +23,7 @@ public:
     bool bActivateAbilitiesOnStart = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bGiveInitialGameplayTags = true;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bInitializeGameplayAttributes"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceInlineRow, EditCondition="bInitializeGameplayAttributes"))
     TMap<FGameplayAttribute, float> InitialGameplayAttributes = {};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAbilitiesOnStart"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
