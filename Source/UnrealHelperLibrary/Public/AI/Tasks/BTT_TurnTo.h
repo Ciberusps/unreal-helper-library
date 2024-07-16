@@ -80,6 +80,6 @@ private:
     UAnimMontage* CurrentTurnAnimMontage = nullptr;
 
     bool IsTurnWithAnimationRequired(ACharacter* Character) const;
-    UAnimMontage* GetTurnAnimation(float DeltaAngle) const;
-    FTurnSettings GetTurnSettings() const;
+    UAnimMontage* GetTurnAnimation(float DeltaAngle);
+    FTurnSettings* GetTurnSettings();
 };

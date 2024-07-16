@@ -13,27 +13,27 @@
 
 void UBTT_TurnTo::SetupPreset_Recommended_90_180()
 {
-    GetTurnSettings().SetupPreset_90_180();
+    GetTurnSettings()->SetupPreset_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_45_90_180()
 {
-    GetTurnSettings().SetupPreset_45_90_180();
+    GetTurnSettings()->SetupPreset_45_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_15_45_90_180()
 {
-    GetTurnSettings().SetupPreset_15_45_90_180();
+    GetTurnSettings()->SetupPreset_15_45_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_15_30_45_90_180()
 {
-    GetTurnSettings().SetupPreset_15_30_45_90_180();
+    GetTurnSettings()->SetupPreset_15_30_45_90_180();
 }
 
 void UBTT_TurnTo::Cleanup()
 {
-    GetTurnSettings().Cleanup();
+    GetTurnSettings()->Cleanup();
 }
 
 UBTT_TurnTo::UBTT_TurnTo(const FObjectInitializer& ObjectInitializer)
@@ -206,7 +206,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		            }
 
 		            // finish if no turn animation found and "bTurnOnlyWithAnims"
-		            if (!CurrentTurnAnimMontage && GetTurnSettings().bTurnOnlyWithAnims)
+		            if (!CurrentTurnAnimMontage && GetTurnSettings()->bTurnOnlyWithAnims)
 		            {
 		                CleanUp(*AIController, NodeMemory);
 		                FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
@@ -250,10 +250,10 @@ bool UBTT_TurnTo::IsTurnWithAnimationRequired(ACharacter* Character) const
     return true;
 }
 
-UAnimMontage* UBTT_TurnTo::GetTurnAnimation(float DeltaAngle) const
+UAnimMontage* UBTT_TurnTo::GetTurnAnimation(float DeltaAngle)
 {
     UAnimMontage* Result = nullptr;
-    for (TTuple<FString, FTurnRanges> TurnToRange : GetTurnSettings().TurnRangesGroups)
+    for (TTuple<FString, FTurnRanges> TurnToRange : GetTurnSettings()->TurnRangesGroups)
     {
         for (FTurnRange Range : TurnToRange.Value.TurnRanges)
         {
@@ -271,15 +271,15 @@ UAnimMontage* UBTT_TurnTo::GetTurnAnimation(float DeltaAngle) const
     return Result;
 }
 
-FTurnSettings UBTT_TurnTo::GetTurnSettings() const
+FTurnSettings* UBTT_TurnTo::GetTurnSettings()
 {
-    if (bUseTurnSettingsDataAsset)
+    if (bUseTurnAnimations && bUseTurnSettingsDataAsset)
     {
-        return RotateToAnimationsDataAsset->TurnSettings;
+        return &RotateToAnimationsDataAsset->TurnSettings;
     }
     else
     {
-        return TurnSettings;
+        return &TurnSettings;
     }
 }
 
