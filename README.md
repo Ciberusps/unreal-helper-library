@@ -48,6 +48,7 @@ From source:
 >     - [DebugPrintString](#debugprintstring)
 >     - [InvokeGameplayAbility](#invokegameplayability)
 >     - [PlayAnimMontage](#playanimmontage)
+>     - [TurnTo](#turnto)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - RelativeAngles
 >     - [RelativeAngleToActor](#relativeangletoactor)
@@ -221,6 +222,11 @@ Troubleshooting:
 **BTT_PlayAnimMontage** - play anim montage with option to customize PlayRate, Starting Position, Start Section Name and stopping montage on task abort
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5026ebdc-689d-4dba-a168-22ae8d6850bf)
+
+#### `TurnTo`
+
+**BTT_TurnTo** - turn to enemy using turn animations
+TODO should be drop in replacement for "RotateToFaceBBEntry"
 
 ---
 

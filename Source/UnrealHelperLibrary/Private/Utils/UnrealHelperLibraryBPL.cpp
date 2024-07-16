@@ -104,6 +104,7 @@ TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* O
 float UUnrealHelperLibraryBPL::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
 	AActor* TargetActor)
 {
+    if (!IsValid(ActorRelativeToWhomAngleCalculated) || !IsValid(TargetActor)) return FLOAT_ERROR;
 	return UKismetAnimationLibrary::CalculateDirection(
 		ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
 		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()

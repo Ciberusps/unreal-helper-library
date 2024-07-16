@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 const FVector VECTOR_ERROR = FVector(404, 404, 404);
+const float FLOAT_ERROR = -99999.0f;
 
 UENUM()
 enum class EBBValueType
