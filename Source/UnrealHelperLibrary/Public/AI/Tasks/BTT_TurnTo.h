@@ -14,7 +14,7 @@ class AAIController;
 /**
  * Mostly copy-pasted from RotateToFaceBBEntry but can use animations to rotate
  */
-UCLASS(config = Game)
+UCLASS(config = Game, Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_TurnTo : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
@@ -31,7 +31,7 @@ protected:
 
     UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides))
     FTurnSettings TurnSettings;
-    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnSettingsDataAsset", EditConditionHides))
+    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && bUseTurnSettingsDataAsset", EditConditionHides))
     UTurnToAnimationsDataAsset* RotateToAnimationsDataAsset;
 
     UPROPERTY(EditAnywhere)
