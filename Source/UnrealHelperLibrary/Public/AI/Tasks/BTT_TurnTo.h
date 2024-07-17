@@ -11,8 +11,23 @@
 
 class AAIController;
 
+struct FBTTurnTo : FBTFocusMemory
+{
+    FTurnRange CurrentTurnRange;
+    bool bCurrentTurnRangeSet = false;
+
+    void Reset()
+    {
+        FocusActorSet = nullptr;
+        FocusLocationSet = FAISystem::InvalidLocation;
+        bActorSet = false;
+        bCurrentTurnRangeSet = false;
+    }
+};
+
 /**
  * Mostly copy-pasted from RotateToFaceBBEntry but can use animations to rotate
+ * TODO bForceRotateNotOnlyWithAnims - overrides DataAsset setting, in rare cases we need to rotate in place
  */
 UCLASS(config = Game, Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_TurnTo : public UBTTask_BlackboardBase
@@ -20,9 +35,10 @@ class UNREALHELPERLIBRARY_API UBTT_TurnTo : public UBTTask_BlackboardBase
 	GENERATED_BODY()
 
 protected:
+    // TODO IMO can't be 0.0f, enemy wont turn such precisely clamp to 0.1f at least?
     /** Success condition precision in degrees */
-    UPROPERTY(config, Category = Node, EditAnywhere, meta = (ClampMin = "0.0"))
-    float Precision;
+    UPROPERTY(config, Category = Node, EditAnywhere, meta = (ClampMin = "0.0", Units="Degrees"))
+    float Precision = 1.0f;
 
     UPROPERTY(EditAnywhere)
     bool bUseTurnAnimations = true;
@@ -37,8 +53,12 @@ protected:
     UPROPERTY(EditAnywhere)
     bool bDebug = false;
 
+    // Prefers to rotate 180deg if relative angle >115deg, suits for all medium mobs(human size)
     UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=1))
-    void SetupPreset_Recommended_90_180();
+    void SetupPreset_Default_90_180();
+    // All ranges have same proportion
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=1))
+    void SetupPreset_BigEnemy_90_180();
     UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=2))
     void SetupPreset_45_90_180();
     UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=3))
@@ -64,22 +84,17 @@ public:
     virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
     virtual FString GetStaticDescription() const override;
 
-    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTFocusMemory); }
+    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTTurnTo); }
     virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
     virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
 
 protected:
-
     float GetPrecisionDot() const { return PrecisionDot; }
     void CleanUp(AAIController& AIController, uint8* NodeMemory);
 
 private:
-
-    bool IsPlayingTurnMontage = false;
-    UPROPERTY()
-    UAnimMontage* CurrentTurnAnimMontage = nullptr;
-
     bool IsTurnWithAnimationRequired(ACharacter* Character) const;
-    UAnimMontage* GetTurnAnimation(float DeltaAngle);
+    bool CanStopMontage(uint8* NodeMemory);
+    FTurnRange GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet);
     FTurnSettings* GetTurnSettings();
 };

@@ -11,9 +11,14 @@
 #include "GameFramework/Character.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
-void UBTT_TurnTo::SetupPreset_Recommended_90_180()
+void UBTT_TurnTo::SetupPreset_Default_90_180()
 {
-    GetTurnSettings()->SetupPreset_90_180();
+    GetTurnSettings()->SetupPreset_Default_90_180();
+}
+
+void UBTT_TurnTo::SetupPreset_BigEnemy_90_180()
+{
+    GetTurnSettings()->SetupPreset_BigEnemy_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_45_90_180()
@@ -83,7 +88,7 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		return EBTNodeResult::Failed;
 	}
 
-	FBTFocusMemory* MyMemory = (FBTFocusMemory*)NodeMemory;
+	FBTTurnTo* MyMemory = CastInstanceNodeMemory<FBTTurnTo>(NodeMemory);
 	check(MyMemory);
 	MyMemory->Reset();
 
@@ -169,6 +174,9 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
 
+    FBTTurnTo* MyMemory = CastInstanceNodeMemory<FBTTurnTo>(NodeMemory);
+    check(MyMemory);
+
 	if (AIController == NULL || AIController->GetPawn() == NULL)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
@@ -182,31 +190,48 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		if (FocalPoint != FAISystem::InvalidLocation)
 		{
 		    float DeltaAngleRad = CalculateAngleDifferenceDot(PawnDirection, FocalPoint - AIController->GetPawn()->GetActorLocation());
-		    float DeltaAngle = FMath::RadiansToDegrees(FMath::Acos(DeltaAngleRad));
+		    // float DeltaAngle = FMath::RadiansToDegrees(FMath::Acos(DeltaAngleRad));
+		    float DeltaAngle = UUnrealHelperLibraryBPL::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet);
+		    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle), "", "", "", "", "", "", "", "", "", -1, FName("Test"));
 
 			if (DeltaAngleRad >= PrecisionDot)
 			{
-			    if (CurrentTurnAnimMontage)
+			    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached));
+			    bool bCanStopMontage = false;
+			    if (MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached)
 			    {
-			        AICharacter->StopAnimMontage();
+			        bCanStopMontage = MyMemory->CurrentTurnRange.bStopMontageOnGoalReached;
+			    }
+			    else
+			    {
+			        bCanStopMontage = GetTurnSettings()->bStopMontageOnGoalReached;
 			    }
 
-				CleanUp(*AIController, NodeMemory);
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			    if (MyMemory && bCanStopMontage)
+			    {
+			        AICharacter->StopAnimMontage();
+			        CleanUp(*AIController, NodeMemory);
+			        FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			    }
+			    else
+			    {
+			        CleanUp(*AIController, NodeMemory);
+			        FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			    }
 			}
 		    else
 		    {
 		        if (IsTurnWithAnimationRequired(AICharacter))
 		        {
-		            UAnimMontage* TurnAnimMontage = GetTurnAnimation(DeltaAngle);
-		            CurrentTurnAnimMontage = TurnAnimMontage;
-		            if (CurrentTurnAnimMontage)
+		            MyMemory->CurrentTurnRange = GetTurnRange(DeltaAngle, MyMemory->bCurrentTurnRangeSet);
+		            if (MyMemory->bCurrentTurnRangeSet && MyMemory->CurrentTurnRange.AnimMontage)
 		            {
-		                AICharacter->PlayAnimMontage(CurrentTurnAnimMontage);
+		                AICharacter->PlayAnimMontage(MyMemory->CurrentTurnRange.AnimMontage);
 		            }
 
+		            // TODO тут ошибка?
 		            // finish if no turn animation found and "bTurnOnlyWithAnims"
-		            if (!CurrentTurnAnimMontage && GetTurnSettings()->bTurnOnlyWithAnims)
+		            if (!MyMemory->bCurrentTurnRangeSet && GetTurnSettings()->bTurnOnlyWithAnims)
 		            {
 		                CleanUp(*AIController, NodeMemory);
 		                FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
@@ -224,7 +249,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
 void UBTT_TurnTo::CleanUp(AAIController& AIController, uint8* NodeMemory)
 {
-	FBTFocusMemory* MyMemory = (FBTFocusMemory*)NodeMemory;
+	FBTTurnTo* MyMemory = (FBTTurnTo*)NodeMemory;
 	check(MyMemory);
 
 	bool bClearFocus = false;
@@ -250,20 +275,37 @@ bool UBTT_TurnTo::IsTurnWithAnimationRequired(ACharacter* Character) const
     return true;
 }
 
-UAnimMontage* UBTT_TurnTo::GetTurnAnimation(float DeltaAngle)
+bool UBTT_TurnTo::CanStopMontage(uint8* NodeMemory)
 {
-    UAnimMontage* Result = nullptr;
+    FBTTurnTo* MyMemory = CastInstanceNodeMemory<FBTTurnTo>(NodeMemory);
+    check(MyMemory);
+
+    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached));
+    // UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("GetTurnSettings()->bStopMontageOnGoalReached %hhd"), GetTurnSettings()->bStopMontageOnGoalReached));
+    if (MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached)
+    {
+        return MyMemory->CurrentTurnRange.bStopMontageOnGoalReached;
+    }
+
+    return GetTurnSettings()->bStopMontageOnGoalReached;
+}
+
+FTurnRange UBTT_TurnTo::GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet)
+{
+    FTurnRange Result;
+    bCurrentTurnRangeSet = false;
     for (TTuple<FString, FTurnRanges> TurnToRange : GetTurnSettings()->TurnRangesGroups)
     {
         for (FTurnRange Range : TurnToRange.Value.TurnRanges)
         {
             if (Range.Range.Contains(DeltaAngle))
             {
-                Result = Range.AnimMontage;
+                Result = Range;
+                bCurrentTurnRangeSet = true;
                 break;
             }
         }
-        if (Result)
+        if (bCurrentTurnRangeSet)
         {
             break;
         }
@@ -331,10 +373,10 @@ FString UBTT_TurnTo::GetStaticDescription() const
 
 void UBTT_TurnTo::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const
 {
-	InitializeNodeMemory<FBTFocusMemory>(NodeMemory, InitType);
+	InitializeNodeMemory<FBTTurnTo>(NodeMemory, InitType);
 }
 
 void UBTT_TurnTo::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const
 {
-	CleanupNodeMemory<FBTFocusMemory>(NodeMemory, CleanupType);
+	CleanupNodeMemory<FBTTurnTo>(NodeMemory, CleanupType);
 }
