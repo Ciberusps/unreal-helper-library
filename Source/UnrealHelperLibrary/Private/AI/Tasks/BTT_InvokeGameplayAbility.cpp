@@ -17,6 +17,7 @@ UBTT_InvokeGameplayAbility::UBTT_InvokeGameplayAbility(const FObjectInitializer&
 EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     EBTNodeResult::Type Result = EBTNodeResult::Failed;
+    bool GameplayAbilitySpecFound = false;
 
     AIOwner = OwnerComp.GetAIOwner();
     OwnerComponent = &OwnerComp;
@@ -42,13 +43,15 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
         if (AbilitySpecSearch->Ability->AbilityTags.HasAny(GameplayTag.GetSingleTagContainer()))
         {
             AbilitySpec = AbilitySpecSearch;
-            GameplayAbilitiesSpec = &GameplayAbilitiesSpecSearch;
+            GameplayAbilitiesSpecHandle = &GameplayAbilitiesSpecSearch;
+            GameplayAbilitySpecFound = true;
+            break;
         }
     }
 
     if (bActivate)
     {
-	    if (AbilitySpec != nullptr)
+	    if (GameplayAbilitySpecFound && AbilitySpec != nullptr)
 	    {
 	        if (bWaitForFinishing)
 	        {
@@ -78,9 +81,9 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     }
     else
     {
-        if (GameplayAbilitiesSpec != nullptr)
+        if (GameplayAbilitySpecFound && GameplayAbilitiesSpecHandle != nullptr)
         {
-            ASC->CancelAbilityHandle(*GameplayAbilitiesSpec);
+            ASC->CancelAbilityHandle(*GameplayAbilitiesSpecHandle);
         }
         Result = EBTNodeResult::Succeeded;
     }
