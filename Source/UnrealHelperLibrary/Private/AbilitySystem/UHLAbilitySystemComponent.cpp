@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include "AbilitySystem/Abilities/UHLGameplayAbility.h"
 #include "Core/UHLGameplayTags.h"
 
 void UUHLAbilitySystemComponent::BeginPlay()
@@ -13,117 +14,6 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
 }
-
-// copy paste from LyraAbilitySystemComponent
-// void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
-// {
-// 	if (HasMatchingGameplayTag(UHLGameplayTags::TAG_Gameplay_AbilityInputBlocked))
-// 	{
-// 		InputPressedSpecHandles.Reset();
-// 		InputReleasedSpecHandles.Reset();
-// 		InputHeldSpecHandles.Reset();
-// 		return;
-// 	}
-//
-// 	static TArray<FGameplayAbilitySpecHandle> AbilitiesToActivate;
-// 	AbilitiesToActivate.Reset();
-//
-// 	//@TODO: See if we can use FScopedServerAbilityRPCBatcher ScopedRPCBatcher in some of these loops
-//
-// 	//
-// 	// Process all abilities that activate when the input is held.
-// 	//
-// 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputHeldSpecHandles)
-// 	{
-// 		if (const FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
-// 		{
-// 			if (AbilitySpec->Ability && !AbilitySpec->IsActive())
-// 			{
-// 				const TObjectPtr<UGCBaseGameplayAbility> AbilityCDO = CastChecked<UGCBaseGameplayAbility>(AbilitySpec->Ability);
-//
-// 				if (AbilityCDO->GetActivationPolicy() == EGCAbilityActivationPolicy::WhileInputActive)
-// 				{
-// 					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
-// 				}
-// 			}
-// 		}
-// 	}
-//
-// 	//
-// 	// Process all abilities that had their input pressed this frame.
-// 	//
-// 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputPressedSpecHandles)
-// 	{
-// 		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
-// 		{
-// 			if (AbilitySpec->Ability)
-// 			{
-// 				AbilitySpec->InputPressed = true;
-//
-// 				// TODO: если абилка активна, нужно пытаться все равно ее активировать, а не просто данные слать
-// 				// If ability active, we should try to activate it again, instead of sending data
-//
-// 				// if (AbilitySpec->IsActive())
-// 				// {
-// 				// 	// Ability is active so pass along the input event.
-// 				// 	AbilitySpecInputPressed(*AbilitySpec);
-// 				// }
-// 				// else
-// 				// {
-// 				const UGCBaseGameplayAbility* AbilityCDO = CastChecked<UGCBaseGameplayAbility>(AbilitySpec->Ability);
-//
-// 				if (AbilityCDO->GetActivationPolicy() == EGCAbilityActivationPolicy::OnInputTriggered)
-// 				{
-// 					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
-//
-// 					// TODO: testing
-// 					// if (AbilitySpec->IsActive())
-// 					// {
-// 						// Ability is active so pass along the input event.
-// 						AbilitySpecInputPressed(*AbilitySpec);
-// 					// }
-// 				}
-// 				// }
-// 			}
-// 		}
-// 	}
-//
-// 	//
-// 	// Try to activate all the abilities that are from presses and holds.
-// 	// We do it all at once so that held inputs don't activate the ability
-// 	// and then also send a input event to the ability because of the press.
-// 	//
-// 	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate)
-// 	{
-// 		TryActivateAbility(AbilitySpecHandle);
-// 	}
-//
-// 	//
-// 	// Process all abilities that had their input released this frame.
-// 	//
-// 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputReleasedSpecHandles)
-// 	{
-// 		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
-// 		{
-// 			if (AbilitySpec->Ability)
-// 			{
-// 				AbilitySpec->InputPressed = false;
-//
-// 				if (AbilitySpec->IsActive())
-// 				{
-// 					// Ability is active so pass along the input event.
-// 					AbilitySpecInputReleased(*AbilitySpec);
-// 				}
-// 			}
-// 		}
-// 	}
-//
-// 	//
-// 	// Clear the cached ability handles.
-// 	//
-// 	InputPressedSpecHandles.Reset();
-// 	InputReleasedSpecHandles.Reset();
-// }
 
 void UUHLAbilitySystemComponent::InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor)
 {
@@ -193,64 +83,6 @@ void UUHLAbilitySystemComponent::OnUnregister()
 	Super::OnUnregister();
 }
 
-void UUHLAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)
-{
-	Super::AbilitySpecInputPressed(Spec);
-
-	// We don't support UGameplayAbility::bReplicateInputDirectly.
-	// Use replicated events instead so that the WaitInputPress ability task works.
-	if (Spec.IsActive())
-	{
-		// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
-		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
-	}
-}
-
-void UUHLAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)
-{
-	Super::AbilitySpecInputReleased(Spec);
-
-	// We don't support UGameplayAbility::bReplicateInputDirectly.
-	// Use replicated events instead so that the WaitInputRelease ability task works.
-	if (Spec.IsActive())
-	{
-		// Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
-		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
-	}
-}
-
-void UUHLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
-{
-	if (InputTag.IsValid())
-	{
-		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
-		{
-			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->AbilityTags
-			if (AbilitySpec.Ability && (AbilitySpec.Ability->AbilityTags.HasTagExact(InputTag)))
-			{
-				InputPressedSpecHandles.AddUnique(AbilitySpec.Handle);
-				InputHeldSpecHandles.AddUnique(AbilitySpec.Handle);
-			}
-		}
-	}
-}
-
-void UUHLAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
-{
-	if (InputTag.IsValid())
-	{
-		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
-		{
-			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->AbilityTags
-			if (AbilitySpec.Ability && (AbilitySpec.Ability->AbilityTags.HasTagExact(InputTag)))
-			{
-				InputReleasedSpecHandles.AddUnique(AbilitySpec.Handle);
-				InputHeldSpecHandles.Remove(AbilitySpec.Handle);
-			}
-		}
-	}
-}
-
 bool UUHLAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {
 	return TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
@@ -312,4 +144,176 @@ bool UUHLAbilitySystemComponent::IsAbilityActive(FGameplayTag GameplayTag) const
 void UUHLAbilitySystemComponent::RemoveLooseGameplayTagCompletly(const FGameplayTag& GameplayTag)
 {
     RemoveLooseGameplayTag(GameplayTag, 999999);
+}
+
+void UUHLAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)
+{
+	Super::AbilitySpecInputPressed(Spec);
+
+	// We don't support UGameplayAbility::bReplicateInputDirectly.
+	// Use replicated events instead so that the WaitInputPress ability task works.
+	if (Spec.IsActive())
+	{
+		// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
+	}
+}
+
+void UUHLAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)
+{
+	Super::AbilitySpecInputReleased(Spec);
+
+	// We don't support UGameplayAbility::bReplicateInputDirectly.
+	// Use replicated events instead so that the WaitInputRelease ability task works.
+	if (Spec.IsActive())
+	{
+		// Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
+	}
+}
+
+void UUHLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
+{
+	if (InputTag.IsValid())
+	{
+		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+		{
+			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->AbilityTags
+			if (AbilitySpec.Ability && (AbilitySpec.Ability->AbilityTags.HasTagExact(InputTag)))
+			{
+				InputPressedSpecHandles.AddUnique(AbilitySpec.Handle);
+				InputHeldSpecHandles.AddUnique(AbilitySpec.Handle);
+			}
+		}
+	}
+}
+
+void UUHLAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+{
+	if (InputTag.IsValid())
+	{
+		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+		{
+			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->AbilityTags
+			if (AbilitySpec.Ability && (AbilitySpec.Ability->AbilityTags.HasTagExact(InputTag)))
+			{
+				InputReleasedSpecHandles.AddUnique(AbilitySpec.Handle);
+				InputHeldSpecHandles.Remove(AbilitySpec.Handle);
+			}
+		}
+	}
+}
+
+// copy paste from LyraAbilitySystemComponent
+void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
+{
+    if (!bUseInputConfig) return;
+
+	// TODO: mb check how Lyra use that tag?
+	if (HasMatchingGameplayTag(UHLGameplayTags::TAG_Gameplay_AbilityInputBlocked))
+	{
+		InputPressedSpecHandles.Reset();
+		InputReleasedSpecHandles.Reset();
+		InputHeldSpecHandles.Reset();
+		return;
+	}
+
+	static TArray<FGameplayAbilitySpecHandle> AbilitiesToActivate;
+	AbilitiesToActivate.Reset();
+
+	//@TODO: See if we can use FScopedServerAbilityRPCBatcher ScopedRPCBatcher in some of these loops
+
+	//
+	// Process all abilities that activate when the input is held.
+	//
+	for (const FGameplayAbilitySpecHandle& SpecHandle : InputHeldSpecHandles)
+	{
+		if (const FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
+		{
+			if (AbilitySpec->Ability && !AbilitySpec->IsActive())
+			{
+				const UUHLGameplayAbility* AbilityCDO = CastChecked<UUHLGameplayAbility>(AbilitySpec->Ability);
+
+				if (AbilityCDO->GetActivationPolicy() == EUHLAbilityActivationPolicy::WhileInputActive)
+				{
+					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
+				}
+			}
+		}
+	}
+
+	//
+	// Process all abilities that had their input pressed this frame.
+	//
+	for (const FGameplayAbilitySpecHandle& SpecHandle : InputPressedSpecHandles)
+	{
+		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
+		{
+			if (AbilitySpec->Ability)
+			{
+				AbilitySpec->InputPressed = true;
+
+				// TODO: если абилка активна, нужно пытаться все равно ее активировать, а не просто данные слать
+				// If ability active, we should try to activate it again, instead of sending data
+
+				// if (AbilitySpec->IsActive())
+				// {
+				// 	// Ability is active so pass along the input event.
+				// 	AbilitySpecInputPressed(*AbilitySpec);
+				// }
+				// else
+				// {
+				const UUHLGameplayAbility* AbilityCDO = CastChecked<UUHLGameplayAbility>(AbilitySpec->Ability);
+
+				if (AbilityCDO->GetActivationPolicy() == EUHLAbilityActivationPolicy::OnInputTriggered)
+				{
+					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
+
+					// TODO: testing
+					// if (AbilitySpec->IsActive())
+					// {
+						// Ability is active so pass along the input event.
+						AbilitySpecInputPressed(*AbilitySpec);
+					// }
+				}
+				// }
+			}
+		}
+	}
+
+	//
+	// Try to activate all the abilities that are from presses and holds.
+	// We do it all at once so that held inputs don't activate the ability
+	// and then also send a input event to the ability because of the press.
+	//
+	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate)
+	{
+		TryActivateAbility(AbilitySpecHandle);
+	}
+
+	//
+	// Process all abilities that had their input released this frame.
+	//
+	for (const FGameplayAbilitySpecHandle& SpecHandle : InputReleasedSpecHandles)
+	{
+		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
+		{
+			if (AbilitySpec->Ability)
+			{
+				AbilitySpec->InputPressed = false;
+
+				if (AbilitySpec->IsActive())
+				{
+					// Ability is active so pass along the input event.
+					AbilitySpecInputReleased(*AbilitySpec);
+				}
+			}
+		}
+	}
+
+	//
+	// Clear the cached ability handles.
+	//
+	InputPressedSpecHandles.Reset();
+	InputReleasedSpecHandles.Reset();
 }

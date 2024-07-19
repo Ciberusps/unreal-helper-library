@@ -67,6 +67,7 @@ From source:
 >     - GetSceneComponentByName
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
+>     - [WIP InputSystem](#InputSystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
 > - [TraceUtilsBPL](#traceutilsbpl)
 
@@ -277,6 +278,13 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 #### > Other
 
 #### `GetHighestPoint`
+
+#### `InputSystem`
+
+Binding InputActions to tags like in Lyra but enhanced and adopted for 3d action game
+- abilities should nest from `UHLGameplayAbility` for "ActivationPolicy" work correctly
+- SetupPlayerInputComponent - bind all from input config, `BindAbilityActions`
+- `Project Settings -> Input -> Default Input Component Class` -> change on `UHLInputComponent`
 
 ### LoadingUtilLibrary
 

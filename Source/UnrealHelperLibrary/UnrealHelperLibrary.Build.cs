@@ -31,6 +31,7 @@ public class UnrealHelperLibrary : ModuleRules
 				"GameplayTags",
 				"GameplayTasks",
 				"AIModule",
+				"EnhancedInput",
 			}
 			);
 

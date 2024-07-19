@@ -9,7 +9,7 @@
 /**
  *
  */
-UCLASS(Category = "UnrealHelperLibrary")
+UCLASS(Category = "UnrealHelperLibrary", Blueprintable, meta=(BlueprintSpawnableComponent))
 class UNREALHELPERLIBRARY_API UUHLAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
@@ -33,6 +33,10 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveInitialGameplayTags"))
     FGameplayTagContainer InitialGameplayTags;
 
+    // binding inputs to tags check Readme.MD on how to setup it
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bUseInputConfig = false;
+
 	virtual void BeginPlay() override;
 	virtual void InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor);
 	virtual void InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor);
@@ -41,12 +45,14 @@ public:
 	virtual void ActivateInitialAbilities();
 	virtual void OnUnregister() override;
 
+/** Input Config **/
+    // TODO DA_InputConfig, UHLGameplayAbility
+    void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	virtual void AbilityInputTagReleased(const FGameplayTag& InputTag);
-    // TODO DA_InputConfig, UHLGameplayAbility
-	// void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
+/** Input Config **/
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation = true);
