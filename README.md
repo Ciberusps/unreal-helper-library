@@ -7,16 +7,19 @@ Support: tested `UE5.3 - UE5.4`
 
 ## Install
 
-From source (recommended):
+#### From source (recommended):
 
-- `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder using
-- to use in C++ add `"UnrealHelperLibrary"` to file `"<ProjectName>.Build.cs"` in `PublicDependencyModuleNames` section
+- `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder
+- add `"UnrealHelperLibrary"` to file `"<ProjectName>.Build.cs"` in `PublicDependencyModuleNames` section to use it in C++
 
 > [!NOTE]
 > don't forget to update `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update plugin(s) - `git submodule update --remote`
+
+> [!NOTE]
 > and add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually
 
-From marketplace: later this year
+#### From marketplace:
+later this year
 
 ## Update
 
