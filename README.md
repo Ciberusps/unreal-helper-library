@@ -16,7 +16,7 @@ Support: tested `UE5.3 - UE5.4`
 > don't forget to update `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update plugin(s) - `git submodule update --remote`
 
 > [!NOTE]
-> and add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually
+> and add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
 
 #### From marketplace:
 later this year
