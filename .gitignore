@@ -53,9 +53,6 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
-!Binaries/Win64/
-Binaries/Win64/*
-!Binaries/Win64/UnrealEditor-UnrealHelperLibrary.dll
 
 # Builds
 Build/*
