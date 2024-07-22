@@ -83,7 +83,7 @@ public:
 
 
 UCLASS(Blueprintable)
-class UNREALHELPERLIBRARY_API UTurnToAnimationsDataAsset : public UPrimaryDataAsset
+class UNREALHELPERLIBRARY_API UTurnSettingsDataAsset : public UPrimaryDataAsset
 {
     GENERATED_BODY()
 

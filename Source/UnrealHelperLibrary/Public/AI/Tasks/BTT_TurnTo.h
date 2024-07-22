@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actors/UHLActorSettings.h"
 #include "AI/Data/TurnSettings.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BehaviorTree/Services/BTService_DefaultFocus.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
+#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "BTT_TurnTo.generated.h"
 
 class AAIController;
@@ -15,6 +17,8 @@ struct FBTTurnTo : FBTFocusMemory
 {
     FTurnRange CurrentTurnRange;
     bool bCurrentTurnRangeSet = false;
+    FTurnSettings TurnSettings;
+    bool bCurrentTurnSettingsSet = false;
 
     void Reset()
     {
@@ -22,6 +26,7 @@ struct FBTTurnTo : FBTFocusMemory
         FocusLocationSet = FAISystem::InvalidLocation;
         bActorSet = false;
         bCurrentTurnRangeSet = false;
+        bCurrentTurnSettingsSet = false;
     }
 };
 
@@ -43,29 +48,29 @@ protected:
     UPROPERTY(EditAnywhere)
     bool bUseTurnAnimations = true;
     UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations", EditConditionHides))
-    bool bUseTurnSettingsDataAsset = true;
+    EUHLSettingsSource SettingsSource = EUHLSettingsSource::Actor;
 
-    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides))
+    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides))
     FTurnSettings TurnSettings;
-    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && bUseTurnSettingsDataAsset", EditConditionHides))
-    UTurnToAnimationsDataAsset* RotateToAnimationsDataAsset;
+    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::DataAsset", EditConditionHides))
+    UTurnSettingsDataAsset* RotateToAnimationsDataAsset;
 
     UPROPERTY(EditAnywhere)
     bool bDebug = false;
 
     // Prefers to rotate 180deg if relative angle >115deg, suits for all medium mobs(human size)
-    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=1))
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides, DisplayPriority=1))
     void SetupPreset_Default_90_180();
     // All ranges have same proportion
-    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=1))
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides, DisplayPriority=1))
     void SetupPreset_BigEnemy_90_180();
-    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=2))
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides, DisplayPriority=2))
     void SetupPreset_45_90_180();
-    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=3))
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides, DisplayPriority=3))
     void SetupPreset_15_45_90_180();
-    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=4))
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides, DisplayPriority=4))
     void SetupPreset_15_30_45_90_180();
-    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && !bUseTurnSettingsDataAsset", EditConditionHides, DisplayPriority=5))
+    UFUNCTION(BlueprintCallable, Category="Setup", CallInEditor, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides, DisplayPriority=5))
     void Cleanup();
 
 private:
@@ -94,7 +99,6 @@ protected:
 
 private:
     bool IsTurnWithAnimationRequired(ACharacter* Character) const;
-    bool CanStopMontage(uint8* NodeMemory);
-    FTurnRange GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet);
-    FTurnSettings* GetTurnSettings();
+    FTurnRange GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet, FTurnSettings TurnSettings_In);
+    FTurnSettings GetTurnSettings(AActor* Actor, bool& bCurrentTurnSettingsSet);
 };

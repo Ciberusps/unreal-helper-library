@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
+#include "Actors/UHLActorSettings.h"
 #include "GameFramework/Character.h"
 #include "UHLBaseCharacter.generated.h"
 
@@ -13,7 +14,8 @@ class UUHLBaseCharacterAttributeSet;
 
 UCLASS()
 class UNREALHELPERLIBRARY_API AUHLBaseCharacter : public ACharacter,
-    public IAbilitySystemInterface
+    public IAbilitySystemInterface,
+	public IUHLActorSettings
 {
 	GENERATED_BODY()
 
@@ -26,6 +28,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UTurnSettingsDataAsset* TurnSettingsDataAsset;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -38,6 +43,10 @@ public:
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
     // virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return nullptr; };
 /** ~IAbilitySystemInterface **/
+
+/** IUHLActorSettings */
+    // virtual void GetTurnSettings_Implementation(FTurnSettings& TurnSettings) const override;
+/** ~IUHLActorSettings */
 
 protected:
 /** GameplayAbilities */

@@ -37,3 +37,15 @@ enum class EUHLDirection: uint8
 
     MAX UMETA(Hidden)
 };
+
+UENUM(BlueprintType)
+enum class EUHLSettingsSource: uint8
+{
+    None UMETA(Hidden),
+
+    Node,
+    DataAsset,
+    Actor,
+
+    MAX UMETA(Hidden)
+};

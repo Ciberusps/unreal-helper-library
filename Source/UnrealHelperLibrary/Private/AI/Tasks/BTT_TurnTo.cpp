@@ -13,32 +13,32 @@
 
 void UBTT_TurnTo::SetupPreset_Default_90_180()
 {
-    GetTurnSettings()->SetupPreset_Default_90_180();
+    TurnSettings.SetupPreset_Default_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_BigEnemy_90_180()
 {
-    GetTurnSettings()->SetupPreset_BigEnemy_90_180();
+    TurnSettings.SetupPreset_BigEnemy_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_45_90_180()
 {
-    GetTurnSettings()->SetupPreset_45_90_180();
+    TurnSettings.SetupPreset_45_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_15_45_90_180()
 {
-    GetTurnSettings()->SetupPreset_15_45_90_180();
+    TurnSettings.SetupPreset_15_45_90_180();
 }
 
 void UBTT_TurnTo::SetupPreset_15_30_45_90_180()
 {
-    GetTurnSettings()->SetupPreset_15_30_45_90_180();
+    TurnSettings.SetupPreset_15_30_45_90_180();
 }
 
 void UBTT_TurnTo::Cleanup()
 {
-    GetTurnSettings()->Cleanup();
+    TurnSettings.Cleanup();
 }
 
 UBTT_TurnTo::UBTT_TurnTo(const FObjectInitializer& ObjectInitializer)
@@ -95,6 +95,7 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
 	APawn* Pawn = AIController->GetPawn();
+
 	const FVector PawnLocation = Pawn->GetActorLocation();
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
@@ -117,6 +118,10 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 				AIController->SetFocus(ActorValue, EAIFocusPriority::Gameplay);
 				MyMemory->FocusActorSet = ActorValue;
 				MyMemory->bActorSet = true;
+			    if (Pawn->GetClass()->ImplementsInterface(UUHLActorSettings::StaticClass()))
+			    {
+			        MyMemory->TurnSettings = GetTurnSettings(Pawn, MyMemory->bCurrentTurnSettingsSet);
+			    }
 				Result = EBTNodeResult::InProgress;
 			}
 		}
@@ -204,7 +209,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 			    }
 			    else
 			    {
-			        bCanStopMontage = GetTurnSettings()->bStopMontageOnGoalReached;
+			        bCanStopMontage = MyMemory->TurnSettings.bStopMontageOnGoalReached;
 			    }
 
 			    if (MyMemory && bCanStopMontage)
@@ -223,7 +228,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		    {
 		        if (IsTurnWithAnimationRequired(AICharacter))
 		        {
-		            MyMemory->CurrentTurnRange = GetTurnRange(DeltaAngle, MyMemory->bCurrentTurnRangeSet);
+		            MyMemory->CurrentTurnRange = GetTurnRange(DeltaAngle, MyMemory->bCurrentTurnRangeSet, MyMemory->TurnSettings);
 		            if (MyMemory->bCurrentTurnRangeSet && MyMemory->CurrentTurnRange.AnimMontage)
 		            {
 		                AICharacter->PlayAnimMontage(MyMemory->CurrentTurnRange.AnimMontage);
@@ -231,7 +236,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
 		            // TODO тут ошибка?
 		            // finish if no turn animation found and "bTurnOnlyWithAnims"
-		            if (!MyMemory->bCurrentTurnRangeSet && GetTurnSettings()->bTurnOnlyWithAnims)
+		            if (!MyMemory->bCurrentTurnRangeSet && MyMemory->TurnSettings.bTurnOnlyWithAnims)
 		            {
 		                CleanUp(*AIController, NodeMemory);
 		                FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
@@ -275,26 +280,11 @@ bool UBTT_TurnTo::IsTurnWithAnimationRequired(ACharacter* Character) const
     return true;
 }
 
-bool UBTT_TurnTo::CanStopMontage(uint8* NodeMemory)
-{
-    FBTTurnTo* MyMemory = CastInstanceNodeMemory<FBTTurnTo>(NodeMemory);
-    check(MyMemory);
-
-    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached));
-    // UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("GetTurnSettings()->bStopMontageOnGoalReached %hhd"), GetTurnSettings()->bStopMontageOnGoalReached));
-    if (MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached)
-    {
-        return MyMemory->CurrentTurnRange.bStopMontageOnGoalReached;
-    }
-
-    return GetTurnSettings()->bStopMontageOnGoalReached;
-}
-
-FTurnRange UBTT_TurnTo::GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet)
+FTurnRange UBTT_TurnTo::GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet, FTurnSettings TurnSettings_In)
 {
     FTurnRange Result;
     bCurrentTurnRangeSet = false;
-    for (TTuple<FString, FTurnRanges> TurnToRange : GetTurnSettings()->TurnRangesGroups)
+    for (TTuple<FString, FTurnRanges> TurnToRange : TurnSettings_In.TurnRangesGroups)
     {
         for (FTurnRange Range : TurnToRange.Value.TurnRanges)
         {
@@ -313,16 +303,26 @@ FTurnRange UBTT_TurnTo::GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSe
     return Result;
 }
 
-FTurnSettings* UBTT_TurnTo::GetTurnSettings()
+FTurnSettings UBTT_TurnTo::GetTurnSettings(AActor* Actor, bool& bCurrentTurnSettingsSet)
 {
-    if (bUseTurnAnimations && bUseTurnSettingsDataAsset)
+    FTurnSettings Result;
+    bCurrentTurnSettingsSet = false;
+    if (SettingsSource == EUHLSettingsSource::Actor)
     {
-        return &RotateToAnimationsDataAsset->TurnSettings;
+        Result = IUHLActorSettings::Execute_GetTurnSettings(Actor);
+        bCurrentTurnSettingsSet = true;
     }
-    else
+    if (SettingsSource == EUHLSettingsSource::DataAsset)
     {
-        return &TurnSettings;
+        Result = RotateToAnimationsDataAsset->TurnSettings;
+        bCurrentTurnSettingsSet = true;
     }
+    if (SettingsSource == EUHLSettingsSource::Node)
+    {
+        Result = TurnSettings;
+        bCurrentTurnSettingsSet = true;
+    }
+    return Result;
 }
 
 EBTNodeResult::Type UBTT_TurnTo::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

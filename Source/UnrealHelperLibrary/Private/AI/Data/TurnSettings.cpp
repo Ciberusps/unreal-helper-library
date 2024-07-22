@@ -196,32 +196,32 @@ void FTurnSettings::SetupPreset_15_30_45_90_180()
         };
 }
 
-void UTurnToAnimationsDataAsset::Cleanup()
+void UTurnSettingsDataAsset::Cleanup()
 {
     TurnSettings.Cleanup();
 }
 
-void UTurnToAnimationsDataAsset::SetupPreset_Default_90_180()
+void UTurnSettingsDataAsset::SetupPreset_Default_90_180()
 {
     TurnSettings.SetupPreset_Default_90_180();
 }
 
-void UTurnToAnimationsDataAsset::SetupPreset_BigEnemy_90_180()
+void UTurnSettingsDataAsset::SetupPreset_BigEnemy_90_180()
 {
     TurnSettings.SetupPreset_BigEnemy_90_180();
 }
 
-void UTurnToAnimationsDataAsset::SetupPreset_45_90_180()
+void UTurnSettingsDataAsset::SetupPreset_45_90_180()
 {
     TurnSettings.SetupPreset_45_90_180();
 }
 
-void UTurnToAnimationsDataAsset::SetupPreset_15_45_90_180()
+void UTurnSettingsDataAsset::SetupPreset_15_45_90_180()
 {
     TurnSettings.SetupPreset_15_45_90_180();
 }
 
-void UTurnToAnimationsDataAsset::SetupPreset_15_30_45_90_180()
+void UTurnSettingsDataAsset::SetupPreset_15_30_45_90_180()
 {
     TurnSettings.SetupPreset_15_30_45_90_180();
 }

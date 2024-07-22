@@ -56,3 +56,8 @@ void AUHLBaseCharacter::PossessedBy(AController* NewController)
     AbilitySystemComponent->ActivateInitialAbilities();
 }
 
+// void AUHLBaseCharacter::GetTurnSettings_Implementation(FTurnSettings& TurnSettings) const
+// {
+//     TurnSettings = TurnSettingsDataAsset->TurnSettings;
+// }
+
