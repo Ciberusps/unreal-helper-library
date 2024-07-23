@@ -11,11 +11,16 @@ UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectIniti
 	: Super(ObjectInitializer)
 {
 	NodeName = "PlayAnimMontage";
+    // TODO try to find the way to remove instancing
+    // instantiating to be able to use Timers
+    bCreateNodeInstance = true;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     EBTNodeResult::Type Result = EBTNodeResult::Failed;
+
+    FUHLPlayAnimMontageMemory* MyMemory = CastInstanceNodeMemory<FUHLPlayAnimMontageMemory>(NodeMemory);
 
     AIOwner = OwnerComp.GetAIOwner();
     OwnerComponent = &OwnerComp;
@@ -32,16 +37,16 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& Ow
 	    return Result;
 	}
 
-	PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
-		Character->GetMesh(),
-		AnimMontage,
-		PlayRate,
-		StartingPosition,
-		StartSectionName
-	);
-	PlayMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-	PlayMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-	PlayMontageCallbackProxy->OnBlendOut.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+    MyMemory->PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
+        Character->GetMesh(),
+        AnimMontage,
+        PlayRate,
+        StartingPosition,
+        StartSectionName
+    );
+    MyMemory->PlayMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+    MyMemory->PlayMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+    MyMemory->PlayMontageCallbackProxy->OnBlendOut.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
 
 	Result = EBTNodeResult::InProgress;
     return Result;
@@ -54,8 +59,17 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::AbortTask(UBehaviorTreeComponent& Owne
     {
         Character.Get()->StopAnimMontage();
     }
-    ClearCallbacks();
 	return Super::AbortTask(OwnerComp, NodeMemory);
+}
+
+void UBTT_PlayAnimMontage::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult)
+{
+    FUHLPlayAnimMontageMemory* MyMemory = CastInstanceNodeMemory<FUHLPlayAnimMontageMemory>(NodeMemory);
+    MyMemory->PlayMontageCallbackProxy->OnCompleted.RemoveAll(this);
+    MyMemory->PlayMontageCallbackProxy->OnInterrupted.RemoveAll(this);
+    MyMemory->PlayMontageCallbackProxy->OnBlendOut.RemoveAll(this);
+
+    Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
 }
 
 FString UBTT_PlayAnimMontage::GetStaticDescription() const
@@ -63,22 +77,22 @@ FString UBTT_PlayAnimMontage::GetStaticDescription() const
 	return FString::Printf(TEXT("%s: \n%s"), *Super::GetStaticDescription(), AnimMontage ? *AnimMontage->GetName() : TEXT(""));
 }
 
+void UBTT_PlayAnimMontage::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const
+{
+    Super::InitializeMemory(OwnerComp, NodeMemory, InitType);
+}
+
+void UBTT_PlayAnimMontage::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const
+{
+    Super::CleanupMemory(OwnerComp, NodeMemory, CleanupType);
+}
+
 void UBTT_PlayAnimMontage::OnPlayMontageEnded(FName NotifyName)
 {
 	const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
 
-    ClearCallbacks();
-
-	if (OwnerComponent.IsValid() && !bIsAborting)
+	if (OwnerComponent && !bIsAborting)
 	{
 		FinishLatentTask(*OwnerComponent, NodeResult);
 	}
 }
-
-void UBTT_PlayAnimMontage::ClearCallbacks()
-{
-    PlayMontageCallbackProxy->OnCompleted.RemoveAll(this);
-    PlayMontageCallbackProxy->OnInterrupted.RemoveAll(this);
-    PlayMontageCallbackProxy->OnBlendOut.RemoveAll(this);
-}
-

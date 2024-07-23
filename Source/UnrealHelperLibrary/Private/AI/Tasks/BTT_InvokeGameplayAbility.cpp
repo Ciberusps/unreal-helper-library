@@ -12,6 +12,8 @@ UBTT_InvokeGameplayAbility::UBTT_InvokeGameplayAbility(const FObjectInitializer&
 	: Super(ObjectInitializer)
 {
     NodeName = "InvokeGameplayAbility";
+    // TODO probably instancing required or won't work with multiple InvokeGameplayAbilities/multiple enemies
+    // as in PlayAnimMontage
 }
 
 EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

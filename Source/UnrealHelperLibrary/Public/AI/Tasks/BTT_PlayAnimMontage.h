@@ -7,6 +7,12 @@
 #include "BTT_PlayAnimMontage.generated.h"
 
 class UPlayMontageCallbackProxy;
+
+struct FUHLPlayAnimMontageMemory
+{
+    UPlayMontageCallbackProxy* PlayMontageCallbackProxy = nullptr;
+};
+
 /**
  *
  */
@@ -32,8 +38,13 @@ public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+    virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult) override;
 
 	virtual FString GetStaticDescription() const override;
+
+    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FUHLPlayAnimMontageMemory); }
+    virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
+    virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
 
 private:
 	bool bIsAborting = false;
@@ -41,11 +52,9 @@ private:
     /** Cached AIController owner of BehaviorTreeComponent. */
     UPROPERTY(Transient)
     TObjectPtr<AAIController> AIOwner;
-    TWeakObjectPtr<UBehaviorTreeComponent> OwnerComponent;
     UPROPERTY()
-    UPlayMontageCallbackProxy* PlayMontageCallbackProxy;
+    TObjectPtr<UBehaviorTreeComponent> OwnerComponent;
 
-	UFUNCTION()
+    UFUNCTION()
 	void OnPlayMontageEnded(FName NotifyName);
-    void ClearCallbacks();
 };
