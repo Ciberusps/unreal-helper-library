@@ -88,7 +88,7 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		return EBTNodeResult::Failed;
 	}
 
-	FBTTurnTo* MyMemory = CastInstanceNodeMemory<FBTTurnTo>(NodeMemory);
+	FBTTurnToMemory* MyMemory = CastInstanceNodeMemory<FBTTurnToMemory>(NodeMemory);
 	check(MyMemory);
 	MyMemory->Reset();
 
@@ -179,7 +179,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
 
-    FBTTurnTo* MyMemory = CastInstanceNodeMemory<FBTTurnTo>(NodeMemory);
+    FBTTurnToMemory* MyMemory = CastInstanceNodeMemory<FBTTurnToMemory>(NodeMemory);
     check(MyMemory);
 
 	if (AIController == NULL || AIController->GetPawn() == NULL)
@@ -254,7 +254,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
 void UBTT_TurnTo::CleanUp(AAIController& AIController, uint8* NodeMemory)
 {
-	FBTTurnTo* MyMemory = (FBTTurnTo*)NodeMemory;
+	FBTTurnToMemory* MyMemory = (FBTTurnToMemory*)NodeMemory;
 	check(MyMemory);
 
 	bool bClearFocus = false;
@@ -373,10 +373,10 @@ FString UBTT_TurnTo::GetStaticDescription() const
 
 void UBTT_TurnTo::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const
 {
-	InitializeNodeMemory<FBTTurnTo>(NodeMemory, InitType);
+	InitializeNodeMemory<FBTTurnToMemory>(NodeMemory, InitType);
 }
 
 void UBTT_TurnTo::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const
 {
-	CleanupNodeMemory<FBTTurnTo>(NodeMemory, CleanupType);
+	CleanupNodeMemory<FBTTurnToMemory>(NodeMemory, CleanupType);
 }

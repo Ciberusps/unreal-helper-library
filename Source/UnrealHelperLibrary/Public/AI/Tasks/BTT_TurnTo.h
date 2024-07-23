@@ -13,7 +13,7 @@
 
 class AAIController;
 
-struct FBTTurnTo : FBTFocusMemory
+struct FBTTurnToMemory : FBTFocusMemory
 {
     FTurnRange CurrentTurnRange;
     bool bCurrentTurnRangeSet = false;
@@ -89,7 +89,7 @@ public:
     virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
     virtual FString GetStaticDescription() const override;
 
-    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTTurnTo); }
+    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTTurnToMemory); }
     virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
     virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
 
