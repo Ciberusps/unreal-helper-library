@@ -16,6 +16,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -132,7 +133,34 @@ USceneComponent* UUnrealHelperLibraryBPL::GetSceneComponentByName(AActor* Actor,
     return Cast<USceneComponent>(GetActorComponentByName(Actor, Name));
 }
 
-FVector UUnrealHelperLibraryBPL::GetHighestPoint(const USceneComponent* Component)
+FVector UUnrealHelperLibraryBPL::GetRandomPointInBox(const USceneComponent* Component, bool bOnGround, bool bDrawDebug, float DebugDrawTime)
+{
+    FVector Origin;
+    FVector BoxExtent;
+    float SphereRadius;
+
+    UKismetSystemLibrary::GetComponentBounds(Component, Origin, BoxExtent, SphereRadius);
+    FVector RandomPoint = UKismetMathLibrary::RandomPointInBoundingBox(Origin, BoxExtent);
+
+    if (bOnGround)
+    {
+        RandomPoint.Z = GetHighestPointInBox(Component).Z;
+        FHitResult OutHit;
+        UKismetSystemLibrary::LineTraceSingle(Component->GetWorld(), RandomPoint, FVector(0, 0, -999999),
+            TraceTypeQuery1, false, TArray<AActor*>(),
+            bDrawDebug ? EDrawDebugTrace::Type::ForDuration : EDrawDebugTrace::Type::None, OutHit,
+            true, FLinearColor::Red, FLinearColor::Green, DebugDrawTime
+        );
+        if (OutHit.IsValidBlockingHit())
+        {
+            RandomPoint = OutHit.Location;
+        }
+    }
+
+    return RandomPoint;
+}
+
+FVector UUnrealHelperLibraryBPL::GetHighestPointInBox(const USceneComponent* Component)
 {
     if (!IsValid(Component)) return VECTOR_ERROR;
 
