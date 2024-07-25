@@ -94,9 +94,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay="bDebug,DebugLifetime,DebugColor"))
     static FVector GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
-    static FVector GetPointAtRelativeAngleBetweenActors(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    static FVector GetPointAtAngleRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
-    static FVector GetPointAtRelativeDirectionBetweenActors(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    static FVector GetPointAtDirectionRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static float DirectionToAngle(const EUHLDirection DirectionIn);
     // TODO: ???

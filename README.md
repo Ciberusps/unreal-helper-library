@@ -60,8 +60,8 @@ From source:
 >     - [RelativeAngleToActor](#relativeangletoactor)
 >     - [GetPointAtRelativeAngle](#getpointatrelativeangle)
 >     - [GetPointAtRelativeDirection](#getpointatrelativedirection)
->     - [GetPointAtRelativeAngleBetweenActors](#getpointatrelativeanglebetweenactors)
->     - [GetPointAtRelativeDirectionBetweenActors](#getpointatrelativedirectionbetweenactors)
+>     - [GetPointAtAngleRelativeToOtherActor](#GetPointAtAngleRelativeToOtherActor)
+>     - [GetPointAtDirectionRelativeToOtherActor](#GetPointAtDirectionRelativeToOtherActor)
 >     - [DirectionToAngle](#directiontoangle)
 >   - GAS
 >     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
@@ -87,7 +87,7 @@ From source:
 
 **UHLAbilitySystemComponent** - for quick start with GAS. You can nest from it on start and than turn off its functions when you ready to replace them with your custom solution.
 
-With abilities to
+Features:
 
 - set `InitialGameplayAttributes`
 - give `Abilities` on start
@@ -179,8 +179,8 @@ Requirements:
 
 #### `SetGameplayFocus`
 
-**BTS_SetGameplayFocus** - alternative for "Set default focus". SetGameplayFocus made right way.
-One of most common problems that anybody stucks when starting developing AI - "focus dont work"/"focus works wrong". Prevents rotation jittering while enemy rotation
+**BTS_SetGameplayFocus** - alternative for "Set default focus". SetGameplayFocus made right way - prevents rotation jittering while enemy rotation.
+One of most common problems that anybody stucks when starting developing AI - "focus dont work"/"focus works wrong".
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c0add45c-76ef-44bc-b97c-0c56901e6e03)
 ![GameplayFocus](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/0126fc2b-8a20-4b61-93d8-b1ead6802057)
@@ -255,9 +255,9 @@ TODO should be drop in replacement for "RotateToFaceBBEntry"
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c1ea6dda-4ccf-4441-a7d0-dc83ac977a9c)
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/a33a93ad-f470-4dec-8c2c-6c76b275207f)
 
-#### `GetPointAtRelativeAngleBetweenActors`
+#### `GetPointAtAngleRelativeToOtherActor`
 
-#### `GetPointAtRelativeDirectionBetweenActors`
+#### `GetPointAtDirectionRelativeToOtherActor`
 
 #### `DirectionToAngle`
 
