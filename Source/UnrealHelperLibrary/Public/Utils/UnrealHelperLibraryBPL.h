@@ -99,6 +99,9 @@ public:
     static FVector GetPointAtDirectionRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static float DirectionToAngle(const EUHLDirection DirectionIn);
+    // e.g. 60% -> x0.4, 40% -> x0.6, 100% -> x0.0, 0% -> x1.0
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+    static float ConvertPercentToMultiplier(float Percent);
     // TODO: ???
     // UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     // static EUHLDirection AngleToDirection(const float AngleIn);

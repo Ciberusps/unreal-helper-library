@@ -260,6 +260,11 @@ float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
     return 0.0f;
 }
 
+float UUnrealHelperLibraryBPL::ConvertPercentToMultiplier(float Percent)
+{
+    return (100.0f - Percent) / 100.0f;
+}
+
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
