@@ -265,6 +265,26 @@ float UUnrealHelperLibraryBPL::ConvertPercentToMultiplier(float Percent)
     return (100.0f - Percent) / 100.0f;
 }
 
+bool UUnrealHelperLibraryBPL::IsPreviewWorld(UObject* WorldContextObject)
+{
+    return WorldContextObject->GetWorld()->IsPreviewWorld();
+}
+
+bool UUnrealHelperLibraryBPL::IsGameWorld(UObject* WorldContextObject)
+{
+    return WorldContextObject->GetWorld()->IsGameWorld();
+}
+
+bool UUnrealHelperLibraryBPL::IsObjectInPreviewWorld(UObject* Object)
+{
+    return Object->GetWorld()->IsPreviewWorld();
+}
+
+bool UUnrealHelperLibraryBPL::IsObjectInGameWorld(UObject* Object)
+{
+    return Object->GetWorld()->IsGameWorld();
+}
+
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {

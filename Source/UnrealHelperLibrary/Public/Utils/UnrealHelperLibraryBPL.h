@@ -102,6 +102,15 @@ public:
     // e.g. 60% -> x0.4, 40% -> x0.6, 100% -> x0.0, 0% -> x1.0
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static float ConvertPercentToMultiplier(float Percent);
+
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+    static bool IsPreviewWorld(UObject* WorldContextObject);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+    static bool IsGameWorld(UObject* WorldContextObject);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary preview editor"))
+    static bool IsObjectInPreviewWorld(UObject* Object);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary game preview editor"))
+    static bool IsObjectInGameWorld(UObject* Object);
     // TODO: ???
     // UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     // static EUHLDirection AngleToDirection(const float AngleIn);

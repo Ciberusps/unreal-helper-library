@@ -17,7 +17,8 @@ class UNREALHELPERLIBRARY_API UAN_UHL_Base : public UAnimNotify
 	GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintCallable)
+    // TODO remove, deprecated use UUnrealHelperLibraryBPL::IsObjectInPreviewWorld
+    UFUNCTION(BlueprintCallable, meta=(DeprecatedFunction, DeprecationMessage="use UUnrealHelperLibraryBPL::IsObjectInPreviewWorld"))
     bool IsPreviewWorld(USkeletalMeshComponent* MeshComp) const;
 
     virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
