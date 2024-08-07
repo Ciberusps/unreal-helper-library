@@ -275,9 +275,19 @@ bool UUnrealHelperLibraryBPL::IsGameWorld(UObject* WorldContextObject)
     return WorldContextObject->GetWorld()->IsGameWorld();
 }
 
+bool UUnrealHelperLibraryBPL::IsEditorWorld(UObject* WorldContextObject)
+{
+    return WorldContextObject->GetWorld()->IsEditorWorld();
+}
+
 bool UUnrealHelperLibraryBPL::IsObjectInPreviewWorld(UObject* Object)
 {
     return Object->GetWorld()->IsPreviewWorld();
+}
+
+bool UUnrealHelperLibraryBPL::IsObjectInEditorWorld(UObject* Object)
+{
+    return Object->GetWorld()->IsEditorWorld();
 }
 
 bool UUnrealHelperLibraryBPL::IsObjectInGameWorld(UObject* Object)

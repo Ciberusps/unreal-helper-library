@@ -107,8 +107,12 @@ public:
     static bool IsPreviewWorld(UObject* WorldContextObject);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
     static bool IsGameWorld(UObject* WorldContextObject);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+    static bool IsEditorWorld(UObject* WorldContextObject);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary preview editor"))
     static bool IsObjectInPreviewWorld(UObject* Object);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary preview editor"))
+    static bool IsObjectInEditorWorld(UObject* Object);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary game preview editor"))
     static bool IsObjectInGameWorld(UObject* Object);
     // TODO: ???
