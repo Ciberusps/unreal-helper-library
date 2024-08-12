@@ -5,6 +5,8 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BTFunctionLibrary.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -15,6 +17,10 @@ UBTD_InRange::UBTD_InRange(const FObjectInitializer& ObjectInitializer)
 {
 	NodeName = "InRange";
 	INIT_DECORATOR_NODE_NOTIFY_FLAGS();
+
+    // Accept only actors and vectors
+    Target.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTD_InRange, Target), AActor::StaticClass());
+    Target.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTD_InRange, Target));
 
 	bAllowAbortNone = true;
 	bAllowAbortLowerPri = true;
@@ -43,8 +49,15 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
     if (Memory == nullptr) return CurrentDistance;
 
 	AActor* SelfActor = OwnerComp.GetOwner();
-	AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName));
-	if (!IsValid(SelfActor) || !IsValid(TargetActor)) return CurrentDistance;
+	AActor* TargetActor = nullptr;
+    if (Target.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+    {
+        TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName));
+    }
+    FVector TargetVector = Target.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass()
+        ? BlackboardComponent->GetValueAsVector(Target.SelectedKeyName)
+        : TargetActor->GetActorLocation();
+	if (!IsValid(SelfActor)) return CurrentDistance;
 
     ACharacter* OwnerCharacter = Memory->OwnerCharacter.Get();
     if (!IsValid(OwnerCharacter))
@@ -53,16 +66,15 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
         OwnerCharacter = IsValid(OwnerCharacterController) ? OwnerCharacterController->GetCharacter() : nullptr;
         Memory->OwnerCharacter = OwnerCharacter;
     }
-	CurrentDistance = OwnerCharacter->GetDistanceTo(TargetActor);
-
-    ACharacter* TargetCharacter = nullptr;
+    CurrentDistance = FVector::Distance(SelfActor->GetActorLocation(), TargetVector);
 
 	if (bIncludeSelfCapsuleRadius && IsValid(OwnerCharacter))
 	{
 		CurrentDistance -= OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
 	}
 
-	if (bIncludeTargetCapsuleRadius)
+    ACharacter* TargetCharacter = nullptr;
+	if (IsValid(TargetActor) && bIncludeTargetCapsuleRadius)
 	{
 		// TODO cache TargetCharacter when possible (on BBValue change?)
 		TargetCharacter = Cast<ACharacter>(TargetActor);
@@ -75,7 +87,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 	if (bDrawDebug_In)
 	{
 		FVector LineStart = OwnerCharacter->GetActorLocation();
-		FVector LineEnd = TargetActor->GetActorLocation();
+		FVector LineEnd = TargetVector;
 		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
 		bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Min, Max);
 
@@ -98,7 +110,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 				TargetCharacterCapsule->GetScaledCapsuleRadius(),
 				TargetCharacterCapsule->GetComponentRotation().Quaternion(), FColor::Blue,
 				false,DebugLifetime, 0, 2.0f);
-			LineEnd = (LineStart - LineEnd).GetSafeNormal() * TargetCharacterCapsule->GetScaledCapsuleRadius() + TargetActor->GetActorLocation();
+			LineEnd = (LineStart - LineEnd).GetSafeNormal() * TargetCharacterCapsule->GetScaledCapsuleRadius() + TargetVector;
 		}
 
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInRange ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
@@ -108,6 +120,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 	    DrawDebugString(OwnerComp.GetWorld(), OwnerCharacter->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	}
 
+    Memory->CurrentDistance = CurrentDistance;
 	return CurrentDistance;
 }
 
@@ -120,9 +133,20 @@ void UBTD_InRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory
 
 bool UBTD_InRange::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	bool bIsInRange = UKismetMathLibrary::InRange_FloatFloat(GetCurrentDistance(OwnerComp, NodeMemory, bDrawDebug), Min, Max);
-
+    float CurrentDistance = GetCurrentDistance(OwnerComp, NodeMemory, bDrawDebug);
+	bool bIsInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Min, Max);
 	return bIsInRange;
+}
+
+void UBTD_InRange::InitializeFromAsset(UBehaviorTree& Asset)
+{
+    Super::InitializeFromAsset(Asset);
+
+    UBlackboardData* BBAsset = GetBlackboardAsset();
+    if (ensure(BBAsset))
+    {
+        Target.ResolveSelectedKey(*BBAsset);
+    }
 }
 
 void UBTD_InRange::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
@@ -158,6 +182,7 @@ void UBTD_InRange::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp
 	EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const
 {
 	Super::DescribeRuntimeValues(OwnerComp, NodeMemory, Verbosity, Values);
-	bool bInRange = false;
-	Values.Add(FString::Printf(TEXT("CurrentDistance: %.2f"), GetCurrentDistance(OwnerComp, NodeMemory)));
+
+    FBTInRangeMemory* Memory = CastInstanceNodeMemory<FBTInRangeMemory>(NodeMemory);
+	Values.Add(FString::Printf(TEXT("CurrentDistance: %.2f"), Memory->CurrentDistance));
 }

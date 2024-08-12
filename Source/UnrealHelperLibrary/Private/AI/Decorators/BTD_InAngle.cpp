@@ -19,6 +19,10 @@ UBTD_InAngle::UBTD_InAngle(const FObjectInitializer& ObjectInitializer)
 	NodeName = "InAngle";
 	INIT_DECORATOR_NODE_NOTIFY_FLAGS();
 
+    // Accept only actors and vectors
+    Target.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTD_InAngle, Target), AActor::StaticClass());
+    Target.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTD_InAngle, Target));
+
 	bAllowAbortNone = true;
 	bAllowAbortLowerPri = true;
 	bAllowAbortChildNodes = true;
@@ -29,6 +33,17 @@ bool UBTD_InAngle::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp,
 	float CurrentAngle = GetCurrentAngle(OwnerComp, NodeMemory, bDrawDebug);
 
 	return bDebugForceFalseCondition ? false : IsInAngle(CurrentAngle);
+}
+
+void UBTD_InAngle::InitializeFromAsset(UBehaviorTree& Asset)
+{
+    Super::InitializeFromAsset(Asset);
+
+    UBlackboardData* BBAsset = GetBlackboardAsset();
+    if (ensure(BBAsset))
+    {
+        Target.ResolveSelectedKey(*BBAsset);
+    }
 }
 
 void UBTD_InAngle::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,

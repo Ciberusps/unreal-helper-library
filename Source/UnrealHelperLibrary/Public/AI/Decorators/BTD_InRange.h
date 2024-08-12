@@ -48,6 +48,7 @@ public:
     UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="bDrawDebug", EditConditionHides))
     float DebugLifetime = -1.0f;
 
+    virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;

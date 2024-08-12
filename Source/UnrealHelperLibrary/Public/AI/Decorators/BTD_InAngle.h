@@ -52,7 +52,7 @@ public:
     float OverrideDebugLinesDistance = 0.0f;
 
 	// virtual void SetOwner(AActor* ActorOwner) override;
-	// virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
+	virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
 	virtual uint16 GetInstanceMemorySize() const override;
 	virtual FString GetStaticDescription() const override;
