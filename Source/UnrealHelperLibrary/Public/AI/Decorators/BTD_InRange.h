@@ -10,9 +10,6 @@
 
 struct FBTInRangeMemory
 {
-	float CurrentDistance = 0.0f;
-    TWeakObjectPtr<ACharacter> OwnerCharacter;
-    TWeakObjectPtr<ACharacter> TargetCharacter;
 };
 
 /**
@@ -56,6 +53,7 @@ public:
 	virtual uint16 GetInstanceMemorySize() const override;
 
 	virtual FString GetStaticDescription() const override;
+    // TODO should be only "WITH_EDITOR"???
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 #if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
