@@ -14,8 +14,10 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_String.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "Components/CapsuleComponent.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
+#include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -188,23 +190,25 @@ FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(const AActor* ActorIn, 
     return Result;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
+void UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor, const FText DebugText)
 {
-    if (!IsValid(ActorIn)) return VECTOR_ERROR;
+    if (!IsValid(ActorIn)) return;
+
     float Angle = DirectionToAngle(Direction);
-    FVector Result = GetPointAtRelativeAngle(ActorIn, Angle, Distance);
+    Point = GetPointAtRelativeAngle(ActorIn, Angle, Distance);
+    PointRotation = (Point - ActorIn->GetActorLocation()).ToOrientationRotator();
+
     if (bDebug)
     {
         const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
         if (EnumPtr)
         {
-	        DrawDebugString(ActorIn->GetWorld(), Result, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+	        DrawDebugString(ActorIn->GetWorld(), Point, FString::Printf(TEXT("%s \nDirection %s\nDistance %.2f"), *DebugText.BuildSourceString(), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
         }
-        DrawDebugSphere(ActorIn->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        DrawDebugSphere(ActorIn->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
         FVector ArrowLineEnd = GetPointAtRelativeAngle(ActorIn, Angle, Distance - 10);
         DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
     }
-    return Result;
 }
 
 FVector UUnrealHelperLibraryBPL::GetPointAtAngleRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
@@ -293,6 +297,37 @@ bool UUnrealHelperLibraryBPL::IsObjectInEditorWorld(UObject* Object)
 bool UUnrealHelperLibraryBPL::IsObjectInGameWorld(UObject* Object)
 {
     return Object->GetWorld()->IsGameWorld();
+}
+
+bool UUnrealHelperLibraryBPL::IsOtherActorInAngle(AActor* Actor, AActor* OtherActor, TArray<FFloatRange> Ranges)
+{
+    float RelativeAngle = RelativeAngleToActor(Actor, OtherActor);
+    bool bInAngle = false;
+    for (FFloatRange Range : Ranges)
+    {
+        bInAngle = UKismetMathLibrary::InRange_FloatFloat(RelativeAngle, Range.GetLowerBoundValue(), Range.GetUpperBoundValue(), true, true);
+        if (bInAngle) break;
+    }
+    return bInAngle;
+}
+
+bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
+{
+    if (!Character || !OtherCharacter) return false;
+
+    float CurrentDistance = Character->GetDistanceTo(OtherCharacter);
+
+    if (bIncludeSelfCapsuleRadius)
+    {
+        CurrentDistance -= Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
+    }
+    if (bIncludeTargetCapsuleRadius)
+    {
+        CurrentDistance -= OtherCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
+    }
+
+    bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
+    return bInRange;
 }
 
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
