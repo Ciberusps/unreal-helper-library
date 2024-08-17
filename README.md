@@ -10,7 +10,24 @@ Support: tested `UE5.3 - UE5.4`
 #### From source (recommended):
 
 - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder
-- add `"UnrealHelperLibrary"` to file `"<ProjectName>.Build.cs"` in `PublicDependencyModuleNames` section to use it in C++
+- add code to file `<ProjectName>.Build.cs`
+```C#
+    // <ProjectName>.Build.cs
+    public GameName(ReadOnlyTargetRules Target) : base(Target) {
+
+        // add "UnrealHelperLibrary" to use it in C++
+        PublicDependencyModuleNames.AddRange(new string[] {
+            // ...
+            "UnrealHelperLibrary",
+        });
+
+        // OPTIONALLY add "UnrealHelperEditor" module to use custom unreal engine editor features
+        if (Target.bBuildEditor)
+        {
+           PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
+        }
+    }
+```
 
 > [!NOTE]
 > don't forget to update `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update plugin(s) - `git submodule update --remote`
@@ -28,6 +45,8 @@ From source:
 - `git submodule update --remote` to update library from source
 
 ## Documentation
+
+UnrealHelperLibrary
 
 > - [GAS](#gas)
 >   - Components
@@ -76,6 +95,14 @@ From source:
 >     - [WIP InputSystem](#InputSystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
 > - [TraceUtilsBPL](#traceutilsbpl)
+
+UnrealHelperEditor
+
+> - [UnrealHelperEditor](#unrealhelpereditor)
+>   - [Custom thumnails](#custom-thumnails)
+>   - [Custom class icon](#custom-class-icon)
+>   - TODO
+>     - [Merge textures Ao + Roughness + Metalic](#merge-textures-ao--roughness--metalic)
 
 ---
 
@@ -288,6 +315,7 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 #### `InputSystem`
 
 Binding InputActions to tags like in Lyra but enhanced and adopted for 3d action game
+
 - abilities should nest from `UHLGameplayAbility` for "ActivationPolicy" work correctly
 - SetupPlayerInputComponent - bind all from input config, `BindAbilityActions`
 - `Project Settings -> Input -> Default Input Component Class` -> change on `UHLInputComponent`
@@ -299,3 +327,58 @@ Binding InputActions to tags like in Lyra but enhanced and adopted for 3d action
 ### TraceUtilsBPL
 
 **UHLTraceUtilsBPL** - trace utils
+
+### UnrealHelperEditor
+
+**UnrealHelperEditor** - optional module with editor customization, e.g. custom thumnails, custom class icons
+
+#### `Custom thumnails`
+
+![image](https://github.com/user-attachments/assets/c24fd8bb-0ffe-4666-afd5-8800df650c35)
+
+**Custom thumnails** - to override thumbnail by your own, just implement `IUHECustomThumbnail` interface and define your own icon using `GetCustomThumbnailIcon()`
+
+```C++
+#if WITH_EDITOR
+#include "UHECustomThumbnail.h"
+#endif
+
+// IUHECustomThumbnail not available in production build
+#if !WITH_EDITOR
+class IUHECustomThumbnail {};
+#endif
+
+class GAMECODE_API UInventoryItem : public UObject,
+    public IUHECustomThumbnail
+{
+//  ...
+
+ /** IUHECustomThumbnail **/
+#if WITH_EDITOR
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+    UTexture2D* GetCustomThumbnailIcon() { return Description.Icon; };
+#endif
+/** ~IUHECustomThumbnail **/
+
+// ...
+```
+
+⚠️ for now works only with C++, TODO add support for blueprints
+
+Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-display-asset-is-never-loaded/143155/2?u=ciberus) and [this](https://forums.unrealengine.com/t/custom-thumbnail-on-blueprint/337532/3?u=ciberus)
+
+#### `Custom class icon`
+
+[//]: # (![image]&#40;https://github.com/user-attachments/assets/c24fd8bb-0ffe-4666-afd5-8800df650c35&#41;)
+
+**Custom class icon** - to override classes icons on your own, just implement set settings in `UHESettings`
+
+[List of default Unreal Engine Editor icons](https://github.com/EpicKiwi/unreal-engine-editor-icons)
+
+⚠️ for now works only with C++, TODO add support for blueprints
+
+Thanks to [this post](https://www.quodsoler.com/blog/customize-your-unreal-class-icons) and [this](https://forums.unrealengine.com/t/how-to-load-a-font-uasset-and-use-it-for-fslatefontinfo/1548466/3?u=ciberus)
+
+#### `Merge textures Ao + Roughness + Metalic`
+
+ref - https://github.com/Atulin/ChannelMerger
