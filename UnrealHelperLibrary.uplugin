@@ -15,11 +15,16 @@
 	"IsExperimentalVersion": false,
 	"Installed": false,
 	"Modules": [
-		{
-			"Name": "UnrealHelperLibrary",
-			"Type": "Runtime",
-			"LoadingPhase": "PreLoadingScreen"
-		}
+        {
+            "Name": "UnrealHelperLibrary",
+            "Type": "Runtime",
+            "LoadingPhase": "PreLoadingScreen"
+        },
+        {
+            "Name": "UnrealHelperEditor",
+            "Type": "Editor",
+            "LoadingPhase": "PostEngineInit"
+        }
 	],
 	"Plugins": [
 		{
