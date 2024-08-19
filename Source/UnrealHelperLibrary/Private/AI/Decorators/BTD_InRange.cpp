@@ -47,14 +47,17 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 
 	AActor* SelfActor = OwnerComp.GetOwner();
 	AActor* TargetActor = nullptr;
+    bool bTargetActorRequiredButNotSet = false;
     if (Target.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
     {
-        TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName));
+        UObject* BBValue = BlackboardComponent->GetValueAsObject(Target.SelectedKeyName);
+        TargetActor = IsValid(BBValue) ? Cast<AActor>(BBValue) : nullptr;
+        bTargetActorRequiredButNotSet = IsValid(TargetActor) ? false : true;
     }
     FVector TargetVector = Target.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass()
         ? BlackboardComponent->GetValueAsVector(Target.SelectedKeyName)
-        : TargetActor->GetActorLocation();
-	if (!IsValid(SelfActor)) return CurrentDistance;
+        : IsValid(TargetActor) ? TargetActor->GetActorLocation() : FVector::Zero();
+	if (!IsValid(SelfActor) || bTargetActorRequiredButNotSet) return CurrentDistance;
 
     AController* OwnerCharacterController = Cast<AController>(SelfActor);
     ACharacter* OwnerCharacter = IsValid(OwnerCharacterController) ? OwnerCharacterController->GetCharacter() : nullptr;
@@ -168,5 +171,5 @@ void UBTD_InRange::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp
 	Super::DescribeRuntimeValues(OwnerComp, NodeMemory, Verbosity, Values);
 
     // no need to cache value its only works in editor
-	Values.Add(FString::Printf(TEXT("CurrentDistance: %.2f"), GetCurrentDistance(OwnerComp, NodeMemory, bDrawDebug)));
+	Values.Add(FString::Printf(TEXT("CurrentDistance: %.2f"), GetCurrentDistance(OwnerComp, NodeMemory, false)));
 }
