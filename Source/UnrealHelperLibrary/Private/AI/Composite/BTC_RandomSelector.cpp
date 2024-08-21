@@ -99,6 +99,11 @@ FString UBTC_RandomSelector::GetErrorOrWarning() const
         {
             return FString::Printf(TEXT("\n                    ❌ERROR❌ \nAdd chances for rest child nodes"));
         }
+        // if RandomSelector have only one child, unreal somehow can crash randomly in different places Anims/AI/random components
+        if (Children.Num() <= 1)
+        {
+            return FString::Printf(TEXT("\n                                                      ❌ERROR❌ \nUse with at least two childs, one child can lead to random crash in child nodes"));
+        }
     }
 
     if (GetChildrenNum() < ChancesArray.Num())

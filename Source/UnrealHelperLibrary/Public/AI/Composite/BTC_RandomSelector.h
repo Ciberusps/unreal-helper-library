@@ -49,7 +49,7 @@ protected:
 
 private:
 	UFUNCTION()
-	bool IsValidSelector() const { return GetChildrenNum() <= ChancesArray.Num(); };
+	bool IsValidSelector() const { return GetChildrenNum() > 1 && GetChildrenNum() <= ChancesArray.Num(); };
 	UFUNCTION()
 	FString GetErrorOrWarning() const;
 	UFUNCTION()
