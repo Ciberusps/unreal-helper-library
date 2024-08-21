@@ -27,18 +27,9 @@ class UNREALHELPERLIBRARY_API UBTC_RandomSelector : public UBTCompositeNode
 public:
 	explicit UBTC_RandomSelector(const FObjectInitializer& ObjectInitializer);
 
-	// if no chance specified, node without chance will win always
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, meta=(DeprecatedProperty))
-	TMap<FString, float> Chances = {
-		{ "1", 1.0f },
-		{ "2", 1.0f },
-		{ "3", 1.0f },
-		{ "4", 1.0f },
-		{ "5", 1.0f },
-	};
 	// TODO validate that chances count == ChildrenNum
 	// if no chance specified, node without chance will win always
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits="Multiplier"))
 	TArray<float> ChancesArray = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 
 protected:
