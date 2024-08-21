@@ -33,22 +33,6 @@ int32 UBTC_RandomSelector::GetNextChildHandler(FBehaviorTreeSearchData& SearchDa
 
 FString UBTC_RandomSelector::GetStaticDescription() const
 {
-    // Chances Map
-    // FString Result = "";
-    // float ChancesSum = 0.0f;
-    // for (TTuple<FString, float> Chance : Chances)
-    // {
-    //     Result += FString::Printf(TEXT("- %s: %.2f \n"), *Chance.Key, Chance.Value);
-    //     ChancesSum += Chance.Value;
-    // }
-    //
-    // FString SumWarning = ChancesSum != 1.0f ? FString(TEXT("⚠️")) : FString();
-    //
-    // Result = FString::Printf(TEXT("%s \n\nSum: %.2f %s \nChances: \n%s"), *Super::GetStaticDescription(), ChancesSum, *SumWarning, *Result);
-    //
-    // Result += GetErrorOrWarning();
-
-
     // Chances Array
     FString Result = "";
 
