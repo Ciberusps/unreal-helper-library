@@ -101,8 +101,11 @@ UnrealHelperEditor
 > - [UnrealHelperEditor](#unrealhelpereditor)
 >   - [Custom thumnails](#custom-thumnails)
 >   - [Custom class icon](#custom-class-icon)
->   - TODO
->     - [Merge textures Ao + Roughness + Metalic](#merge-textures-ao--roughness--metalic)
+
+UHL Utils (Editor Utility Widget)
+
+> - [UHL Utils (Editor Utility Widget)](#uhl-utils-editor-utility-widget)
+>   - [ConvertToORM](#converttoorm)
 
 ---
 
@@ -379,6 +382,10 @@ Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-dis
 
 Thanks to [this post](https://www.quodsoler.com/blog/customize-your-unreal-class-icons) and [this](https://forums.unrealengine.com/t/how-to-load-a-font-uasset-and-use-it-for-fslatefontinfo/1548466/3?u=ciberus)
 
-#### `Merge textures Ao + Roughness + Metalic`
+### UHL Utils (Editor Utility Widget)
 
-ref - https://github.com/Atulin/ChannelMerger
+### ConvertToORM
+
+Combines separate `Occlusion`, `Roughness`, `Metalic` textures into one `ORM`
+
+TODO check ref - https://github.com/Atulin/ChannelMerger
