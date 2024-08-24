@@ -123,6 +123,9 @@ public:
     static bool IsOtherActorInAngle(AActor* Actor, AActor* OtherActor, TArray<FFloatRange> Ranges);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
     static bool IsOtherCharacterInRange(ACharacter* Actor, ACharacter* OtherActor, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
+
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary file path"))
+    static FString GetPathToFile(UObject* Object);
 /** ~Utils **/
 
 /** AI **/

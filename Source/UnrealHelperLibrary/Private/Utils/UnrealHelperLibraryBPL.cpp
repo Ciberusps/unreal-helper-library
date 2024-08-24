@@ -330,6 +330,12 @@ bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACh
     return bInRange;
 }
 
+FString UUnrealHelperLibraryBPL::GetPathToFile(UObject* Object)
+{
+    FString NameAndWithSlash = FString::Printf(TEXT("/%s"), *Object->GetName());
+    return Object->GetPathName(NULL).Replace(*Object->GetName(), TEXT(""));
+}
+
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
