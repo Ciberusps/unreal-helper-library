@@ -3,6 +3,7 @@
 
 #include "AI/Decorators/BTD_InRange.h"
 
+#include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BTFunctionLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -10,7 +11,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 
 UBTD_InRange::UBTD_InRange(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -27,10 +27,6 @@ UBTD_InRange::UBTD_InRange(const FObjectInitializer& ObjectInitializer)
 	bAllowAbortChildNodes = true;
 }
 
-uint16 UBTD_InRange::GetInstanceMemorySize() const
-{
-	return sizeof(FBTInRangeMemory);
-}
 #if WITH_EDITOR
 FName UBTD_InRange::GetNodeIconName() const
 {
@@ -45,23 +41,30 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 	const UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComponent) return CurrentDistance;
 
-	AActor* SelfActor = OwnerComp.GetOwner();
-	AActor* TargetActor = nullptr;
+    AAIController* OwnerController = OwnerComp.GetAIOwner();
+    AActor* OwnerActor = OwnerController ? OwnerController->GetPawn() : nullptr;
+    AActor* TargetActor = nullptr;
     bool bTargetActorRequiredButNotSet = false;
+
+    FVector TargetVector = FVector::ZeroVector;
     if (Target.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
     {
         UObject* BBValue = BlackboardComponent->GetValueAsObject(Target.SelectedKeyName);
         TargetActor = IsValid(BBValue) ? Cast<AActor>(BBValue) : nullptr;
-        bTargetActorRequiredButNotSet = IsValid(TargetActor) ? false : true;
+        bTargetActorRequiredButNotSet = !IsValid(TargetActor);
+        TargetVector = IsValid(TargetActor) ? TargetActor->GetActorLocation() : FVector::ZeroVector;
     }
-    FVector TargetVector = Target.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass()
-        ? BlackboardComponent->GetValueAsVector(Target.SelectedKeyName)
-        : IsValid(TargetActor) ? TargetActor->GetActorLocation() : FVector::Zero();
-	if (!IsValid(SelfActor) || bTargetActorRequiredButNotSet) return CurrentDistance;
+    if (Target.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+    {
+        TargetVector = BlackboardComponent->GetValueAsVector(Target.SelectedKeyName);
+    }
 
-    AController* OwnerCharacterController = Cast<AController>(SelfActor);
-    ACharacter* OwnerCharacter = IsValid(OwnerCharacterController) ? OwnerCharacterController->GetCharacter() : nullptr;
-    CurrentDistance = FVector::Distance(SelfActor->GetActorLocation(), TargetVector);
+    if (!IsValid(OwnerActor) || bTargetActorRequiredButNotSet) return CurrentDistance;
+
+    ACharacter* OwnerCharacter = IsValid(OwnerController) ? OwnerController->GetCharacter() : nullptr;
+    CurrentDistance = bCalculateDistanceIn2D
+        ? FVector::Dist2D(OwnerActor->GetActorLocation(), TargetVector)
+        : FVector::Distance(OwnerActor->GetActorLocation(), TargetVector);
 
 	if (bIncludeSelfCapsuleRadius && IsValid(OwnerCharacter))
 	{
@@ -77,7 +80,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 
 	if (bDrawDebug_In)
 	{
-		FVector LineStart = OwnerCharacter->GetActorLocation();
+		FVector LineStart = OwnerActor->GetActorLocation();
 		FVector LineEnd = TargetVector;
 		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
 		bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Min, Max);
@@ -107,7 +110,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInRange ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 5.0f, 16, FColor::Blue, false, DebugLifetime, DebugLifetime, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 5.0f, 16, FColor::Blue, false, DebugLifetime, DebugLifetime, 2.0f);
-		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance: %.2f"), CurrentDistance), nullptr, bInRange ? FColor::Green : FColor::Red, DebugLifetime < 0 ? 0 : DebugLifetime, true);
+		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance%s: %.2f"), bCalculateDistanceIn2D ? TEXT("(2D)") : TEXT("(3D)"), CurrentDistance), nullptr, bInRange ? FColor::Green : FColor::Red, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	    DrawDebugString(OwnerComp.GetWorld(), OwnerCharacter->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	}
 
@@ -142,16 +145,13 @@ void UBTD_InRange::InitializeFromAsset(UBehaviorTree& Asset)
 void UBTD_InRange::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTMemoryInit::Type InitType) const
 {
-	FBTInRangeMemory* DecoratorMemory = CastInstanceNodeMemory<FBTInRangeMemory>(NodeMemory);
+    InitializeNodeMemory<FBTInRangeMemory>(NodeMemory, InitType);
 }
 
 void UBTD_InRange::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTMemoryClear::Type CleanupType) const
 {
-	// if (CleanupType == EBTMemoryClear::Destroy)
-	// {
-	Super::CleanupMemory(OwnerComp, NodeMemory, CleanupType);
-	// }
+    CleanupNodeMemory<FBTInRangeMemory>(NodeMemory, CleanupType);
 }
 
 FString UBTD_InRange::GetStaticDescription() const

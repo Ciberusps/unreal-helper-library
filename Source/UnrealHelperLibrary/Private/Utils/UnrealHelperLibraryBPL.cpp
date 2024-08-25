@@ -114,6 +114,15 @@ float UUnrealHelperLibraryBPL::RelativeAngleToActor(AActor* ActorRelativeToWhomA
 	);
 }
 
+float UUnrealHelperLibraryBPL::RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector)
+{
+    if (!IsValid(ActorRelativeToWhomAngleCalculated)) return FLOAT_ERROR;
+    return UKismetAnimationLibrary::CalculateDirection(
+        ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetVector,
+        (ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
+    );
+}
+
 UActorComponent* UUnrealHelperLibraryBPL::GetActorComponentByName(AActor* Actor, FString Name)
 {
     if (!IsValid(Actor)) return nullptr;

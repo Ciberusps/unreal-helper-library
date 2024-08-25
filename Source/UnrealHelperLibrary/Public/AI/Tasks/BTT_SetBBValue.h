@@ -22,6 +22,7 @@ enum class ESetBBValue_MathOperations : uint8
  * mostly you want to write BTTasks where its possible, use it for test purposes
  *
  * TODO arithmetic operations like A + B, A * B ...
+ * TODO vector calculations - add relative to owner, e.g. set Value as GetActorLocation + Value(offset)
  */
 UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_SetBBValue : public UBTTaskNode
