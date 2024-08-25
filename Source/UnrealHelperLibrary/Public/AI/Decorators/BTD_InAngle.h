@@ -8,8 +8,6 @@
 
 struct FBTInAngleMemory
 {
-	TWeakObjectPtr<ACharacter> OwnerCharacter;
-	TWeakObjectPtr<ACharacter> TargetCharacter;
 };
 
 USTRUCT()
@@ -18,11 +16,10 @@ struct FAngleRange
 	GENERATED_BODY()
 
 public:
-	// TODO on create random color;
-	UPROPERTY(Category=Decorator, EditAnywhere)
+	UPROPERTY(Category="Decorator", EditAnywhere)
 	FFloatRange Range;
-	UPROPERTY(Category=Decorator, EditAnywhere)
-	FColor DebugColor = FColor::Blue;
+	UPROPERTY(Category="Decorator", EditAnywhere)
+	FColor DebugColor = FColor::MakeRandomColor();
 };
 
 /**
@@ -36,12 +33,15 @@ class UNREALHELPERLIBRARY_API UBTD_InAngle : public UBTD_Base
 public:
 	UBTD_InAngle(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	FBlackboardKeySelector Target;
-	UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	TArray<FAngleRange> IncludeRanges;
 	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="", EditConditionHides))
 	// TArray<FAngleRange> ExcludeRanges;
+
+    // TODO bIncludeTargetCharacterCapsule - checks not only angle to actor
+    // but also that TargetCharacter capsule in angle
 
 	UPROPERTY(Category="Decorator", EditAnywhere)
 	bool bDrawDebug = false;
@@ -51,26 +51,23 @@ public:
     UPROPERTY(Category="Decorator", EditAnywhere)
     float OverrideDebugLinesDistance = 0.0f;
 
-	// virtual void SetOwner(AActor* ActorOwner) override;
 	virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
+
+    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTInAngleMemory); };
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
-	virtual uint16 GetInstanceMemorySize() const override;
+    virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
+
 	virtual FString GetStaticDescription() const override;
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 #if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
 #endif
 
-	virtual EBlackboardNotificationResult OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID) override;
-
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
-	float GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, bool bDrawDebug_In = false) const;
 	bool IsInAngle(float CurrentAngle) const;
-
-	// virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
 	TWeakObjectPtr<ACharacter> CachedOwnerCharacter;
 
-	void TryCacheTargetCharacter(const UBlackboardComponent* BlackboardComponent, FBTInAngleMemory* NodeMemory) const;
+	float GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, bool bDrawDebug_In = false) const;
 };

@@ -3,11 +3,12 @@
 
 #include "AI/Decorators/BTD_InAngle.h"
 
-#include "KismetAnimationLibrary.h"
+#include "AIController.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BTCompositeNode.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
@@ -49,15 +50,12 @@ void UBTD_InAngle::InitializeFromAsset(UBehaviorTree& Asset)
 void UBTD_InAngle::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTMemoryInit::Type InitType) const
 {
-	Super::InitializeMemory(OwnerComp, NodeMemory, InitType);
-	FBTInAngleMemory* DecoratorMemory = CastInstanceNodeMemory<FBTInAngleMemory>(NodeMemory);
-	DecoratorMemory->OwnerCharacter = nullptr;
-	DecoratorMemory->TargetCharacter = nullptr;
+    InitializeNodeMemory<FBTInAngleMemory>(NodeMemory, InitType);
 }
 
-uint16 UBTD_InAngle::GetInstanceMemorySize() const
+void UBTD_InAngle::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const
 {
-	return sizeof(FBTInAngleMemory);
+    CleanupNodeMemory<FBTInAngleMemory>(NodeMemory, CleanupType);
 }
 
 FString UBTD_InAngle::GetStaticDescription() const
@@ -79,22 +77,6 @@ FName UBTD_InAngle::GetNodeIconName() const
 }
 #endif
 
-EBlackboardNotificationResult UBTD_InAngle::OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard,
-                                                                       FBlackboard::FKey ChangedKeyID)
-{
-	if (ChangedKeyID == Target.GetSelectedKeyID())
-	{
-		UBehaviorTreeComponent* BehaviorComp = Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent());
-
-		const int32 NodeInstanceIdx = BehaviorComp->FindInstanceContainingNode(this);
-		FBTInAngleMemory* Memory = CastInstanceNodeMemory<FBTInAngleMemory>(BehaviorComp->GetNodeMemory(this, NodeInstanceIdx));
-
-		TryCacheTargetCharacter(&Blackboard, Memory);
-	}
-
-	return Super::OnBlackboardKeyValueChange(Blackboard, ChangedKeyID);
-}
-
 float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, bool bDrawDebug_In) const
 {
 	float CurrentAngle = 0.0f;
@@ -102,49 +84,56 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 	const UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComponent) return CurrentAngle;
 
-	FBTInAngleMemory* Memory = CastInstanceNodeMemory<FBTInAngleMemory>(NodeMemory);
-	if (Memory == nullptr) return CurrentAngle;
+    AAIController* OwnerController = OwnerComp.GetAIOwner();
+    AActor* OwnerActor = OwnerController ? OwnerController->GetPawn() : nullptr;
+    ACharacter* OwnerCharacter = IsValid(OwnerController) ? OwnerController->GetCharacter() : nullptr;
+    AActor* TargetActor = nullptr;
+    bool bTargetActorRequiredButNotSet = false;
 
-	AActor* SelfActor = OwnerComp.GetOwner();
-	ACharacter* OwnerCharacter = Memory->OwnerCharacter.Get();
-	if (!IsValid(OwnerCharacter))
-	{
-		AController* OwnerCharacterController = Cast<AController>(SelfActor);
-		OwnerCharacter = IsValid(OwnerCharacterController) ? OwnerCharacterController->GetCharacter() : nullptr;
-		Memory->OwnerCharacter = OwnerCharacter;
-	}
+    FVector TargetVector = FVector::ZeroVector;
+    if (Target.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+    {
+        UObject* BBValue = BlackboardComponent->GetValueAsObject(Target.SelectedKeyName);
+        TargetActor = IsValid(BBValue) ? Cast<AActor>(BBValue) : nullptr;
+        bTargetActorRequiredButNotSet = !IsValid(TargetActor);
+        TargetVector = IsValid(TargetActor) ? TargetActor->GetActorLocation() : FVector::ZeroVector;
+    }
+    if (Target.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+    {
+        TargetVector = BlackboardComponent->GetValueAsVector(Target.SelectedKeyName);
+    }
 
-	ACharacter* TargetCharacter = Memory->TargetCharacter.Get();
-	if (!IsValid(TargetCharacter))
-	{
-		TryCacheTargetCharacter(BlackboardComponent, Memory);
-		// TargetCharacter = Cast<ACharacter>(TargetActor);
-		// Memory->TargetCharacter = TargetCharacter;
-	}
+	if (!IsValid(OwnerActor) || bTargetActorRequiredButNotSet) return CurrentAngle;
 
-	if (!IsValid(SelfActor) || !IsValid(Memory->TargetCharacter.Get())) return CurrentAngle;
-
-	CurrentAngle = UUnrealHelperLibraryBPL::RelativeAngleToActor(SelfActor, Memory->TargetCharacter.Get());
+	CurrentAngle = UUnrealHelperLibraryBPL::RelativeAngleToVector(OwnerActor, TargetVector);
 
 	if (bDrawDebug)
 	{
-		FVector LineStart = SelfActor->GetActorLocation();
-		FVector LineEnd = Memory->TargetCharacter->GetActorLocation();
+		FVector LineStart = OwnerActor->GetActorLocation();
+		FVector LineEnd = TargetVector;
 		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
 		bool bInAngle = IsInAngle(CurrentAngle);
 
+        FAngleRange* InAngleRange = nullptr;
+
 		if(IsValid(OwnerCharacter))
 		{
+		    float CapsuleSizeMultiplier = 6.0f;
 			float AngleLineLength = OverrideDebugLinesDistance > 0.0f
 		        ? OverrideDebugLinesDistance
-		        : OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius() * 6.0f;
-			// CurrentDistance -= OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
+		        : OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius() * CapsuleSizeMultiplier;
 			for (FAngleRange IncludeRange : IncludeRanges)
 			{
 				bool bInThisAngle = UKismetMathLibrary::InRange_FloatFloat(CurrentAngle, IncludeRange.Range.GetLowerBoundValue(), IncludeRange.Range.GetUpperBoundValue(), true, true);
 				float RangeAngle = IncludeRange.Range.GetLowerBoundValue() > 0.0f
 					? IncludeRange.Range.GetUpperBoundValue() / 2
 					: IncludeRange.Range.GetLowerBoundValue() / 2;
+
+				// TODO bDebugUseSuccessColorFromRange
+                // if (bInThisAngle)
+                // {
+                //     InAngleRange = &IncludeRange;
+                // }
 
 				FVector StartRangeLine = LineStart + OwnerCharacter->GetActorForwardVector().RotateAngleAxis(IncludeRange.Range.GetLowerBoundValue(), FVector(0, 0, 1)) * AngleLineLength;
 				FVector EndRangeLine = LineStart + OwnerCharacter->GetActorForwardVector().RotateAngleAxis(IncludeRange.Range.GetUpperBoundValue(), FVector(0, 0, 1)) * AngleLineLength;
@@ -157,11 +146,17 @@ float UBTD_InAngle::GetCurrentAngle(const UBehaviorTreeComponent& OwnerComp, uin
 			}
 		}
 
+	    FColor AngleTextColor = bInAngle ? FColor::Green : FColor::Red;
+	    // if (InAngleRange != nullptr)
+	    // {
+	    //     AngleTextColor = InAngleRange->DebugColor;
+	    // }
+
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInAngle ? FColor::Green : FColor::Red, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 4.0f, 16, FColor::Blue, false, -1, -1, 2.0f);
-		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %.2f"), CurrentAngle), nullptr,  bInAngle ? FColor::Green : FColor::White, 0, true);
-	    DrawDebugString(OwnerComp.GetWorld(), SelfActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, 0, true);
+		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Angle: %.2f"), CurrentAngle), nullptr,  AngleTextColor, 0, true);
+	    DrawDebugString(OwnerComp.GetWorld(), OwnerActor->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, 0, true);
 	}
 
 	return CurrentAngle;
@@ -180,24 +175,3 @@ bool UBTD_InAngle::IsInAngle(float CurrentAngle) const
 	}
 	return bInThisAngle;
 }
-
-void UBTD_InAngle::TryCacheTargetCharacter(const UBlackboardComponent* BlackboardComponent, FBTInAngleMemory* NodeMemory) const
-{
-	// const UBlackboardData* BlackboardAsset = GetBlackboardAsset();
-	// Target.ResolveSelectedKey(*BlackboardAsset);
-
-	AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(Target.SelectedKeyName));
-	if (!IsValid(TargetActor)) return;
-
-	// if (Target.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
-	// {
-		// UObject* KeyValue = Blackboard->GetValue<UBlackboardKeyType_Object>(Target.GetSelectedKeyID());
-		// AActor* TargetActor = Cast<AActor>(KeyValue);
-		ACharacter* TargetCharacter = Cast<ACharacter>(TargetActor);
-		if (TargetCharacter)
-		{
-			NodeMemory->TargetCharacter = TargetCharacter;
-		}
-	// }
-}
-
