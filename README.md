@@ -36,6 +36,7 @@ Support: tested `UE5.3 - UE5.4`
 > and add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
 
 #### From marketplace:
+
 later this year
 
 ## Update
@@ -44,9 +45,17 @@ From source:
 
 - `git submodule update --remote` to update library from source
 
+## Modules
+
+UHL consists of 3 modules:
+
+- **UnrealHelperLibrary** - main module with GAS helper classes, AI behavior tree nodes, Blueprint Function Libraries. Most functionality can be tested in `Gyms`(maps for testing atomic/single gameplay mechanic), all `Gyms` located in `/Plugins/UnrealHelperLibrary/Content/Gyms`
+- **UnrealHelperEditor** - optional module with editor customization, e.g. custom thumnails, custom class icons
+- **UHL Utils (EditorUtilityWidget)** - widget with tools helping you make trivial things, like `ConvertToORM` quite often task when you want to combine 3 textures `Occlusion`, `Roughness`, `Metalic` in one ORM texture
+
 ## Documentation
 
-UnrealHelperLibrary
+**UnrealHelperLibrary** - main module
 
 > - [GAS](#gas)
 >   - Components
@@ -96,13 +105,13 @@ UnrealHelperLibrary
 > - [LoadingUtilLibrary](#loadingutillibrary)
 > - [TraceUtilsBPL](#traceutilsbpl)
 
-UnrealHelperEditor
+**UnrealHelperEditor**
 
 > - [UnrealHelperEditor](#unrealhelpereditor)
 >   - [Custom thumnails](#custom-thumnails)
 >   - [Custom class icon](#custom-class-icon)
 
-UHL Utils (Editor Utility Widget)
+**UHL Utils (Editor Utility Widget)**
 
 > - [UHL Utils (Editor Utility Widget)](#uhl-utils-editor-utility-widget)
 >   - [ConvertToORM](#converttoorm)
