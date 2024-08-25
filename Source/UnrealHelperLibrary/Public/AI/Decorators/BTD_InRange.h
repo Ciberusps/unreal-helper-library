@@ -39,6 +39,9 @@ public:
 	/** if set, radius of Target's capsule will be added to threshold between AI and goal location  */
 	UPROPERTY(Category="Decorator", EditAnywhere)
 	bool bIncludeTargetCapsuleRadius = true;
+    UPROPERTY(Category="Decorator", EditAnywhere)
+    bool bCalculateDistanceIn2D = true;
+
 	UPROPERTY(Category="Decorator", EditAnywhere)
 	bool bDrawDebug = false;
     // TODO: if -1 or 0, when should be overriden by UHLGlobalSettings.DebugLifeTime, by default should be -1 or 0?
@@ -48,9 +51,9 @@ public:
     virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
+	virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTInRangeMemory); };
 	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
 	virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
-	virtual uint16 GetInstanceMemorySize() const override;
 
 	virtual FString GetStaticDescription() const override;
     // TODO should be only "WITH_EDITOR"???
