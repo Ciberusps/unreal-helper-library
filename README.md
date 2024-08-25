@@ -1,6 +1,6 @@
 # Unreal Helper Library [UHL]
 
-UHL - unreal helper library, toolset to help developers working with AI, GAS and so on.
+**UHL** - unreal helper library, toolset to help developers working with AI, GAS and so on.
 Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions)
 
 Support: tested `UE5.3 - UE5.4`
@@ -11,20 +11,20 @@ Support: tested `UE5.3 - UE5.4`
 
 - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder
 - add code to file `<ProjectName>.Build.cs`
+
 ```C#
     // <ProjectName>.Build.cs
-    public GameName(ReadOnlyTargetRules Target) : base(Target) {
-
-        // add "UnrealHelperLibrary" to use it in C++
+    public GameName(ReadOnlyTargetRules Target) : base(Target)
+    {
         PublicDependencyModuleNames.AddRange(new string[] {
-            // ...
+            // add "UnrealHelperLibrary" to use it in C++
             "UnrealHelperLibrary",
         });
 
         // OPTIONALLY add "UnrealHelperEditor" module to use custom unreal engine editor features
         if (Target.bBuildEditor)
         {
-           PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
+            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
         }
     }
 ```
@@ -36,6 +36,7 @@ Support: tested `UE5.3 - UE5.4`
 > and add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
 
 #### From marketplace:
+
 later this year
 
 ## Update
@@ -44,9 +45,17 @@ From source:
 
 - `git submodule update --remote` to update library from source
 
+## Modules
+
+UHL consists of 3 modules:
+
+- **UnrealHelperLibrary** - main module with GAS helper classes, AI behavior tree nodes, Blueprint Function Libraries. Most functionality can be tested in `Gyms`(maps for testing atomic/single gameplay mechanic), all `Gyms` located in `/Plugins/UnrealHelperLibrary/Content/Gyms`
+- **UnrealHelperEditor** - optional module with editor customization, e.g. custom thumnails, custom class icons
+- **UHL Utils (EditorUtilityWidget)** - widget with tools helping you make trivial things, like `ConvertToORM` quite often task when you want to combine 3 textures `Occlusion`, `Roughness`, `Metalic` in one ORM texture
+
 ## Documentation
 
-UnrealHelperLibrary
+**UnrealHelperLibrary** - main module
 
 > - [GAS](#gas)
 >   - Components
@@ -79,8 +88,8 @@ UnrealHelperLibrary
 >     - [RelativeAngleToActor](#relativeangletoactor)
 >     - [GetPointAtRelativeAngle](#getpointatrelativeangle)
 >     - [GetPointAtRelativeDirection](#getpointatrelativedirection)
->     - [GetPointAtAngleRelativeToOtherActor](#GetPointAtAngleRelativeToOtherActor)
->     - [GetPointAtDirectionRelativeToOtherActor](#GetPointAtDirectionRelativeToOtherActor)
+>     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
+>     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
 >   - GAS
 >     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
@@ -94,15 +103,22 @@ UnrealHelperLibrary
 >     - [GetHighestPoint](#gethighestpoint)
 >     - [WIP InputSystem](#InputSystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
+>   - ApplyDefaultPriorityLoading
+>   - ApplyStreamingPriorityLoading
+>   - ApplyHighestPriorityLoading
+>   - ApplyCustomPriorityLoading
+>   - ForceGarbageCollection
+>   - FlushLevelStreaming
 > - [TraceUtilsBPL](#traceutilsbpl)
+>   - SweepCapsuleSingleByChannel
 
-UnrealHelperEditor
+**UnrealHelperEditor**
 
 > - [UnrealHelperEditor](#unrealhelpereditor)
 >   - [Custom thumnails](#custom-thumnails)
 >   - [Custom class icon](#custom-class-icon)
 
-UHL Utils (Editor Utility Widget)
+**UHL Utils (Editor Utility Widget)**
 
 > - [UHL Utils (Editor Utility Widget)](#uhl-utils-editor-utility-widget)
 >   - [ConvertToORM](#converttoorm)
@@ -325,7 +341,7 @@ Binding InputActions to tags like in Lyra but enhanced and adopted for 3d action
 
 ### LoadingUtilLibrary
 
-**UHLLoadingUtilLibrary** - loading utils
+**UHLLoadingUtilLibrary** - loading utils from Lyra
 
 ### TraceUtilsBPL
 

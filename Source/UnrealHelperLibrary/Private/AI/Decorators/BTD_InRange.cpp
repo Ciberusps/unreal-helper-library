@@ -27,10 +27,6 @@ UBTD_InRange::UBTD_InRange(const FObjectInitializer& ObjectInitializer)
 	bAllowAbortChildNodes = true;
 }
 
-uint16 UBTD_InRange::GetInstanceMemorySize() const
-{
-	return sizeof(FBTInRangeMemory);
-}
 #if WITH_EDITOR
 FName UBTD_InRange::GetNodeIconName() const
 {
@@ -55,7 +51,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
     {
         UObject* BBValue = BlackboardComponent->GetValueAsObject(Target.SelectedKeyName);
         TargetActor = IsValid(BBValue) ? Cast<AActor>(BBValue) : nullptr;
-        bTargetActorRequiredButNotSet = IsValid(TargetActor) ? false : true;
+        bTargetActorRequiredButNotSet = !IsValid(TargetActor);
         TargetVector = IsValid(TargetActor) ? TargetActor->GetActorLocation() : FVector::ZeroVector;
     }
     if (Target.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
@@ -66,7 +62,9 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
     if (!IsValid(OwnerActor) || bTargetActorRequiredButNotSet) return CurrentDistance;
 
     ACharacter* OwnerCharacter = IsValid(OwnerController) ? OwnerController->GetCharacter() : nullptr;
-    CurrentDistance = FVector::Distance(OwnerActor->GetActorLocation(), TargetVector);
+    CurrentDistance = bCalculateDistanceIn2D
+        ? FVector::Dist2D(OwnerActor->GetActorLocation(), TargetVector)
+        : FVector::Distance(OwnerActor->GetActorLocation(), TargetVector);
 
 	if (bIncludeSelfCapsuleRadius && IsValid(OwnerCharacter))
 	{
@@ -112,7 +110,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 		DrawDebugLine(OwnerComp.GetWorld(), LineStart, LineEnd, bInRange ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineStart, 5.0f, 16, FColor::Blue, false, DebugLifetime, DebugLifetime, 2.0f);
 		DrawDebugSphere(OwnerComp.GetWorld(), LineEnd, 5.0f, 16, FColor::Blue, false, DebugLifetime, DebugLifetime, 2.0f);
-		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance: %.2f"), CurrentDistance), nullptr, bInRange ? FColor::Green : FColor::Red, DebugLifetime < 0 ? 0 : DebugLifetime, true);
+		DrawDebugString(OwnerComp.GetWorld(), TextLocation, FString::Printf(TEXT("Distance%s: %.2f"), bCalculateDistanceIn2D ? TEXT("(2D)") : TEXT("(3D)"), CurrentDistance), nullptr, bInRange ? FColor::Green : FColor::Red, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	    DrawDebugString(OwnerComp.GetWorld(), OwnerCharacter->GetActorLocation(), FString::Printf(TEXT("ParentNode:\n%s \n\nNodeName:\n%s"), *GetParentNode()->NodeName, *GetMyNode()->NodeName), nullptr,  FColor::White, DebugLifetime < 0 ? 0 : DebugLifetime, true);
 	}
 
@@ -147,16 +145,13 @@ void UBTD_InRange::InitializeFromAsset(UBehaviorTree& Asset)
 void UBTD_InRange::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTMemoryInit::Type InitType) const
 {
-	FBTInRangeMemory* DecoratorMemory = CastInstanceNodeMemory<FBTInRangeMemory>(NodeMemory);
+    InitializeNodeMemory<FBTInRangeMemory>(NodeMemory, InitType);
 }
 
 void UBTD_InRange::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	EBTMemoryClear::Type CleanupType) const
 {
-	// if (CleanupType == EBTMemoryClear::Destroy)
-	// {
-	Super::CleanupMemory(OwnerComp, NodeMemory, CleanupType);
-	// }
+    CleanupNodeMemory<FBTInRangeMemory>(NodeMemory, CleanupType);
 }
 
 FString UBTD_InRange::GetStaticDescription() const

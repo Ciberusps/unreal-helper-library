@@ -86,12 +86,26 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 	{
 		CurrentEnum = ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType;
-		BlackboardComponent->SetValueAsEnum(BlackboardKey.SelectedKeyName, CurrentEnum->GetValueByNameString(EnumStringValue));
+	    if (CurrentEnum)
+	    {
+	        BlackboardComponent->SetValueAsEnum(BlackboardKey.SelectedKeyName, CurrentEnum->GetValueByNameString(EnumStringValue));
+	    }
+	    else
+	    {
+	        UUnrealHelperLibraryBPL::DebugPrintStrings("Enum from BB key ", BlackboardKey.SelectedKeyName.ToString(), "not found");
+	    }
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_NativeEnum::StaticClass())
 	{
 		CurrentEnum = ((UBlackboardKeyType_NativeEnum*)(EntryInfo->KeyType))->EnumType;
-		BlackboardComponent->SetValueAsEnum(BlackboardKey.SelectedKeyName, CurrentEnum->GetValueByNameString(EnumStringValue));
+	    if (CurrentEnum)
+	    {
+	        BlackboardComponent->SetValueAsEnum(BlackboardKey.SelectedKeyName, CurrentEnum->GetValueByNameString(EnumStringValue));
+	    }
+		else
+		{
+			UUnrealHelperLibraryBPL::DebugPrintStrings("Enum from BB key ", BlackboardKey.SelectedKeyName.ToString(), "not found");
+		}
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 	{
