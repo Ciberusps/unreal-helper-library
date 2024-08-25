@@ -1,6 +1,6 @@
 # Unreal Helper Library [UHL]
 
-UHL - unreal helper library, toolset to help developers working with AI, GAS and so on.
+**UHL** - unreal helper library, toolset to help developers working with AI, GAS and so on.
 Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions)
 
 Support: tested `UE5.3 - UE5.4`
@@ -11,20 +11,20 @@ Support: tested `UE5.3 - UE5.4`
 
 - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder
 - add code to file `<ProjectName>.Build.cs`
+
 ```C#
     // <ProjectName>.Build.cs
-    public GameName(ReadOnlyTargetRules Target) : base(Target) {
-
-        // add "UnrealHelperLibrary" to use it in C++
+    public GameName(ReadOnlyTargetRules Target) : base(Target)
+    {
         PublicDependencyModuleNames.AddRange(new string[] {
-            // ...
+            // add "UnrealHelperLibrary" to use it in C++
             "UnrealHelperLibrary",
         });
 
         // OPTIONALLY add "UnrealHelperEditor" module to use custom unreal engine editor features
         if (Target.bBuildEditor)
         {
-           PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
+            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
         }
     }
 ```
@@ -88,8 +88,8 @@ UHL consists of 3 modules:
 >     - [RelativeAngleToActor](#relativeangletoactor)
 >     - [GetPointAtRelativeAngle](#getpointatrelativeangle)
 >     - [GetPointAtRelativeDirection](#getpointatrelativedirection)
->     - [GetPointAtAngleRelativeToOtherActor](#GetPointAtAngleRelativeToOtherActor)
->     - [GetPointAtDirectionRelativeToOtherActor](#GetPointAtDirectionRelativeToOtherActor)
+>     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
+>     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
 >   - GAS
 >     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
@@ -103,7 +103,14 @@ UHL consists of 3 modules:
 >     - [GetHighestPoint](#gethighestpoint)
 >     - [WIP InputSystem](#InputSystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
+>   - ApplyDefaultPriorityLoading
+>   - ApplyStreamingPriorityLoading
+>   - ApplyHighestPriorityLoading
+>   - ApplyCustomPriorityLoading
+>   - ForceGarbageCollection
+>   - FlushLevelStreaming
 > - [TraceUtilsBPL](#traceutilsbpl)
+>   - SweepCapsuleSingleByChannel
 
 **UnrealHelperEditor**
 
@@ -334,7 +341,7 @@ Binding InputActions to tags like in Lyra but enhanced and adopted for 3d action
 
 ### LoadingUtilLibrary
 
-**UHLLoadingUtilLibrary** - loading utils
+**UHLLoadingUtilLibrary** - loading utils from Lyra
 
 ### TraceUtilsBPL
 
