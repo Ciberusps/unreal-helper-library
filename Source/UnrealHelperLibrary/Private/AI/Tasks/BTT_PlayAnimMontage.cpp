@@ -20,11 +20,11 @@ EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& Ow
 {
     EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
+	bIsAborting = false;
     FUHLPlayAnimMontageMemory* MyMemory = CastInstanceNodeMemory<FUHLPlayAnimMontageMemory>(NodeMemory);
-
-    AIOwner = OwnerComp.GetAIOwner();
+    AAIController* AIOwner = OwnerComp.GetAIOwner();
     OwnerComponent = &OwnerComp;
-    if (!AIOwner.Get())
+    if (!AIOwner)
     {
         Result = EBTNodeResult::Failed;
         return Result;
