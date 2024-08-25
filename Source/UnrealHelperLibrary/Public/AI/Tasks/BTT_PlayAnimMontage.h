@@ -49,9 +49,7 @@ public:
 private:
 	bool bIsAborting = false;
     TWeakObjectPtr<ACharacter> Character;
-    /** Cached AIController owner of BehaviorTreeComponent. */
-    UPROPERTY(Transient)
-    TObjectPtr<AAIController> AIOwner;
+    
     UPROPERTY()
     TObjectPtr<UBehaviorTreeComponent> OwnerComponent;
 
