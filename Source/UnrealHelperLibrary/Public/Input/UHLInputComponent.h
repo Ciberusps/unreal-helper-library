@@ -46,7 +46,7 @@ void UUHLInputComponent::BindAbilityActions(const UUHLInputConfig* InputConfig, 
 
     for (const FUHLInputActionAbilities& Action : InputConfig->AbilityInputActions)
     {
-        if (Action.InputAction && !Action.AbilitiesToActivate.IsEmpty())
+        if (Action.InputAction && Action.bEnabled && !Action.AbilitiesToActivate.IsEmpty())
         {
             for (FGameplayTag AbilityTag : Action.AbilitiesToActivate)
             {

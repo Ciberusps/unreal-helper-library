@@ -44,6 +44,8 @@ struct FUHLInputActionAbilities
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(EditDefaultsOnly)
+    bool bEnabled = true;
 	UPROPERTY(EditDefaultsOnly)
 	const UInputAction* InputAction = nullptr;
 	UPROPERTY(EditDefaultsOnly)
