@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include "AbilitySystem/Abilities/GA_AbilityInputCache.h"
 #include "AbilitySystem/Abilities/UHLGameplayAbility.h"
 #include "Core/UHLGameplayTags.h"
 
@@ -288,7 +289,25 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 	//
 	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate)
 	{
-		TryActivateAbility(AbilitySpecHandle);
+		bool bActivated = TryActivateAbility(AbilitySpecHandle);
+
+	    // check AbilityCache
+	    if (bUseAbilityInputCache && !bActivated && AbilitySpecHandle.IsValid())
+	    {
+	        FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(AbilitySpecHandle);
+	        if (AbilitySpec->Ability && !AbilitySpec->IsActive())
+	        {
+                UUHLGameplayAbility* GameplayAbility = StaticCast<UUHLGameplayAbility*>(AbilitySpec->Ability.Get());
+	            if (GameplayAbility->bCacheInput)
+	            {
+	                FGameplayEventData GameplayEventData = FGameplayEventData();
+	                UAbilityInputCachePayload* AbilityInputCachePayload = NewObject<UAbilityInputCachePayload>();
+	                AbilityInputCachePayload->AbilityGameplayTagToCache = GameplayAbility->AbilityTags.First();
+	                GameplayEventData.OptionalObject = AbilityInputCachePayload;
+	                HandleGameplayEvent(UHLGameplayTags::TAG_UHL_AbilityInputCache_Add, &GameplayEventData);
+	            }
+	        }
+	    }
 	}
 
 	//

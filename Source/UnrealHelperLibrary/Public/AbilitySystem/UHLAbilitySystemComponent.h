@@ -36,6 +36,8 @@ public:
     // binding inputs to tags check Readme.MD on how to setup it
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bUseInputConfig = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
+    bool bUseAbilityInputCache = true;
 
 	virtual void BeginPlay() override;
 	virtual void InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor);
