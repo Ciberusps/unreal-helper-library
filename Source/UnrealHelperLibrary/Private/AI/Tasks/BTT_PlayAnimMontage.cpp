@@ -7,6 +7,8 @@
 #include "PlayMontageCallbackProxy.h"
 #include "GameFramework/Character.h"
 
+DEFINE_LOG_CATEGORY(LogBTT_PlayAnimMontage);
+
 UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -19,56 +21,64 @@ UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectIniti
 EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     EBTNodeResult::Type Result = EBTNodeResult::Failed;
-
-	bIsAborting = false;
-    FUHLPlayAnimMontageMemory* MyMemory = CastInstanceNodeMemory<FUHLPlayAnimMontageMemory>(NodeMemory);
-    AAIController* AIOwner = OwnerComp.GetAIOwner();
-    OwnerComponent = &OwnerComp;
-    if (!AIOwner)
-    {
-        Result = EBTNodeResult::Failed;
-        return Result;
-    }
-
-	Character = Cast<ACharacter>(AIOwner->GetCharacter());
-	if (!Character.IsValid())
+	
+    AIOwner = OwnerComp.GetAIOwner();
+	ACharacter* Character = AIOwner.IsValid() ? AIOwner->GetCharacter() : nullptr;
+	
+	if (!Character)
 	{
-	    Result = EBTNodeResult::Failed;
 	    return Result;
 	}
+	
+    PlayMontageCallbackProxy = UMyPlayMontageCallbackProxy::TryCreateProxyObjectForPlayMontage(
+		Character->GetMesh(),
+		AnimMontage,
+		PlayRate,
+		StartingPosition,
+		StartSectionName
+	);
 
-    MyMemory->PlayMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
-        Character->GetMesh(),
-        AnimMontage,
-        PlayRate,
-        StartingPosition,
-        StartSectionName
-    );
-    MyMemory->PlayMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-    MyMemory->PlayMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-    MyMemory->PlayMontageCallbackProxy->OnBlendOut.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-
-	Result = EBTNodeResult::InProgress;
+	//Play Montage Success
+	if(PlayMontageCallbackProxy)
+	{
+		Result = EBTNodeResult::InProgress;
+		PlayMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+		PlayMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
+	}
+	else
+	{
+		UE_LOG(LogBTT_PlayAnimMontage, Warning, TEXT("Montage(%s) Play Failed!"), *GetNameSafe(AnimMontage));
+		Result = EBTNodeResult::Failed;
+	}
+	
     return Result;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	bIsAborting = true;
-    if (StopMontageOnAbort && Character.IsValid())
+    if (StopMontageOnAbort && AIOwner.IsValid())
     {
-        Character.Get()->StopAnimMontage();
+	    if(ACharacter* Character = AIOwner->GetCharacter())
+    	{
+    		Character->StopAnimMontage();
+	    	
+	    	//Clear MontageCallback
+	    	if(PlayMontageCallbackProxy)
+	    	{
+	    		PlayMontageCallbackProxy->BeginDestroy();
+	    	}
+    	}
     }
 	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 
 void UBTT_PlayAnimMontage::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult)
 {
-    FUHLPlayAnimMontageMemory* MyMemory = CastInstanceNodeMemory<FUHLPlayAnimMontageMemory>(NodeMemory);
-    MyMemory->PlayMontageCallbackProxy->OnCompleted.RemoveAll(this);
-    MyMemory->PlayMontageCallbackProxy->OnInterrupted.RemoveAll(this);
-    MyMemory->PlayMontageCallbackProxy->OnBlendOut.RemoveAll(this);
-
+	if(PlayMontageCallbackProxy)
+	{
+		PlayMontageCallbackProxy->BeginDestroy();
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%s(%d): OnTaskFinished， OwnerComp = %p"), TEXT(__FUNCTION__), __LINE__, &OwnerComp );
     Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
 }
 
@@ -77,22 +87,18 @@ FString UBTT_PlayAnimMontage::GetStaticDescription() const
 	return FString::Printf(TEXT("%s: \n%s"), *Super::GetStaticDescription(), AnimMontage ? *AnimMontage->GetName() : TEXT(""));
 }
 
-void UBTT_PlayAnimMontage::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const
-{
-    Super::InitializeMemory(OwnerComp, NodeMemory, InitType);
-}
-
-void UBTT_PlayAnimMontage::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const
-{
-    Super::CleanupMemory(OwnerComp, NodeMemory, CleanupType);
-}
-
 void UBTT_PlayAnimMontage::OnPlayMontageEnded(FName NotifyName)
 {
-	const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
+	UBehaviorTreeComponent* OwnerComp = AIOwner.IsValid() ? Cast<UBehaviorTreeComponent>(AIOwner->BrainComponent) : nullptr;
 
-	if (OwnerComponent && !bIsAborting)
+	if(OwnerComp)
 	{
-		FinishLatentTask(*OwnerComponent, NodeResult);
+		FinishLatentTask(*OwnerComp, EBTNodeResult::Succeeded);
+	}
+
+	if(PlayMontageCallbackProxy)
+	{
+		PlayMontageCallbackProxy->OnCompleted.RemoveAll(this);
+		PlayMontageCallbackProxy->OnInterrupted.RemoveAll(this);
 	}
 }

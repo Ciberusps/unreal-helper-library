@@ -3,18 +3,46 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayMontageCallbackProxy.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_PlayAnimMontage.generated.h"
 
-class UPlayMontageCallbackProxy;
+DECLARE_LOG_CATEGORY_EXTERN(LogBTT_PlayAnimMontage,Log,All);
 
-struct FUHLPlayAnimMontageMemory
+UCLASS()
+class UMyPlayMontageCallbackProxy : public UPlayMontageCallbackProxy
 {
-    UPlayMontageCallbackProxy* PlayMontageCallbackProxy = nullptr;
+	GENERATED_BODY()
+
+public:
+	
+	/**
+	 * try to Play montage and create callback.
+	 * If played successfully, return callback. otherwise return null
+	 */
+	static UMyPlayMontageCallbackProxy* TryCreateProxyObjectForPlayMontage(
+		USkeletalMeshComponent* InSkeletalMeshComponent, 
+		UAnimMontage* MontageToPlay, 
+		float PlayRate = 1.f, 
+		float StartingPosition = 0.f, 
+		FName StartingSection = NAME_None)
+	{
+		UMyPlayMontageCallbackProxy* Proxy = NewObject<UMyPlayMontageCallbackProxy>();
+		
+		if(Proxy->PlayMontage(InSkeletalMeshComponent, MontageToPlay, PlayRate, StartingPosition, StartingSection))
+		{
+			Proxy->SetFlags(RF_StrongRefOnFrame);
+			return Proxy;
+		}
+		
+		Proxy->MarkAsGarbage();
+		return nullptr;
+	}
 };
 
 /**
- *
+ * playMontage and wait finish.
+ * If the montage is already playing, it will be forcefully overwritten and played directly.
  */
 UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_PlayAnimMontage : public UBTTaskNode
@@ -42,17 +70,22 @@ public:
 
 	virtual FString GetStaticDescription() const override;
 
-    virtual uint16 GetInstanceMemorySize() const override { return sizeof(FUHLPlayAnimMontageMemory); }
-    virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
-    virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
+private:
+	
+	/**
+	 * AIOwner Caceh
+	 */
+	UPROPERTY()
+	TWeakObjectPtr<AAIController> AIOwner;
+	
+	/**
+	 * MontageCallback, on executeTask assignment
+	 */
+	UPROPERTY()
+	TObjectPtr<UMyPlayMontageCallbackProxy> PlayMontageCallbackProxy;
 
 private:
-	bool bIsAborting = false;
-    TWeakObjectPtr<ACharacter> Character;
-    
-    UPROPERTY()
-    TObjectPtr<UBehaviorTreeComponent> OwnerComponent;
-
-    UFUNCTION()
+	
+	UFUNCTION()
 	void OnPlayMontageEnded(FName NotifyName);
 };
