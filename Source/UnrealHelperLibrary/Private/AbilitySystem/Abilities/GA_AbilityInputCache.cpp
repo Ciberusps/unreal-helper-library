@@ -41,6 +41,7 @@ void UGA_AbilityInputCache::AddTagToCache(FGameplayTag AbilityTag_In)
 {
     // not required to be unique
     AbilityInputCache.Add(AbilityTag_In);
+    UE_LOG(LogGA_AbilityInputCache, Log, TEXT("Add ability to InputCache - %s"), *AbilityTag_In.ToString());
 }
 
 // should cancel all abilities that also cached but not fired
@@ -50,7 +51,7 @@ void UGA_AbilityInputCache::CheckCache()
 
     if (AbilityInputCache.IsEmpty())
     {
-        UE_LOG(LogGA_AbilityInputCache, Log, TEXT("AbilityInputCache clean"));
+        UE_LOG(LogGA_AbilityInputCache, Log, TEXT("AbilityInputCache is empty"));
         return;
     };
 
@@ -65,13 +66,12 @@ void UGA_AbilityInputCache::CheckCache()
 			// AbilityInputCachePayload->AbilityGameplayTagToCache = AbilityTags.First();
 			// GameplayEventData.OptionalObject = AbilityInputCachePayload;
 			ASC->HandleGameplayEvent(AbilityTagToActivate, &GameplayEventData);
-        }
-
-        // TODO log all things
-        // UE_LOG(LogGA_AbilityInputCache, Log, TEXT("InputCache checked found - %s!"), *GetNameSafe(AnimMontage));
+            UE_LOG(LogGA_AbilityInputCache, Log, TEXT("InputCache checked found ability to activate - %s!"), *AbilityTagToActivate.ToString());
+       }
     }
 
     ClearCache();
+    UE_LOG(LogGA_AbilityInputCache, Log, TEXT("AbilityInputCache clean"));
 }
 
 void UGA_AbilityInputCache::ClearCache()

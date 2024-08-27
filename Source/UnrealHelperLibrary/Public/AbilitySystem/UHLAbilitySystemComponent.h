@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "Input/AbilityInputCache.h"
 #include "UHLAbilitySystemComponent.generated.h"
 
 /**
@@ -71,6 +72,9 @@ public:
 	virtual int32 FireGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
 
 private:
+    UPROPERTY()
+    TObjectPtr<UAbilityInputCache> AbilityInputCache;
+
 	// Handles to abilities that had their input pressed this frame.
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
 	// Handles to abilities that had their input released this frame.

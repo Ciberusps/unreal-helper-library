@@ -39,8 +39,9 @@ public:
 
     // should cache input if ability can't be activated for now
     // Requirements:
+    // - ASC should enable "bUseAbilityInputCache"
     // - Ability should have at least one AbilityTag
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability|Caching")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     bool bCacheInput = false;
     // if any of those tags on owner ASC - cache input
     // UPD not required we cache only abilities that can't be activated and have bCachedInput

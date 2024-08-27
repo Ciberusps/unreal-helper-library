@@ -3,9 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UHLGameplayAbility.h"
-#include "GA_AbilityInputCache.generated.h"
+#include "GameplayTagContainer.h"
+#include "Abilities/GameplayAbilityTypes.h"
+#include "UObject/NoExportTypes.h"
+#include "AbilityInputCache.generated.h"
 
+
+class UUHLAbilitySystemComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGA_AbilityInputCache, Log, All);
 
@@ -20,17 +24,15 @@ public:
 };
 
 /**
- * TODO store more than one AbilityTag?
- * TODO move to UHLAbilitySystemComponent->AbilityInputCache UObject?? no need to have an ability for input caching
- * TODO add debug via console like "UHL.AbilityInputCache 1"
+ *
  */
 UCLASS()
-class UNREALHELPERLIBRARY_API UGA_AbilityInputCache : public UUHLGameplayAbility
+class UNREALHELPERLIBRARY_API UAbilityInputCache : public UObject
 {
 	GENERATED_BODY()
 
 public:
-    virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+    void SetUp(UUHLAbilitySystemComponent* ASC_In);
 
     UFUNCTION(BlueprintCallable)
     void AddTagToCache(FGameplayTag AbilityTag_In);
@@ -38,16 +40,18 @@ public:
     void CheckCache();
     UFUNCTION(BlueprintCallable)
     void ClearCache();
+    UFUNCTION(BlueprintCallable)
+    void DrawDebug();
     // UFUNCTION(BlueprintCallable)
     // void RemoveTagFromCache(FGameplayTag AbilityTag_In);
 
-
 private:
-    UFUNCTION()
-    void OnReceivedAddToInputCacheEvent(FGameplayEventData EventData);
-    UFUNCTION()
-    void OnReceivedCheckInputCacheEvent(FGameplayEventData EventData);
+    // UFUNCTION()
+    void OnReceivedAddToInputCacheEvent(FGameplayTag GameplayTag_In, const FGameplayEventData* EventData);
+    // UFUNCTION()
+    void OnReceivedCheckInputCacheEvent(FGameplayTag GameplayTag_In, const FGameplayEventData* EventData);
 
     UPROPERTY()
     TArray<FGameplayTag> AbilityInputCache = {};
+    TWeakObjectPtr<UUHLAbilitySystemComponent> ASC;
 };

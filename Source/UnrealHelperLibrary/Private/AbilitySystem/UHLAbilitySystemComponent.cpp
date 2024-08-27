@@ -295,16 +295,17 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 	    if (bUseAbilityInputCache && !bActivated && AbilitySpecHandle.IsValid())
 	    {
 	        FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(AbilitySpecHandle);
-	        if (AbilitySpec->Ability && !AbilitySpec->IsActive())
+	        if (AbilitySpec->Ability)
 	        {
                 UUHLGameplayAbility* GameplayAbility = StaticCast<UUHLGameplayAbility*>(AbilitySpec->Ability.Get());
 	            if (GameplayAbility->bCacheInput)
 	            {
-	                FGameplayEventData GameplayEventData = FGameplayEventData();
-	                UAbilityInputCachePayload* AbilityInputCachePayload = NewObject<UAbilityInputCachePayload>();
-	                AbilityInputCachePayload->AbilityGameplayTagToCache = GameplayAbility->AbilityTags.First();
-	                GameplayEventData.OptionalObject = AbilityInputCachePayload;
-	                HandleGameplayEvent(UHLGameplayTags::TAG_UHL_AbilityInputCache_Add, &GameplayEventData);
+	                AbilityInputCache->AddTagToCache(GameplayAbility->AbilityTags.First());
+	                // FGameplayEventData GameplayEventData = FGameplayEventData();
+	                // UAbilityInputCachePayload* AbilityInputCachePayload = NewObject<UAbilityInputCachePayload>();
+	                // AbilityInputCachePayload->AbilityGameplayTagToCache = GameplayAbility->AbilityTags.First();
+	                // GameplayEventData.OptionalObject = AbilityInputCachePayload;
+	                // HandleGameplayEvent(UHLGameplayTags::TAG_UHL_AbilityInputCache_Add, &GameplayEventData);
 	            }
 	        }
 	    }
