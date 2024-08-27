@@ -10,7 +10,12 @@
 class IAbilitySystemInterface;
 
 /**
- * TODO Invoke by Class option
+ * TODO Invoke by Class option?
+ * 1) tbh its bad practice to have hard refs on classes,
+ * no need in this options, better to force good practices - dont hard ref abilities
+ * 2) it brokes good architechture/behaviorTrees reusability if we hard ref ability
+ * it means that nested abilities can't be activated, with activation by tag
+ * all enemies can have different abilities implementation using same tag
  */
 UCLASS(Category = "UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UBTT_InvokeGameplayAbility : public UBTTaskNode
@@ -43,8 +48,7 @@ private:
     // TODO move to Memory
     TWeakObjectPtr<UAbilitySystemComponent> ASC;
     /** Cached AIController owner of BehaviorTreeComponent. */
-    UPROPERTY(Transient)
-    TObjectPtr<AAIController> AIOwner;
+
     TWeakObjectPtr<UBehaviorTreeComponent> OwnerComponent;
 
     UFUNCTION()
