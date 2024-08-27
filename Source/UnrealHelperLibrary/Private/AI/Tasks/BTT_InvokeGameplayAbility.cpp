@@ -21,8 +21,10 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     EBTNodeResult::Type Result = EBTNodeResult::Failed;
     bool GameplayAbilitySpecFound = false;
 
-    AIOwner = OwnerComp.GetAIOwner();
+    TObjectPtr<AAIController> AIOwner = OwnerComp.GetAIOwner();
     OwnerComponent = &OwnerComp;
+
+    if (!AIOwner) return EBTNodeResult::Failed;
 
     IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(AIOwner->GetPawn());
     if (!AbilitySystemInterface)

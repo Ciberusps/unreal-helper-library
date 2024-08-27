@@ -30,7 +30,10 @@ public:
 	// TODO validate that chances count == ChildrenNum
 	// if no chance specified, node without chance will win always
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits="Multiplier"))
-	TArray<float> ChancesArray = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	TArray<float> ChancesArray = { 0.5f, 0.5f };
+
+    UFUNCTION(BlueprintCallable, CallInEditor)
+    void RemoveUnusedChances();
 
 protected:
 	virtual int32 GetNextChildHandler(struct FBehaviorTreeSearchData& SearchData, int32 PrevChild, EBTNodeResult::Type LastResult) const override;

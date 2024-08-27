@@ -279,7 +279,8 @@ Troubleshooting:
 #### `TurnTo`
 
 **BTT_TurnTo** - turn to enemy using turn animations
-TODO should be drop in replacement for "RotateToFaceBBEntry"
+Drop in replacement for "RotateToFaceBBEntry" but with option to "RotateTo" with animations
+To get settings from actor requires `IUHLActorSettings` to be implemented on character
 
 ---
 

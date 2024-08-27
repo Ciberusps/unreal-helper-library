@@ -12,6 +12,15 @@ UBTC_RandomSelector::UBTC_RandomSelector(const FObjectInitializer& ObjectInitial
     NodeName = "RandomSelector";
 }
 
+void UBTC_RandomSelector::RemoveUnusedChances()
+{
+    if (ChancesArray.Num() > GetChildrenNum())
+    {
+        int32 CountToRemove = ChancesArray.Num() - GetChildrenNum();
+        ChancesArray.RemoveAt(ChancesArray.Num() - CountToRemove, CountToRemove);
+    }
+}
+
 int32 UBTC_RandomSelector::GetNextChildHandler(FBehaviorTreeSearchData& SearchData, int32 PrevChild, EBTNodeResult::Type LastResult) const
 {
     // success = quit
