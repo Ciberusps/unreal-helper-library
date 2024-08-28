@@ -7,37 +7,23 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_PlayAnimMontage.generated.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogBTT_PlayAnimMontage,Log,All);
+DECLARE_LOG_CATEGORY_EXTERN(LogBTT_PlayAnimMontage, Log, All);
 
-UCLASS()
-class UMyPlayMontageCallbackProxy : public UPlayMontageCallbackProxy
+/**
+ * Deciding when to end the node
+ */
+UENUM()
+enum ETaskNodeEndPolicy
 {
-	GENERATED_BODY()
-
-public:
-	
 	/**
-	 * try to Play montage and create callback.
-	 * If played successfully, return callback. otherwise return null
+	 * after the node ends, still need to perform montage node, using this policy can make the anime more coherent
 	 */
-	static UMyPlayMontageCallbackProxy* TryCreateProxyObjectForPlayMontage(
-		USkeletalMeshComponent* InSkeletalMeshComponent, 
-		UAnimMontage* MontageToPlay, 
-		float PlayRate = 1.f, 
-		float StartingPosition = 0.f, 
-		FName StartingSection = NAME_None)
-	{
-		UMyPlayMontageCallbackProxy* Proxy = NewObject<UMyPlayMontageCallbackProxy>();
-		
-		if(Proxy->PlayMontage(InSkeletalMeshComponent, MontageToPlay, PlayRate, StartingPosition, StartingSection))
-		{
-			Proxy->SetFlags(RF_StrongRefOnFrame);
-			return Proxy;
-		}
-		
-		Proxy->MarkAsGarbage();
-		return nullptr;
-	}
+	OnMontageBlendingOut,
+
+	/**
+	 * end when the montage is completely finished, applicable to situations where only one montage is executed
+	 */
+	OnMontageEnded
 };
 
 /**
@@ -60,32 +46,51 @@ public:
 	float StartingPosition = 0.0f;
 	UPROPERTY(Category="Blackboard", EditAnywhere)
 	FName StartSectionName = NAME_None;
-	// TODO probably should be true by default
 	UPROPERTY(Category="Blackboard", EditAnywhere)
-	bool StopMontageOnAbort = false;
+	bool StopMontageOnAbort = true;
+	UPROPERTY(Category="Blackboard", EditAnywhere)
+	TEnumAsByte<ETaskNodeEndPolicy> TaskNodeEndPolicy = ETaskNodeEndPolicy::OnMontageBlendingOut;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-    virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult) override;
+	virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+	                            EBTNodeResult::Type TaskResult) override;
 
 	virtual FString GetStaticDescription() const override;
 
 private:
-	
 	/**
-	 * AIOwner Caceh
+	 * AIOwner Cache
 	 */
 	UPROPERTY()
 	TWeakObjectPtr<AAIController> AIOwner;
-	
-	/**
-	 * MontageCallback, on executeTask assignment
-	 */
-	UPROPERTY()
-	TObjectPtr<UMyPlayMontageCallbackProxy> PlayMontageCallbackProxy;
 
-private:
-	
+protected:
+	/**
+	 * PlayMontage and bind callback
+	 */
+	bool PlayMontage(USkeletalMeshComponent* InSkeletalMeshComponent,
+	                 UAnimMontage* MontageToPlay,
+	                 float InPlayRate,
+	                 float InStartingPosition,
+	                 FName InStartingSection);
+
+	/**
+	 * All callbacks at the end of montage need to be filtered
+	 */
 	UFUNCTION()
-	void OnPlayMontageEnded(FName NotifyName);
+	void OnMontageEnded(UAnimMontage* InAnimMontage, bool bInterrupted);
+
+	/**
+	 * All callbacks at the BlendingOut of montage need to be filtered
+	 */
+	UFUNCTION()
+	void OnMontageBlendingOut(UAnimMontage* InAnimMontage, bool bInterrupted);
+
+	void ClearMontageDelegate();
+
+	/**
+	 * finish AIOwner task node, if AIOwner still is Valid
+	 */
+	void FinishTaskNode();
 };
