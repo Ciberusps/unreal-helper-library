@@ -6,9 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Core/UHLGameplayTags.h"
+#include "Input/AbilityInputCache.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
-DEFINE_LOG_CATEGORY(LogGA_AbilityInputCache);
 
 void UGA_AbilityInputCache::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
     const FGameplayEventData* TriggerEventData)

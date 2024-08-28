@@ -7,17 +7,15 @@
 #include "GA_AbilityInputCache.generated.h"
 
 
-DECLARE_LOG_CATEGORY_EXTERN(LogGA_AbilityInputCache, Log, All);
-
-UCLASS(Blueprintable)
-class UAbilityInputCachePayload : public UObject
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FGameplayTag AbilityGameplayTagToCache;
-};
+// UCLASS(Blueprintable)
+// class UAbilityInputCachePayload : public UObject
+// {
+//     GENERATED_BODY()
+//
+// public:
+//     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//     FGameplayTag AbilityGameplayTagToCache;
+// };
 
 /**
  * TODO store more than one AbilityTag?
