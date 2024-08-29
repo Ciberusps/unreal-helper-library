@@ -2,6 +2,7 @@
 
 #include "Utils/UnrealHelperLibraryBPL.h"
 
+#include "AbilitySystemComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
@@ -69,6 +70,38 @@ FGameplayEffectSpec UUnrealHelperLibraryBPL::CreateGenericGASGameplayEffectSpec(
     GameplayEffectContextHandle.AddSourceObject(SourceObject);
     FGameplayEffectSpec GameplayEffectSpec(GameplayEffect, GameplayEffectContextHandle);
     return GameplayEffectSpec;
+}
+
+void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag)
+{
+    if (!ASC) return;
+
+    if (bCondition)
+    {
+        if (!ASC->HasMatchingGameplayTag(PositiveConditionTag))
+        {
+            ASC->AddLooseGameplayTag(PositiveConditionTag);
+        }
+        if (NegativeConditionTag != FGameplayTag::EmptyTag)
+        {
+            ASC->RemoveLooseGameplayTag(NegativeConditionTag, 999999);
+        }
+    }
+    else
+    {
+        if (NegativeConditionTag == FGameplayTag::EmptyTag)
+        {
+            ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
+        }
+        else
+        {
+            if (!ASC->HasMatchingGameplayTag(NegativeConditionTag))
+            {
+                ASC->AddLooseGameplayTag(NegativeConditionTag);
+            }
+            ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
+        }
+    }
 }
 
 TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)

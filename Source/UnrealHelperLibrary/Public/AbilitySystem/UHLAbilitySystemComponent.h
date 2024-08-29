@@ -7,6 +7,7 @@
 #include "Input/AbilityInputCache.h"
 #include "UHLAbilitySystemComponent.generated.h"
 
+class UUHLGameplayAbility;
 /**
  *
  */
@@ -39,8 +40,13 @@ public:
     bool bUseInputConfig = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
     bool bUseAbilityInputCache = true;
+    // if enabled - caching works only in predefined user windows - ANS_AbilityInputCache_CacheWindow
+    // if disabled - works always
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseAbilityInputCache"))
+    bool bUseInputCacheWindows = true;
 
 	virtual void BeginPlay() override;
+
 	virtual void InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor);
 	virtual void InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor);
 	virtual void InitAttributes();
@@ -56,6 +62,9 @@ public:
 	virtual void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	virtual void AbilityInputTagReleased(const FGameplayTag& InputTag);
 /** Input Config **/
+
+    UFUNCTION(BlueprintCallable)
+    UAbilityInputCache* GetAbilityInputCache() const { return AbilityInputCache; };
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation = true);
@@ -81,4 +90,7 @@ private:
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	// Handles to abilities that have their input held.
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
+
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
+    bool CanAddAbilityToCache(UUHLGameplayAbility* GameplayAbility_In) const;
 };

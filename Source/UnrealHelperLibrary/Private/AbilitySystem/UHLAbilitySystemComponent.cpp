@@ -3,13 +3,16 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
-#include "AbilitySystem/Abilities/GA_AbilityInputCache.h"
 #include "AbilitySystem/Abilities/UHLGameplayAbility.h"
 #include "Core/UHLGameplayTags.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 
 void UUHLAbilitySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+    AbilityInputCache = NewObject<UAbilityInputCache>(this);
+    AbilityInputCache->SetUp(this);
 
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
@@ -123,6 +126,14 @@ TArray<bool> UUHLAbilitySystemComponent::TryCancelAbilitiesWithTags(TArray<FGame
 int32 UUHLAbilitySystemComponent::FireGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload)
 {
 	return HandleGameplayEvent(EventTag, &Payload);
+}
+
+bool UUHLAbilitySystemComponent::CanAddAbilityToCache(UUHLGameplayAbility* GameplayAbility_In) const
+{
+    bool bHasRequiredTags = HasAllMatchingGameplayTags(GameplayAbility_In->AddingToCacheInputRequiredTags);
+    bool bDontHaveBlockedTags = !HasAnyMatchingGameplayTags(GameplayAbility_In->AddingToCacheInputBlockedTags);
+
+    return bHasRequiredTags && bDontHaveBlockedTags;
 }
 
 bool UUHLAbilitySystemComponent::IsAbilityActive(FGameplayTag GameplayTag) const
@@ -287,29 +298,47 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 	// We do it all at once so that held inputs don't activate the ability
 	// and then also send a input event to the ability because of the press.
 	//
+    // TODO AbiilityInputCache field of improvement - check not "bAtLeastOneCachedAbilityActivated"
+    // but how much abilities was activated from "FUHLInputActionAbilities"
+    // if at least one from "FUHLInputActionAbilities" activated skip adding others to cache
+    bool bAtLeastOneCachedAbilityActivated = false;
+    TArray<FGameplayTag> AbilityTagsRequiredToBeCached = {};
 	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate)
 	{
 		bool bActivated = TryActivateAbility(AbilitySpecHandle);
 
 	    // check AbilityCache
-	    if (bUseAbilityInputCache && !bActivated && AbilitySpecHandle.IsValid())
+	    if (bUseAbilityInputCache && AbilitySpecHandle.IsValid())
 	    {
-	        FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(AbilitySpecHandle);
-	        if (AbilitySpec->Ability)
-	        {
-                UUHLGameplayAbility* GameplayAbility = StaticCast<UUHLGameplayAbility*>(AbilitySpec->Ability.Get());
-	            if (GameplayAbility->bCacheInput)
-	            {
-	                AbilityInputCache->AddTagToCache(GameplayAbility->AbilityTags.First());
-	                // FGameplayEventData GameplayEventData = FGameplayEventData();
-	                // UAbilityInputCachePayload* AbilityInputCachePayload = NewObject<UAbilityInputCachePayload>();
-	                // AbilityInputCachePayload->AbilityGameplayTagToCache = GameplayAbility->AbilityTags.First();
-	                // GameplayEventData.OptionalObject = AbilityInputCachePayload;
-	                // HandleGameplayEvent(UHLGameplayTags::TAG_UHL_AbilityInputCache_Add, &GameplayEventData);
-	            }
-	        }
+	        // works if not using cache windows or use them and now in "CatchTo AbilityInputCache" window
+            if (!bUseInputCacheWindows || (bUseInputCacheWindows && HasMatchingGameplayTag(UHLGameplayTags::TAG_UHL_AbilityInputCache_Catching)))
+            {
+				FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(AbilitySpecHandle);
+				if (AbilitySpec->Ability)
+				{
+					UUHLGameplayAbility* GameplayAbility = StaticCast<UUHLGameplayAbility*>(AbilitySpec->Ability.Get());
+					if (GameplayAbility->bCacheInput && !bActivated)
+					{
+						if (CanAddAbilityToCache(GameplayAbility))
+						{
+							AbilityTagsRequiredToBeCached.Add(GameplayAbility->AbilityTags.First());
+						}
+					}
+
+					if (GameplayAbility->bCacheInput && bActivated)
+					{
+						bAtLeastOneCachedAbilityActivated = true;
+						UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("At least one activated %s"), *GameplayAbility->AbilityTags.First().ToString()));
+					}
+				}
+            }
 	    }
 	}
+
+    if (!bAtLeastOneCachedAbilityActivated)
+    {
+        AbilityInputCache->AddTagsToCache(AbilityTagsRequiredToBeCached);
+    }
 
 	//
 	// Process all abilities that had their input released this frame.

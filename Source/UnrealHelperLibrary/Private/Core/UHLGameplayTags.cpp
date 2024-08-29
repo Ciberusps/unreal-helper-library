@@ -9,7 +9,7 @@ namespace UHLGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_UHL_Debug_CheckGASGameplayTagsOnActor, "UHL.Debug.CheckGASGameplayTagsOnActor");
 
 	// AbilityInputCache
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_AbilityInputCache_Add, "UHL.AbilityInputCache.Add", "Event for adding ability input cache, mostly used for melee combats");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_AbilityInputCache_Catching, "UHL.AbilityInputCache.Catching", "Opened for catching actions to AbilityInputCache");
 
 	// Errors
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Error, "Error");
