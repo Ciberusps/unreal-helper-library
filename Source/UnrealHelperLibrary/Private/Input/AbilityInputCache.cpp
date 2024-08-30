@@ -99,8 +99,9 @@ void UAbilityInputCache::CheckCache()
 			    if (bActivated)
 			    {
 			        bActivatedAtLeastOneTag = true;
+			        break;
 			    }
-		   }
+			}
         }
 
         // possibly is shit, ANS_CheckAbilityInputCache clears cache on end (forgot how its related)
