@@ -60,6 +60,8 @@ UHL consists of 3 modules:
 > - [GAS](#gas)
 >   - Components
 >     - [AbilitySystemComponent](#abilitysystemcomponent)
+>       - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
+>       - [AbilityInputCache](#abilityinputcache)
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
 > - [AI](#ai)
@@ -139,6 +141,27 @@ Features:
 - give `Abilities` on start
 - activate `InitialActiveAbilities`
 - apply `InitialGameplayTags`
+- Lyra-like "InputConfig", GAS abilities input binding
+
+##### InputConfig (GAS abilities input binding)
+
+`bUseInputConfig`
+
+##### AbilityInputCache
+
+`AbilityInputCache`
+
+How it works:
+
+- activate `bUseAbilityInputCache` in `UHLAbilitySystemComponent` (nest your own AbilitySystem from `UHLAbilitySystemComponent`)
+- in GameplayAbility activate `bInputCache`
+- add anim notifies to your attack animation
+  - `ANS_CatchToAbilityInputCache` - to mark when its possible to cache ability  - best practice - on 2nd frame of attack and until "BlockAction" end
+  - `ANS_CheckAbilityInputCache` - when you want to check cache and activate ability best practice - on end of "BlockAction" with 5-10frames duration
+
+Debug:
+
+- write in console `ToggleAbilityInputDebug`, don't forget to add `ProcessConsoleExec` to your `BGameInstance` or it won't work
 
 #### `InterpolateToPosition`
 

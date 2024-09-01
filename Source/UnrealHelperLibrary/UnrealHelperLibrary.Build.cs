@@ -43,6 +43,7 @@ public class UnrealHelperLibrary : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"UMG",
 				"AnimGraphRuntime",
 				// ... add private dependencies that you statically link with here ...
 			}

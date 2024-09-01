@@ -59,6 +59,19 @@ public:
 /** GAS **/
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug GAS Development"))
     static FGameplayEffectSpec CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser, const FHitResult& HitResult, const UObject* SourceObject);
+    /**
+    *   UUnrealHelperLibraryBPL::UpdateStateGameplayTags(ASC, GetMovementComponent()->Velocity.Length() > 0,
+            UHLGameplayTags::TAG_Character_State_IsMoving,
+            UHLGameplayTags::TAG_Character_State_IsIdling);
+		bCondition = true ? TAG_Character_State_IsMoving : TAG_Character_State_IsIdling
+
+        UUnrealHelperLibraryBPL::UpdateStateGameplayTags(ASC, CharacterMovementVector.Length() > 0.4f,
+            UHLGameplayTags::TAG_Character_State_HasMoveInput,
+            FGameplayTag::EmptyTag);
+		bCondition = true ? TAG_Character_State_HasMoveInput : NONE
+     */
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
+    static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
 /** ~GAS **/
 
 /** Utils **/

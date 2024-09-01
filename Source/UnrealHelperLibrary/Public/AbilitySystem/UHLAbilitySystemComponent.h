@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "Input/AbilityInputCache.h"
 #include "UHLAbilitySystemComponent.generated.h"
 
+class UUHLGameplayAbility;
 /**
  *
  */
@@ -36,8 +38,15 @@ public:
     // binding inputs to tags check Readme.MD on how to setup it
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bUseInputConfig = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
+    bool bUseAbilityInputCache = true;
+    // if enabled - caching works only in predefined user windows - ANS_AbilityInputCache_CacheWindow
+    // if disabled - works always
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseAbilityInputCache"))
+    bool bUseInputCacheWindows = true;
 
 	virtual void BeginPlay() override;
+
 	virtual void InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor);
 	virtual void InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor);
 	virtual void InitAttributes();
@@ -54,6 +63,9 @@ public:
 	virtual void AbilityInputTagReleased(const FGameplayTag& InputTag);
 /** Input Config **/
 
+    UFUNCTION(BlueprintCallable)
+    UAbilityInputCache* GetAbilityInputCache() const { return AbilityInputCache; };
+
 	UFUNCTION(BlueprintCallable)
 	virtual bool TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation = true);
 	UFUNCTION(BlueprintCallable)
@@ -69,10 +81,16 @@ public:
 	virtual int32 FireGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
 
 private:
+    UPROPERTY()
+    TObjectPtr<UAbilityInputCache> AbilityInputCache;
+
 	// Handles to abilities that had their input pressed this frame.
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
 	// Handles to abilities that had their input released this frame.
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	// Handles to abilities that have their input held.
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
+
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
+    bool CanAddAbilityToCache(UUHLGameplayAbility* GameplayAbility_In) const;
 };
