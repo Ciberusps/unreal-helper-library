@@ -38,6 +38,7 @@
 		{
 			"Name": "TextureGraph",
 			"Enabled": true,
+			"Optional": true,
 			"TargetAllowList": [
 				"Editor"
 			]
