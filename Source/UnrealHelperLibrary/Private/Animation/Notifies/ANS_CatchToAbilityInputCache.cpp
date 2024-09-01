@@ -7,6 +7,7 @@
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Core/UHLGameplayTags.h"
 
+
 void UANS_CatchToAbilityInputCache::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
     Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
