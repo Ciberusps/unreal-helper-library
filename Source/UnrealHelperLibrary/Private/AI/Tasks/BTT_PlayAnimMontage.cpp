@@ -12,6 +12,8 @@ UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectIniti
 	: Super(ObjectInitializer)
 {
 	NodeName = "PlayAnimMontage";
+	// instantiating to be able to use Timers
+	bCreateNodeInstance = true;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
