@@ -4,7 +4,6 @@
 #include "AI/Tasks/BTT_PlayAnimMontage.h"
 
 #include "AIController.h"
-#include "PlayMontageCallbackProxy.h"
 #include "GameFramework/Character.h"
 
 DEFINE_LOG_CATEGORY(LogBTT_PlayAnimMontage);
@@ -13,92 +12,158 @@ UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectIniti
 	: Super(ObjectInitializer)
 {
 	NodeName = "PlayAnimMontage";
-    // TODO try to find the way to remove instancing
-    // instantiating to be able to use Timers
-    bCreateNodeInstance = true;
+	// instantiating to be able to use Timers
+	bCreateNodeInstance = true;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    EBTNodeResult::Type Result = EBTNodeResult::Failed;
-	
-    AIOwner = OwnerComp.GetAIOwner();
+	AIOwner = OwnerComp.GetAIOwner();
 	ACharacter* Character = AIOwner.IsValid() ? AIOwner->GetCharacter() : nullptr;
-	
-	if (!Character)
-	{
-	    return Result;
-	}
-	
-    PlayMontageCallbackProxy = UMyPlayMontageCallbackProxy::TryCreateProxyObjectForPlayMontage(
-		Character->GetMesh(),
+
+	bool bPlayMontage = PlayMontage(
+		Character ? Character->GetMesh() : nullptr,
 		AnimMontage,
 		PlayRate,
 		StartingPosition,
 		StartSectionName
 	);
 
-	//Play Montage Success
-	if(PlayMontageCallbackProxy)
-	{
-		Result = EBTNodeResult::InProgress;
-		PlayMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-		PlayMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnPlayMontageEnded);
-	}
-	else
-	{
-		UE_LOG(LogBTT_PlayAnimMontage, Warning, TEXT("Montage(%s) Play Failed!"), *GetNameSafe(AnimMontage));
-		Result = EBTNodeResult::Failed;
-	}
-	
-    return Result;
+	return bPlayMontage ? EBTNodeResult::InProgress : EBTNodeResult::Failed;
 }
 
 EBTNodeResult::Type UBTT_PlayAnimMontage::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    if (StopMontageOnAbort && AIOwner.IsValid())
-    {
-	    if(ACharacter* Character = AIOwner->GetCharacter())
-    	{
-    		Character->StopAnimMontage();
-	    	
-	    	//Clear MontageCallback
-	    	if(PlayMontageCallbackProxy)
-	    	{
-	    		PlayMontageCallbackProxy->BeginDestroy();
-	    	}
-    	}
-    }
+	ClearMontageDelegate();
+
+	if (StopMontageOnAbort && AIOwner.IsValid())
+	{
+		if (ACharacter* Character = AIOwner->GetCharacter())
+		{
+			Character->StopAnimMontage();
+		}
+	}
 	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 
-void UBTT_PlayAnimMontage::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult)
+void UBTT_PlayAnimMontage::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,EBTNodeResult::Type TaskResult)
 {
-	if(PlayMontageCallbackProxy)
-	{
-		PlayMontageCallbackProxy->BeginDestroy();
-	}
-	UE_LOG(LogTemp, Warning, TEXT("%s(%d): OnTaskFinished， OwnerComp = %p"), TEXT(__FUNCTION__), __LINE__, &OwnerComp );
-    Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
+	ClearMontageDelegate();
+	Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
 }
 
 FString UBTT_PlayAnimMontage::GetStaticDescription() const
 {
-	return FString::Printf(TEXT("%s: \n%s"), *Super::GetStaticDescription(), AnimMontage ? *AnimMontage->GetName() : TEXT(""));
+	return FString::Printf(
+		TEXT(
+		"AnimMontage: %s\n "
+		"PlayRate: %f\n "
+		"StartingPosition: %f\n"
+		"StartSectionName: %s\n"
+		"StopMontageOnAbort: %s\n "
+		"TaskNodeEndPolicy: %s"),
+		AnimMontage ? *AnimMontage->GetName() : TEXT("None"),
+		PlayRate,
+		StartingPosition,
+		*StartSectionName.ToString(),
+		StopMontageOnAbort ? TEXT("True") : TEXT("False"),
+		TaskNodeEndPolicy == ETaskNodeEndPolicy::OnMontageEnded ? TEXT("OnMontageEnded") : TEXT("OnMontageBlendingOut")
+	);
 }
 
-void UBTT_PlayAnimMontage::OnPlayMontageEnded(FName NotifyName)
-{
-	UBehaviorTreeComponent* OwnerComp = AIOwner.IsValid() ? Cast<UBehaviorTreeComponent>(AIOwner->BrainComponent) : nullptr;
 
-	if(OwnerComp)
+bool UBTT_PlayAnimMontage::PlayMontage(USkeletalMeshComponent* InSkeletalMeshComponent, UAnimMontage* MontageToPlay,
+                                       float InPlayRate, float InStartingPosition, FName InStartingSection)
+{
+	bool bPlayedSuccessfully = false;
+
+	if (UAnimInstance* AnimInstance = InSkeletalMeshComponent ? InSkeletalMeshComponent->GetAnimInstance() : nullptr)
+	{
+		const float MontageLength = AnimInstance->Montage_Play(MontageToPlay, InPlayRate,EMontagePlayReturnType::MontageLength,InStartingPosition);
+
+		bPlayedSuccessfully = (MontageLength > 0.f);
+
+		if (bPlayedSuccessfully)
+		{
+			if (InStartingSection != NAME_None)
+			{
+				AnimInstance->Montage_JumpToSection(InStartingSection, MontageToPlay);
+			}
+
+			/**
+			 * If a callback is set within this Tick, the notification of the previous montage interrupted will be called!
+			 * We need to consume a Tick to prevent the notification of the previous montage interrupted
+			 * from triggering on the current launched montage
+			 */
+			GetWorld()->GetTimerManager().SetTimerForNextTick([&]()
+			{
+				ACharacter* Character = AIOwner.IsValid() ? AIOwner->GetCharacter() : nullptr;
+				USkeletalMeshComponent* MeshComponent = Character ? Character->GetMesh() : nullptr;
+				UAnimInstance* AnimIns = MeshComponent ? MeshComponent->GetAnimInstance() : nullptr;
+				if (AnimIns)
+				{
+					if (TaskNodeEndPolicy == ETaskNodeEndPolicy::OnMontageBlendingOut)
+					{
+						AnimIns->OnMontageBlendingOut.AddUniqueDynamic(
+							this, &UBTT_PlayAnimMontage::OnMontageBlendingOut);
+					}
+					else if (TaskNodeEndPolicy == ETaskNodeEndPolicy::OnMontageEnded)
+					{
+						AnimIns->OnMontageEnded.AddUniqueDynamic(this, &UBTT_PlayAnimMontage::OnMontageEnded);
+					}
+				}
+			});
+		}
+	}
+
+	return bPlayedSuccessfully;
+}
+
+
+void UBTT_PlayAnimMontage::OnMontageEnded(UAnimMontage* InAnimMontage, bool bInterrupted)
+{
+	if (InAnimMontage != AnimMontage)
+	{
+		return;
+	}
+
+	FinishTaskNode();
+}
+
+void UBTT_PlayAnimMontage::OnMontageBlendingOut(UAnimMontage* InAnimMontage, bool bInterrupted)
+{
+	if (InAnimMontage != AnimMontage)
+	{
+		return;
+	}
+
+	FinishTaskNode();
+}
+
+void UBTT_PlayAnimMontage::FinishTaskNode()
+{
+	UBehaviorTreeComponent* OwnerComp = AIOwner.IsValid()? Cast<UBehaviorTreeComponent>(AIOwner->BrainComponent): nullptr;
+
+	ClearMontageDelegate();
+
+	if (OwnerComp)
 	{
 		FinishLatentTask(*OwnerComp, EBTNodeResult::Succeeded);
 	}
+}
 
-	if(PlayMontageCallbackProxy)
+void UBTT_PlayAnimMontage::ClearMontageDelegate()
+{
+	if (AIOwner.IsValid())
 	{
-		PlayMontageCallbackProxy->OnCompleted.RemoveAll(this);
-		PlayMontageCallbackProxy->OnInterrupted.RemoveAll(this);
+		ACharacter* Character = AIOwner->GetCharacter();
+		USkeletalMeshComponent* MeshComponent = Character ? Character->GetMesh() : nullptr;
+		UAnimInstance* AnimInstance = MeshComponent ? MeshComponent->GetAnimInstance() : nullptr;
+
+		if (AnimInstance)
+		{
+			AnimInstance->OnMontageEnded.RemoveAll(this);
+			AnimInstance->OnMontageBlendingOut.RemoveAll(this);
+		}
 	}
 }
