@@ -305,6 +305,8 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
     TArray<FGameplayTag> AbilityTagsRequiredToBeCached = {};
 	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate)
 	{
+	    if (!AbilitySpecHandle.IsValid()) continue;
+
 		bool bActivated = TryActivateAbility(AbilitySpecHandle);
 
 	    // check AbilityCache
