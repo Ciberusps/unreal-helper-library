@@ -39,7 +39,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bUseInputConfig = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
-    bool bUseAbilityInputCache = true;
+    bool bUseAbilityInputCache = false;
     // if enabled - caching works only in predefined user windows - ANS_AbilityInputCache_CacheWindow
     // if disabled - works always
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseAbilityInputCache"))
