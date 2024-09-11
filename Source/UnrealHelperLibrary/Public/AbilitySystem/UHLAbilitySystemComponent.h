@@ -7,6 +7,7 @@
 #include "Input/AbilityInputCache.h"
 #include "UHLAbilitySystemComponent.generated.h"
 
+class UUHLInputConfig;
 class UUHLGameplayAbility;
 /**
  *
@@ -39,6 +40,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bUseInputConfig = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
+    UUHLInputConfig* InputConfig;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
     bool bUseAbilityInputCache = false;
     // if enabled - caching works only in predefined user windows - ANS_AbilityInputCache_CacheWindow
     // if disabled - works always
@@ -55,12 +58,11 @@ public:
 	virtual void OnUnregister() override;
 
 /** Input Config **/
-    // TODO DA_InputConfig, UHLGameplayAbility
     void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
-	virtual void AbilityInputTagPressed(const FGameplayTag& InputTag);
-	virtual void AbilityInputTagReleased(const FGameplayTag& InputTag);
+	virtual void AbilityInputTagPressed(const FGameplayTag InputTag);
+	virtual void AbilityInputTagReleased(const FGameplayTag InputTag);
 /** Input Config **/
 
     UFUNCTION(BlueprintCallable)

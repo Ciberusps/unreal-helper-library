@@ -145,7 +145,38 @@ Features:
 
 ##### InputConfig (GAS abilities input binding)
 
-`bUseInputConfig`
+Binding InputActions to GameplayAbilities using tags, like in Lyra but enhanced and adopted for 3d action game.
+
+![image](https://github.com/user-attachments/assets/2c72400e-1122-40b2-aa73-4bfc1e212d0f)
+
+Setup:
+
+- turn on `bUseInputConfig` on `UHLAbilitySystemComponent`
+- create `InputConfig` - `DataAsset` nested from `UHLInputConfig`
+- abilities should nest from `UHLGameplayAbility` for `ActivationPolicy` work correctly
+- in `Project Settings -> Input -> Default Input Component Class` -> set `UHLInputComponent`
+- in your PlayerCharacter class add lines in `SetupPlayerInputComponent` for bind actions from `InputConfig`
+
+```c++
+void AUHLPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    UUHLInputComponent* UHLInputComponent = CastChecked<UUHLInputComponent>(PlayerInputComponent);
+    UUHLInputConfig* UHLInputConfig = AbilitySystemComponent->InputConfig;
+    TArray<uint32> BindHandles;
+    UHLInputComponent->BindAbilityActions(UHLInputConfig, AbilitySystemComponent, &UUHLAbilitySystemComponent::AbilityInputTagPressed, &UUHLAbilitySystemComponent::AbilityInputTagReleased, BindHandles);
+
+    if (UHLInputComponent)
+    {
+        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputMove);
+        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Completed, this, &AUHLPlayerCharacter::InputStopMove);
+
+        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_LookMouse.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputLook);
+        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_LookStick.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputLook);
+    }
+}
+```
 
 ##### AbilityInputCache
 
@@ -354,14 +385,6 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 #### > Other
 
 #### `GetHighestPoint`
-
-#### `InputSystem`
-
-Binding InputActions to tags like in Lyra but enhanced and adopted for 3d action game
-
-- abilities should nest from `UHLGameplayAbility` for "ActivationPolicy" work correctly
-- SetupPlayerInputComponent - bind all from input config, `BindAbilityActions`
-- `Project Settings -> Input -> Default Input Component Class` -> change on `UHLInputComponent`
 
 ### LoadingUtilLibrary
 

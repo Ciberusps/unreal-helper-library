@@ -184,7 +184,7 @@ void UUHLAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& 
 	}
 }
 
-void UUHLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
+void UUHLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag InputTag)
 {
 	if (InputTag.IsValid())
 	{
@@ -200,7 +200,7 @@ void UUHLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& Inpu
 	}
 }
 
-void UUHLAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+void UUHLAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag InputTag)
 {
 	if (InputTag.IsValid())
 	{
