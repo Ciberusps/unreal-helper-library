@@ -143,7 +143,7 @@ Features:
 - apply `InitialGameplayTags`
 - Lyra-like "InputConfig", GAS abilities input binding
 
-##### InputConfig (GAS abilities input binding)
+##### InputConfig (GAS abilities input binding) [optional]
 
 Binding InputActions to GameplayAbilities using tags, like in Lyra but enhanced and adopted for 3d action game.
 
@@ -155,9 +155,10 @@ Setup:
 - create `InputConfig` - `DataAsset` nested from `UHLInputConfig`
 - abilities should nest from `UHLGameplayAbility` for `ActivationPolicy` work correctly
 - in `Project Settings -> Input -> Default Input Component Class` -> set `UHLInputComponent`
-- in your PlayerCharacter class add lines in `SetupPlayerInputComponent` for bind actions from `InputConfig`
+- in your PlayerCharacter class add lines in `SetupPlayerInputComponent` for binding actions from `InputConfig`
 
 ```c++
+// Your PlayerCharacter class
 void AUHLPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -167,6 +168,7 @@ void AUHLPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
     TArray<uint32> BindHandles;
     UHLInputComponent->BindAbilityActions(UHLInputConfig, AbilitySystemComponent, &UUHLAbilitySystemComponent::AbilityInputTagPressed, &UUHLAbilitySystemComponent::AbilityInputTagReleased, BindHandles);
 
+    // optional
     if (UHLInputComponent)
     {
         UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputMove);
@@ -177,6 +179,49 @@ void AUHLPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
     }
 }
 ```
+
+- in your PlayerController class add
+
+```c++
+// Your PlayerController.cpp
+void AUHLPlayerController::OnPossess(APawn* InPawn)
+{
+    Super::OnPossess(InPawn);
+
+    CachedPlayerCharacter = Cast<AUHLPlayerCharacter>(InPawn);
+}
+
+void AUHLPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
+{
+    Super::PostProcessInput(DeltaTime, bGamePaused);
+
+    if (CachedPlayerCharacter.Get() == nullptr) return;
+
+    if (UUHLAbilitySystemComponent* ASC = CachedPlayerCharacter.Get()->GetUHLAbilitySystemComponent())
+    {
+        ASC->ProcessAbilityInput(DeltaTime, bGamePaused);
+    }
+}
+
+
+
+// Your PlayerController.h
+UCLASS()
+class UHL_API AUHLPlayerController : public APlayerController
+{
+  GENERATED_BODY()
+
+protected:
+    virtual void OnPossess(APawn* InPawn) override;
+    virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+
+private:
+    TWeakObjectPtr<AUHLPlayerCharacter> CachedPlayerCharacter;
+};
+```
+
+How to use:
+- every `UHLGameplayAbility`
 
 ##### AbilityInputCache
 
