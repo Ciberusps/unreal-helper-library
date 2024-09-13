@@ -11,6 +11,9 @@ namespace UHLGameplayTags
 	// AbilityInputCache
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_AbilityInputCache_Catching, "UHL.AbilityInputCache.Catching", "Opened for catching actions to AbilityInputCache");
 
+	// Debug Categories
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_DebugCategory_AbilitySystem_Default, "UHL.DebugCategory.AbilitySystem.Default", "");
+
 	// Errors
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Error, "Error");
 }

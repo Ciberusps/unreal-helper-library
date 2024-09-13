@@ -13,6 +13,9 @@ namespace UHLGameplayTags
     // AbilityInputCache
 	UNREALHELPERLIBRARY_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UHL_AbilityInputCache_Catching);
 
+    // Debug Categories
+	UNREALHELPERLIBRARY_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UHL_DebugCategory_AbilitySystem_Default);
+
 	// Errors
 	// UNREALHELPERLIBRARY_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Error);
 };
