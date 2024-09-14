@@ -6,6 +6,19 @@
 #include "Development/UHLDebugSubsystemSettings.h"
 #include "Kismet/GameplayStatics.h"
 
+bool UUHLDebugCategoryComponent::CanActivate_Implementation(UObject* ContextObject) const
+{
+    return true;
+}
+
+void UUHLDebugCategoryComponent::Activate_Implementation(UObject* ContextObject)
+{
+}
+
+void UUHLDebugCategoryComponent::Deactivate_Implementation(UObject* ContextObject)
+{
+}
+
 bool FUHLDebugCategory::TryActivate(UObject* ContextObj, APlayerController* PlayerController)
 {
     bool bResult = false;
@@ -34,8 +47,9 @@ bool FUHLDebugCategory::TryActivate(UObject* ContextObj, APlayerController* Play
         {
             Component = *FoundComponent;
         }
-        if (Component->Activate(ContextObj, PlayerController))
+        if (Component->CanActivate(ContextObj))
         {
+            Component->Activate(ContextObj);
             ComponentsActivated++;
         }
     }
@@ -80,7 +94,10 @@ void UUHLDebugSubsystem::SetUp()
 
     for (const TTuple<FGameplayTag, bool>& EnabledDebugCategory : DeveloperSettings->EnabledDebugCategories)
     {
-        EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
+        if (EnabledDebugCategory.Value == true)
+        {
+            EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
+        }
     };
 }
 
@@ -97,7 +114,7 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
 
     FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory DebugCategory)
     {
-        return DebugCategory.Tag == DebugCategoryTag;
+        return DebugCategory.Tags.HasAny(FGameplayTagContainer(DebugCategoryTag));
     });
     if (UHLDebugCategory != nullptr)
     {
