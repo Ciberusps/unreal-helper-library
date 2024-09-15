@@ -3,7 +3,8 @@
 
 #include "Development/UHLDebugSubsystemSettings.h"
 
-#include "Subsystems/UHLDebugSubsystem.h"
+#include "Subsystems/DebugSubsystem/UHLDebugCategory.h"
+#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
 FName UUHLDebugSubsystemSettings::GetCategoryName() const
 {
@@ -13,33 +14,97 @@ FName UUHLDebugSubsystemSettings::GetCategoryName() const
 void UUHLDebugSubsystemSettings::PostInitProperties()
 {
     Super::PostInitProperties();
-    UpdateEnabledDebugCategoriesList();
+    RecreateEnabledDebugCategoriesList();
 }
 
 void UUHLDebugSubsystemSettings::PreEditChange(FProperty* PropertyAboutToChange)
 {
-    if (PropertyAboutToChange->GetName() == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategories))
+    if (PropertyAboutToChange->GetName() == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategories)
+        || PropertyAboutToChange->GetName() == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategoriesNames))
     {
         LastEnabledDebugCategories = TMap(EnabledDebugCategories);
+        LastEnabledDebugCategoriesNames = TMap(EnabledDebugCategoriesNames);
     }
 
     Super::PreEditChange(PropertyAboutToChange);
 }
 
+void UUHLDebugSubsystemSettings::PreEditChange(class FEditPropertyChain& PropertyAboutToChange)
+{
+    // FName PropertyName = PropertyAboutToChange.GetActiveNode()->GetValue()->GetName();
+    //
+    // bool bNotEditingEnabledCategoriesKey = PropertyName != "EnabledDebugCategories_Key";
+    // if (bNotEditingEnabledCategoriesKey)
+    // {
+    //     Super::PostEditChangeChainProperty(PropertyChangedEvent);
+    // }
+    Super::PreEditChange(PropertyAboutToChange);
+}
+
+bool UUHLDebugSubsystemSettings::CanEditChange(const FProperty* InProperty) const
+{
+    // FName PropertyName = InProperty->Get;
+    // bool bNotEditingEnabledCategoriesKey = PropertyName != "EnabledDebugCategories_Key";
+    return Super::CanEditChange(InProperty);
+}
+
+bool UUHLDebugSubsystemSettings::CanEditChange(const FEditPropertyChain& PropertyChain) const
+{
+    return Super::CanEditChange(PropertyChain);
+}
+
 void UUHLDebugSubsystemSettings::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
     Super::PostEditChangeProperty(PropertyChangedEvent);
+}
 
-    if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategories)
-        && LastEnabledDebugCategories.Num() == EnabledDebugCategories.Num())
+void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+    FName PropertyName = PropertyChangedEvent.GetPropertyName();
+
+    bool bEditingEnabledCategoriesKey = PropertyName == "EnabledDebugCategories_Key";
+    if (bEditingEnabledCategoriesKey)
+    {
+        RecreateEnabledDebugCategoriesList();
+        return;
+    }
+
+    Super::PostEditChangeChainProperty(PropertyChangedEvent);
+
+    bool bEditingEnabledDebugCategories = PropertyName == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategories)
+        && LastEnabledDebugCategories.Num() == EnabledDebugCategories.Num();
+    bool bEditingEnabledDebugCategoriesNames = PropertyName == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategoriesNames)
+        && LastEnabledDebugCategoriesNames.Num() == EnabledDebugCategoriesNames.Num();
+
+
+    // disable other DebugCategories by "Blocks" tags
+    if (bEditingEnabledDebugCategories || bEditingEnabledDebugCategoriesNames)
     {
         FGameplayTag ChangedDebugCategoryTag = FGameplayTag::EmptyTag;
-        for (TTuple<FGameplayTag, bool> EnabledDebugCategory : EnabledDebugCategories)
+        if (!bDisplayShortNames)
         {
-            if (LastEnabledDebugCategories[EnabledDebugCategory.Key] != EnabledDebugCategory.Value
-                && EnabledDebugCategory.Value == true)
+			for (const TTuple<FGameplayTag, bool>& EnabledDebugCategory : EnabledDebugCategories)
+			{
+				if (LastEnabledDebugCategories[EnabledDebugCategory.Key] != EnabledDebugCategory.Value
+					&& EnabledDebugCategory.Value == true)
+				{
+					ChangedDebugCategoryTag = EnabledDebugCategory.Key;
+				}
+			}
+        }
+        else
+        {
+            for (const TTuple<FString, bool>& EnabledDebugCategory : EnabledDebugCategoriesNames)
             {
-                ChangedDebugCategoryTag = EnabledDebugCategory.Key;
+                if (LastEnabledDebugCategoriesNames[EnabledDebugCategory.Key] != EnabledDebugCategory.Value
+                    && EnabledDebugCategory.Value == true)
+                {
+                    FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
+					{
+						return DebugCategory.ShortName == EnabledDebugCategory.Key;
+					});
+                    ChangedDebugCategoryTag = UHLDebugCategory->Tags.First();
+                }
             }
         }
 
@@ -62,7 +127,29 @@ void UUHLDebugSubsystemSettings::PostEditChangeProperty(struct FPropertyChangedE
                         }
                     }
                 }
+                // UpdateEnabledDebugCategoriesList();
             }
+        }
+    }
+
+    if (PropertyName == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, DebugCategories)
+        || PropertyName == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, UHLDefaultDebugCategories)
+        || PropertyChangedEvent.PropertyChain.GetActiveMemberNode()->GetValue()->GetName() == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, DebugCategories))
+    {
+        RecreateEnabledDebugCategoriesList();
+    }
+}
+
+void UUHLDebugSubsystemSettings::RecreateEnabledDebugCategoriesList()
+{
+    TMap<FGameplayTag, bool> CopyOfEnabledDebugCategories = TMap(EnabledDebugCategories);
+    EnabledDebugCategories.Empty();
+    for (const FUHLDebugCategory& DebugCategory : DebugCategories)
+    {
+        for (FGameplayTag GameplayTag : DebugCategory.Tags.GetGameplayTagArray())
+        {
+            bool* KeyVal = CopyOfEnabledDebugCategories.Find(GameplayTag);
+            EnabledDebugCategories.Add(GameplayTag, KeyVal ? *KeyVal : false);
         }
     }
 }
@@ -85,6 +172,19 @@ void UUHLDebugSubsystemSettings::UpdateEnabledDebugCategoriesList()
                 }
                 EnabledDebugCategories.Add(GameplayTag, false);
             }
+        }
+    }
+
+    EnabledDebugCategoriesNames.Empty();
+    for (TTuple<FGameplayTag, bool> EnabledDebugCategory : EnabledDebugCategories)
+    {
+        FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
+        {
+            return DebugCategory.Tags.HasAny(FGameplayTagContainer(EnabledDebugCategory.Key));
+        });
+        if (UHLDebugCategory != nullptr)
+        {
+            EnabledDebugCategoriesNames.Add(UHLDebugCategory->ShortName, EnabledDebugCategory.Value);
         }
     }
 }

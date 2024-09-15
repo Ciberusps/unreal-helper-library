@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/UHLDebugSubsystem.h"
+#include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
 #include "DCC_Collisions.generated.h"
 
 /**
