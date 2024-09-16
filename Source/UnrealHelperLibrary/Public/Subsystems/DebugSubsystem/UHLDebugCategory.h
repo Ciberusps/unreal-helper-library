@@ -13,7 +13,7 @@ struct FUHLDebugCategory
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    // UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bActive = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString ShortName = "";

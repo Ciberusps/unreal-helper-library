@@ -9,6 +9,8 @@
 #include "UHLDebugSubsystem.generated.h"
 
 
+class UUHLAbilitySystemComponent;
+class UUHLDebugWidget;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUHLDebugCategoryChanged, FGameplayTag, DebugCategoryTag, bool, bEnabled);
 
 UCLASS()
@@ -33,14 +35,23 @@ public:
     UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
     void EnableDebugCategory(const FGameplayTag DebugCategoryTag, bool bEnable);
 
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
+    void ToggleAbilityInputDebug();
+
 private:
     bool bSetupped = false;
     TArray<FUHLDebugCategory> DebugCategories = {};
     // TMap<FGameplayTag, FUHLDebugCategory> EnabledDebugCategories;
     // TArray<FGameplayTag, FUHLDebugCategory> EnabledDebugCategoriesComponent = {};
 
-    APlayerController* GetPlayerController() const;
+    UPROPERTY()
+    TSubclassOf<UUHLDebugWidget> UHLDebugWidgetClass;
+    UPROPERTY()
+    UUHLDebugWidget* DebugWidgetInstance = nullptr;
 
-    // UFUNCTION()
-    // void OnDebugCategoryEnabledInternal(EDebugCategory DebugCategory, bool bEnabled);
+    APlayerController* GetPlayerController() const;
+    UUHLAbilitySystemComponent* GetPlayerAbilitySystemComponent() const;
+    UUHLDebugWidget* GetOrCreateUHLDebugWidget();
+    UFUNCTION()
+    void OnDebugCategoryChangedInternal(FGameplayTag DebugCategoryTag, bool bEnabled);
 };

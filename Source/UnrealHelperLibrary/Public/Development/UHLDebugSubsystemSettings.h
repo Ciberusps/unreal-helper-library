@@ -51,6 +51,9 @@ public:
     // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition")
     TArray<FUHLDebugCategory> UHLDefaultDebugCategories = {};
 
+    // TODO: choosing debug subsystem class??? user can extend debug subsystem with own things?
+    TSubclassOf<UUHLDebugSubsystem> UHLDebugSubsystemClass;
+
 protected:
     //~UDeveloperSettings interface
     virtual FName GetCategoryName() const override;
