@@ -21,7 +21,7 @@ public:
     // TODO add updating bool value from Blueprint by reference
     // UFUNCTION(BlueprintCallable, DisplayName="WaitDebugCategoryChange", meta=(WorldContext="WorldContext", BlueprintInternalUseOnly="true", AutoCreateRefTerm="bIsDebugEnabledValueRef", AdvancedDisplay="bIsDebugEnabledValueRef"))
     // static UAA_WaitDebugCategoryChange* WaitDebugCategoryChange(const UObject* WorldContext, FGameplayTag DebugCategoryTag, bool bCheckOnStart, const bool& bIsDebugEnabledValueRef);
-    UFUNCTION(BlueprintCallable, Category="UnrealHelperLibrary", meta=(WorldContext="WorldContext", BlueprintInternalUseOnly="true", DefaultToSelf="WaitDebugCategoryChange", Keywords = "UnrealHelperLibrary debug UHL debugCategory debugging"))
+    UFUNCTION(BlueprintCallable, Category="UnrealHelperLibrary", meta=(WorldContext="WorldContext", BlueprintInternalUseOnly="true", Keywords = "UnrealHelperLibrary debug UHL debugCategory debugging"))
     static UAA_WaitDebugCategoryChange* WaitDebugCategoryChange(const UObject* WorldContext, FGameplayTag DebugCategoryTag, bool bCheckOnStart = true);
 
     UPROPERTY(BlueprintAssignable)
