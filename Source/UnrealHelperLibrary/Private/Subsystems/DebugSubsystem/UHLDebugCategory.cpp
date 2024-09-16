@@ -45,6 +45,7 @@ void FUHLDebugCategory::TryDeactivate(UObject* ContextObj)
         UUHLDebugCategoryComponent* Component = GetOrCreateDebugCategoryComponent(ComponentClass, ContextObj);
         Component->Deactivate(ContextObj);
     }
+    bEnabled = false;
 }
 
 UUHLDebugCategoryComponent* FUHLDebugCategory::GetOrCreateDebugCategoryComponent(TSubclassOf<UUHLDebugCategoryComponent> ComponentClass, UObject* ContextObj)

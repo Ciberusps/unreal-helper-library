@@ -25,6 +25,7 @@ public:
     FOnUHLDebugCategoryChanged OnDebugCategoryChanged;
 
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+    virtual void Deinitialize() override;
 
     UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
     void SetUp();

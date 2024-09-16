@@ -21,11 +21,12 @@ class UNREALHELPERLIBRARY_API UUHLDebugCategoriesListWidget : public UUserWidget
 protected:
     virtual bool Initialize() override;
     virtual void NativeConstruct() override;
+    virtual void NativePreConstruct() override;
 
 private:
     UPROPERTY()
     UScrollBox* ScrollBox;
     TWeakObjectPtr<UUHLDebugSubsystem> UHLDebugSubsystem;
     UFUNCTION()
-    void OnMadeClick(UDebugCategoryButtonWidget* Button, FGameplayTag DebugCategoryGameplayTag);
+    void OnButtonClicked(UDebugCategoryButtonWidget* Button, FGameplayTag DebugCategoryGameplayTag);
 };

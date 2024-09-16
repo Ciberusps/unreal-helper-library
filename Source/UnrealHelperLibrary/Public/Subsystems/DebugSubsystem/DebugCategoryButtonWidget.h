@@ -32,9 +32,8 @@ public:
 
 protected:
     virtual bool Initialize() override;
-    virtual void NativeConstruct() override;
-    // TODO use EnabledDebugCategories
-    // virtual void NativePreConstruct() override;
+    virtual void NativePreConstruct() override;
+
 private:
 	UPROPERTY()
     UButton* Button;
@@ -46,8 +45,9 @@ private:
     UTextBlock* TextBlock;
     UPROPERTY()
     FUHLDebugCategory UHLDebugCategory;
-    TWeakObjectPtr<UUHLDebugSubsystem> UHLDebugSubsystem;
 
     UFUNCTION()
     void OnButtonClicked();
+    UFUNCTION()
+    void OnDebugCategoryChanged(FGameplayTag DebugCategoryTag_In, bool bEnabled_In);
 };

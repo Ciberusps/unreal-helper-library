@@ -10,16 +10,24 @@
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/TextBlock.h"
+#include "Development/UHLDebugSubsystemSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/DebugSubsystem/UHLDebugCategory.h"
-#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
+
 
 void UDebugCategoryButtonWidget::SetUp(const FUHLDebugCategory& UHLDebugCategory_In)
 {
     UHLDebugCategory = UHLDebugCategory_In;
     TextBlock->SetText(FText::FromString(UHLDebugCategory_In.ShortName));
     UpdateCheckboxState(UHLDebugCategory_In.bEnabled);
-    Button->SetBackgroundColor(UHLDebugCategory.Color.Desaturate(0.6f));
+    Button->SetBackgroundColor(UHLDebugCategory.Color);
+    Button->OnClicked.AddUniqueDynamic(this, &UDebugCategoryButtonWidget::OnButtonClicked);
+    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
+    if (GameInstance)
+    {
+        UUHLDebugSubsystem* UHLDebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSubsystem>();
+        UHLDebugSubsystem->OnDebugCategoryChanged.AddUniqueDynamic(this, &UDebugCategoryButtonWidget::OnDebugCategoryChanged);
+    }
 }
 
 void UDebugCategoryButtonWidget::UpdateCheckboxState(bool bEnabled_In)
@@ -32,7 +40,7 @@ bool UDebugCategoryButtonWidget::Initialize()
     bool bIsWidgetInitialized = Super::Initialize();
 
     // more correct way to avoid error. than in original post.
-    if(!HasAnyFlags(RF_ClassDefaultObject) )
+    if(!HasAnyFlags(RF_ClassDefaultObject))
     {
         // root have to be initialized in Initialize function, otherwise it will not work, donno exactly why.
         Button = WidgetTree->ConstructWidget<UButton>();
@@ -41,12 +49,9 @@ bool UDebugCategoryButtonWidget::Initialize()
     return bIsWidgetInitialized;
 }
 
-void UDebugCategoryButtonWidget::NativeConstruct()
+void UDebugCategoryButtonWidget::NativePreConstruct()
 {
     Super::NativeConstruct();
-
-    UHLDebugSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<UUHLDebugSubsystem>();
-    Button->OnClicked.AddUniqueDynamic(this, &UDebugCategoryButtonWidget::OnButtonClicked);
 
     HorizontalBox = WidgetTree->ConstructWidget<UHorizontalBox>();
     CheckBox = WidgetTree->ConstructWidget<UCheckBox>();
@@ -54,6 +59,20 @@ void UDebugCategoryButtonWidget::NativeConstruct()
 
     TextBlock->SetShadowOffset(FVector2D(1.0f, 1.0f));
     TextBlock->SetShadowColorAndOpacity(FColor::FromHex("#000000FF"));
+    TextBlock->SetVisibility(ESlateVisibility::HitTestInvisible);
+    CheckBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+    CheckBox->SetIsEnabled(false);
+    FCheckBoxStyle CheckBoxStyle = CheckBox->GetWidgetStyle();
+    CheckBoxStyle.CheckedImage.TintColor = FColor::Black;
+    CheckBoxStyle.ForegroundColor = FColor::White;
+    CheckBoxStyle.CheckedForeground = FColor::White;
+    CheckBoxStyle.HoveredForeground = FColor::White;
+    CheckBoxStyle.PressedForeground = FColor::White;
+    CheckBoxStyle.UndeterminedForeground = FColor::White;
+    CheckBoxStyle.CheckedHoveredForeground = FColor::White;
+    CheckBoxStyle.CheckedPressedForeground = FColor::White;
+    CheckBox->SetWidgetStyle(CheckBoxStyle);
+    HorizontalBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 
     UButtonSlot* HorizontalBoxButtonSlot = Cast<UButtonSlot>(Button->AddChild(HorizontalBox));
     UHorizontalBoxSlot* CheckboxHorizontalBoxSlot = Cast<UHorizontalBoxSlot>(HorizontalBox->AddChild(CheckBox));
@@ -70,5 +89,13 @@ void UDebugCategoryButtonWidget::OnButtonClicked()
     if (OnMadeClick.IsBound())
     {
         OnMadeClick.Broadcast(this, UHLDebugCategory.Tags.First());
+    }
+}
+
+void UDebugCategoryButtonWidget::OnDebugCategoryChanged(FGameplayTag DebugCategoryTag_In, bool bEnabled_In)
+{
+    if (UHLDebugCategory.Tags.First() == DebugCategoryTag_In)
+    {
+        UpdateCheckboxState(bEnabled_In);
     }
 }

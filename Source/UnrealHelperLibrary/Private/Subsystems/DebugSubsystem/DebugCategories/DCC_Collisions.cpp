@@ -13,6 +13,6 @@ void UDCC_Collisions::Activate_Implementation(UObject* ContextObject)
 
 void UDCC_Collisions::Deactivate_Implementation(UObject* ContextObject)
 {
-    UKismetSystemLibrary::ExecuteConsoleCommand(ContextObject->GetWorld(), FString("s"));
+    UKismetSystemLibrary::ExecuteConsoleCommand(ContextObject->GetWorld(), FString("ShowFlag.Collision 0"));
     Super::Deactivate_Implementation(ContextObject);
 }
