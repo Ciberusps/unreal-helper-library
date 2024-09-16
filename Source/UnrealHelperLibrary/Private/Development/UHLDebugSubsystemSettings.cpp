@@ -112,7 +112,7 @@ void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyCha
         {
             FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
             {
-                return DebugCategory.Tags.HasAny(FGameplayTagContainer(ChangedDebugCategoryTag));
+                return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(ChangedDebugCategoryTag));
             });
             if (UHLDebugCategory != nullptr)
             {
@@ -180,7 +180,7 @@ void UUHLDebugSubsystemSettings::UpdateEnabledDebugCategoriesList()
     {
         FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
         {
-            return DebugCategory.Tags.HasAny(FGameplayTagContainer(EnabledDebugCategory.Key));
+            return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(EnabledDebugCategory.Key));
         });
         if (UHLDebugCategory != nullptr)
         {

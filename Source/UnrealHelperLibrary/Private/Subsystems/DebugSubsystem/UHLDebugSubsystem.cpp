@@ -39,6 +39,23 @@ void UUHLDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     }
 }
 
+void UUHLDebugSubsystem::Deinitialize()
+{
+    for (FUHLDebugCategory& DebugCategory : DebugCategories)
+    {
+        // if (DebugCategory.bForceComponentsDeactivateOnEnd)
+        // {
+        //     DebugCategory.TryDeactivate(this);
+        // }
+        if (DebugCategory.bEnabled)
+        {
+            DebugCategory.TryDeactivate(this);
+        }
+    }
+
+    Super::Deinitialize();
+}
+
 void UUHLDebugSubsystem::SetUp()
 {
     if (bSetupped) return;
@@ -63,7 +80,7 @@ bool UUHLDebugSubsystem::IsCategoryEnabled(const FGameplayTag DebugCategoryTag) 
 {
     const FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
     {
-        return DebugCategory.Tags.HasAny(FGameplayTagContainer(DebugCategoryTag));
+        return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(DebugCategoryTag));
     });
     if (UHLDebugCategory != nullptr)
     {
@@ -78,18 +95,28 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
 
     FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
     {
-        return DebugCategory.Tags.HasAny(FGameplayTagContainer(DebugCategoryTag));
+        return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(DebugCategoryTag));
     });
     if (UHLDebugCategory != nullptr)
     {
         if (bEnable)
         {
+            // Disable blocked DebugCategories
+            for (const FUHLDebugCategory& DebugCategory : DebugCategories)
+            {
+                if (DebugCategory != *UHLDebugCategory
+                    && DebugCategory.Tags.HasAny(UHLDebugCategory->Blocks))
+                {
+                    EnableDebugCategory(DebugCategory.Tags.First(), false);
+                }
+            }
+
             bActivated = UHLDebugCategory->TryActivate(this);
         }
         else
         {
             if (!bIsSetuping
-                || (bIsSetuping && UHLDebugCategory->bForceDeactivateOnGameStart))
+                || (bIsSetuping && UHLDebugCategory->bForceComponentsDeactivateOnEnd))
             {
                 UHLDebugCategory->TryDeactivate(this);
             }

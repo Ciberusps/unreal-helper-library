@@ -35,8 +35,9 @@ struct FUHLDebugCategory
     UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay)
     FLinearColor Color = FLinearColor::MakeRandomColor();
     // for some specific categories like "Collisions" that keeps activated between sessions
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bForceDeactivateOnGameStart = false;
+    // TODO probably all activated debug categories should be deactivated on end?
+    // UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bForceComponentsDeactivateOnEnd = false;
 
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
     // bool bPriority = false;
@@ -45,13 +46,12 @@ struct FUHLDebugCategory
 
     bool bEnabled = false;
 
-    // TODO OnActivate - deactivate blocked debug categories
     bool TryActivate(UObject* ContextObj);
     void TryDeactivate(UObject* ContextObj);
 
     bool operator==(const FUHLDebugCategory& Other) const
     {
-        return ShortName == Other.ShortName || Tags.HasAnyExact(Other.Tags);
+        return ShortName == Other.ShortName && Tags == Other.Tags;
     }
 
 private:
