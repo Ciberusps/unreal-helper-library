@@ -24,13 +24,13 @@ public:
 
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
     void SetUp();
     // TODO filter gameplayTags, allow using only values from DebugCategories `meta=(Categories="")`
     // probably "Godreaper.DebugCategories." required, or "ProjectName.DebugCategories"...
-    UFUNCTION(Exec, BlueprintCallable)
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
     bool IsCategoryEnabled(const FGameplayTag DebugCategoryTag) const;
-    UFUNCTION(Exec, BlueprintCallable)
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
     void EnableDebugCategory(const FGameplayTag DebugCategoryTag, bool bEnable);
 
 private:
