@@ -56,6 +56,7 @@ void UUHLDebugSubsystem::SetUp()
             EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
         }
     };
+    bIsSetuping = false;
 }
 
 bool UUHLDebugSubsystem::IsCategoryEnabled(const FGameplayTag DebugCategoryTag) const
@@ -87,14 +88,23 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
         }
         else
         {
-            // TODO deactivate
+            if (!bIsSetuping
+                || (bIsSetuping && UHLDebugCategory->bForceDeactivateOnGameStart))
+            {
+                UHLDebugCategory->TryDeactivate(this);
+            }
+        }
+
+        for (FGameplayTag GameplayTag : UHLDebugCategory->Tags.GetGameplayTagArray())
+        {
+            OnDebugCategoryChanged.Broadcast(GameplayTag, bActivated);
         }
     }
+}
 
-    for (FGameplayTag GameplayTag : UHLDebugCategory->Tags.GetGameplayTagArray())
-    {
-        OnDebugCategoryChanged.Broadcast(GameplayTag, bActivated);
-    }
+void UUHLDebugSubsystem::ToggleDebugCategory(const FGameplayTag DebugCategoryTag)
+{
+    EnableDebugCategory(DebugCategoryTag, !IsCategoryEnabled(DebugCategoryTag));
 }
 
 void UUHLDebugSubsystem::ToggleAbilityInputDebug()

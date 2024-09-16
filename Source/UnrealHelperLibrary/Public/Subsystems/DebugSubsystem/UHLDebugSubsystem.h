@@ -34,12 +34,17 @@ public:
     bool IsCategoryEnabled(const FGameplayTag DebugCategoryTag) const;
     UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
     void EnableDebugCategory(const FGameplayTag DebugCategoryTag, bool bEnable);
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
+    void ToggleDebugCategory(const FGameplayTag DebugCategoryTag);
 
     UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
     void ToggleAbilityInputDebug();
 
+    const TArray<FUHLDebugCategory>& GetDebugCategories() const { return DebugCategories; }
+
 private:
     bool bSetupped = false;
+    bool bIsSetuping = true;
     TArray<FUHLDebugCategory> DebugCategories = {};
     // TMap<FGameplayTag, FUHLDebugCategory> EnabledDebugCategories;
     // TArray<FGameplayTag, FUHLDebugCategory> EnabledDebugCategoriesComponent = {};

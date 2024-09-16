@@ -38,6 +38,13 @@ bool FUHLDebugCategory::TryActivate(UObject* ContextObj)
 
 void FUHLDebugCategory::TryDeactivate(UObject* ContextObj)
 {
+    for (TSubclassOf<UUHLDebugCategoryComponent> ComponentClass : Components)
+    {
+        if (!ComponentClass) continue;
+
+        UUHLDebugCategoryComponent* Component = GetOrCreateDebugCategoryComponent(ComponentClass, ContextObj);
+        Component->Deactivate(ContextObj);
+    }
 }
 
 UUHLDebugCategoryComponent* FUHLDebugCategory::GetOrCreateDebugCategoryComponent(TSubclassOf<UUHLDebugCategoryComponent> ComponentClass, UObject* ContextObj)
