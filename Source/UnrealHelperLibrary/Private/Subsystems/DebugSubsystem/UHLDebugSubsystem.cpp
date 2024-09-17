@@ -27,6 +27,7 @@ void UUHLDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
     DebugCategories = DeveloperSettings->DebugCategories;
 
+    SetUp();
     // TODO on actors initiallized enabled debug categories
     // or give opportunity to make it in PlayerController
     if (DeveloperSettings->bEnableDebugCategoriesOnStart)
@@ -44,23 +45,24 @@ void UUHLDebugSubsystem::Deinitialize()
     for (FUHLDebugCategory& DebugCategory : DebugCategories)
     {
         // if (DebugCategory.bForceComponentsDeactivateOnEnd)
-        // {
-        //     DebugCategory.TryDeactivate(this);
-        // }
         if (DebugCategory.bEnabled)
         {
             DebugCategory.TryDeactivate(this);
         }
     }
-
     Super::Deinitialize();
+}
+
+void UUHLDebugSubsystem::BeginDestroy()
+{
+    Super::BeginDestroy();
 }
 
 void UUHLDebugSubsystem::SetUp()
 {
     if (bSetupped) return;
-
     bSetupped = true;
+
     const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
     DebugCategories = DeveloperSettings->DebugCategories;
 
@@ -68,7 +70,31 @@ void UUHLDebugSubsystem::SetUp()
 
     for (const TTuple<FGameplayTag, bool>& EnabledDebugCategory : DeveloperSettings->EnabledDebugCategories)
     {
-        if (EnabledDebugCategory.Value == true)
+        const FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
+		{
+			return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(EnabledDebugCategory.Key));
+		});
+        if (EnabledDebugCategory.Value == true && UHLDebugCategory != nullptr && !UHLDebugCategory->bRequiresPlayerControllerToEnable)
+        {
+            EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
+        }
+    };
+}
+
+void UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController()
+{
+    if (bSetUpCategoriesThatRequiresPlayerController) return;
+    bSetUpCategoriesThatRequiresPlayerController = true;
+
+    const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
+
+    for (const TTuple<FGameplayTag, bool>& EnabledDebugCategory : DeveloperSettings->EnabledDebugCategories)
+    {
+        const FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
+        {
+            return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(EnabledDebugCategory.Key));
+        });
+        if (EnabledDebugCategory.Value == true && UHLDebugCategory != nullptr && UHLDebugCategory->bRequiresPlayerControllerToEnable)
         {
             EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
         }

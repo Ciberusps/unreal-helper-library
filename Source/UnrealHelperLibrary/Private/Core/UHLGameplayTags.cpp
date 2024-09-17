@@ -12,7 +12,7 @@ namespace UHLGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_AbilityInputCache_Catching, "UHL.AbilityInputCache.Catching", "Opened for catching actions to AbilityInputCache");
 
 	// Debug Categories
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_DebugCategory_AbilitySystem_Default, "UHL.DebugCategory.AbilitySystem.Default", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_DebugCategory_AbilitySystem, "UHL.DebugCategory.AbilitySystem", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_DebugCategory_AbilitySystem_Attributes, "UHL.DebugCategory.AbilitySystem.Attributes", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_DebugCategory_AbilitySystem_Effects, "UHL.DebugCategory.AbilitySystem.Effects", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_UHL_DebugCategory_AbilitySystem_Abilities, "UHL.DebugCategory.AbilitySystem.Abilities", "");

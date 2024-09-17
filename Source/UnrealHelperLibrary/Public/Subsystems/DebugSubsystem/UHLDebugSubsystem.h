@@ -26,9 +26,15 @@ public:
 
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
+    virtual void BeginDestroy() override;
 
+    // should be called as soon as possible - better on GameInstance.Init
     UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
     void SetUp();
+    // should be called when player controller available
+    UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
+    void SetUpCategoriesThatRequiresPlayerController();
+
     // TODO filter gameplayTags, allow using only values from DebugCategories `meta=(Categories="")`
     // probably "Godreaper.DebugCategories." required, or "ProjectName.DebugCategories"...
     UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
@@ -38,14 +44,14 @@ public:
     UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
     void ToggleDebugCategory(const FGameplayTag DebugCategoryTag);
 
-    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
-    void ToggleAbilityInputDebug();
-
     const TArray<FUHLDebugCategory>& GetDebugCategories() const { return DebugCategories; }
 
 private:
     bool bSetupped = false;
+    bool bSetUpCategoriesThatRequiresPlayerController = false;
     bool bIsSetuping = true;
+
+    UPROPERTY()
     TArray<FUHLDebugCategory> DebugCategories = {};
     // TMap<FGameplayTag, FUHLDebugCategory> EnabledDebugCategories;
     // TArray<FGameplayTag, FUHLDebugCategory> EnabledDebugCategoriesComponent = {};
@@ -58,6 +64,8 @@ private:
     APlayerController* GetPlayerController() const;
     UUHLAbilitySystemComponent* GetPlayerAbilitySystemComponent() const;
     UUHLDebugWidget* GetOrCreateUHLDebugWidget();
+    UFUNCTION()
+    void ToggleAbilityInputDebug();
     UFUNCTION()
     void OnDebugCategoryChangedInternal(FGameplayTag DebugCategoryTag, bool bEnabled);
 };
