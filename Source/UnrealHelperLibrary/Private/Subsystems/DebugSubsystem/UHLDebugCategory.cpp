@@ -38,12 +38,12 @@ bool FUHLDebugCategory::TryActivate(UObject* ContextObj)
 
 void FUHLDebugCategory::TryDeactivate(UObject* ContextObj)
 {
-    for (TSubclassOf<UUHLDebugCategoryComponent> ComponentClass : Components)
+    for (UUHLDebugCategoryComponent* InstancedComponent : InstancedComponents)
     {
-        if (!ComponentClass) continue;
-
-        UUHLDebugCategoryComponent* Component = GetOrCreateDebugCategoryComponent(ComponentClass, ContextObj);
-        Component->Deactivate(ContextObj);
+        if (InstancedComponent)
+        {
+            InstancedComponent->Deactivate(ContextObj);
+        }
     }
     bEnabled = false;
 }
@@ -51,10 +51,7 @@ void FUHLDebugCategory::TryDeactivate(UObject* ContextObj)
 UUHLDebugCategoryComponent* FUHLDebugCategory::GetOrCreateDebugCategoryComponent(TSubclassOf<UUHLDebugCategoryComponent> ComponentClass, UObject* ContextObj)
 {
     UUHLDebugCategoryComponent* Component = nullptr;
-    UUHLDebugCategoryComponent** FoundComponent = InstancedComponents.FindByPredicate([=](UUHLDebugCategoryComponent* DebugCategoryComponent)
-        {
-            return DebugCategoryComponent->GetClass() == ComponentClass;
-        });
+    UUHLDebugCategoryComponent** FoundComponent = GetDebugCategoryComponent(ComponentClass, ContextObj);
     if (!FoundComponent)
     {
         Component = NewObject<UUHLDebugCategoryComponent>(ContextObj, ComponentClass);
@@ -65,4 +62,12 @@ UUHLDebugCategoryComponent* FUHLDebugCategory::GetOrCreateDebugCategoryComponent
         Component = *FoundComponent;
     }
     return Component;
+}
+
+UUHLDebugCategoryComponent** FUHLDebugCategory::GetDebugCategoryComponent(TSubclassOf<UUHLDebugCategoryComponent> ComponentClass, UObject* ContextObj)
+{
+    return InstancedComponents.FindByPredicate([=](UUHLDebugCategoryComponent* DebugCategoryComponent)
+        {
+            return DebugCategoryComponent->GetClass() == ComponentClass;
+        });
 }

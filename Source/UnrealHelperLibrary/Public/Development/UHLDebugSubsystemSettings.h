@@ -54,6 +54,10 @@ public:
     // TODO: choosing debug subsystem class??? user can extend debug subsystem with own things?
     TSubclassOf<UUHLDebugSubsystem> UHLDebugSubsystemClass;
 
+    // Called if no debug categories found
+    UFUNCTION(BlueprintCallable, CallInEditor)
+    void AddOrUpdateDefualtUHLDebugCategories();
+
 protected:
     //~UDeveloperSettings interface
     virtual FName GetCategoryName() const override;

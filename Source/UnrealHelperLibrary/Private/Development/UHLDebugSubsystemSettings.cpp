@@ -3,8 +3,62 @@
 
 #include "Development/UHLDebugSubsystemSettings.h"
 
+#include "Core/UHLGameplayTags.h"
 #include "Subsystems/DebugSubsystem/UHLDebugCategory.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
+#include "Subsystems/DebugSubsystem/DebugCategories/DCC_AbilitySystem_Abilities.h"
+#include "Subsystems/DebugSubsystem/DebugCategories/DCC_AbilitySystem_Attributes.h"
+#include "Subsystems/DebugSubsystem/DebugCategories/DCC_AbilitySystem_Effects.h"
+#include "Subsystems/DebugSubsystem/DebugCategories/DCC_InputSystem_EnhancedInput.h"
+
+
+void UUHLDebugSubsystemSettings::AddOrUpdateDefualtUHLDebugCategories()
+{
+    TArray<FUHLDebugCategory> DEFAULT_UHL_DEBUG_CATEGORIES = {};
+
+    FUHLDebugCategory AbilitySystemAttributesDebugCategory = {};
+    AbilitySystemAttributesDebugCategory.ShortName = "AbilitySystem Attributes";
+    AbilitySystemAttributesDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem_Attributes };
+    AbilitySystemAttributesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
+    AbilitySystemAttributesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem);
+    AbilitySystemAttributesDebugCategory.Components = { UDCC_AbilitySystem_Attributes::StaticClass() };
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAttributesDebugCategory);
+
+    FUHLDebugCategory AbilitySystemEffectsDebugCategory = {};
+    AbilitySystemEffectsDebugCategory.ShortName = "AbilitySystem Effects";
+    AbilitySystemEffectsDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem_Effects };
+    AbilitySystemEffectsDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
+    AbilitySystemEffectsDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem);
+    AbilitySystemEffectsDebugCategory.Components = { UDCC_AbilitySystem_Effects::StaticClass() };
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemEffectsDebugCategory);
+
+    FUHLDebugCategory AbilitySystemAbilitiesDebugCategory = {};
+    AbilitySystemAbilitiesDebugCategory.ShortName = "AbilitySystem Abilities";
+    AbilitySystemAbilitiesDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem_Abilities };
+    AbilitySystemAbilitiesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
+    AbilitySystemAbilitiesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem);
+    AbilitySystemAbilitiesDebugCategory.Components = { UDCC_AbilitySystem_Abilities::StaticClass() };
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAbilitiesDebugCategory);
+
+    FUHLDebugCategory EnhancedInputSystemDebugCategory = {};
+    EnhancedInputSystemDebugCategory.ShortName = "EnhancedInputSystem";
+    EnhancedInputSystemDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem };
+    EnhancedInputSystemDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
+    EnhancedInputSystemDebugCategory.Components = { UDCC_InputSystem_EnhancedInput::StaticClass() };
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAbilitiesDebugCategory);
+
+    FUHLDebugCategory AbilityInputCacheDebugCategory = {};
+    EnhancedInputSystemDebugCategory.ShortName = "AbilityInputCache";
+    EnhancedInputSystemDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem };
+    EnhancedInputSystemDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
+    EnhancedInputSystemDebugCategory.Components = { UDCC_InputSystem_EnhancedInput::StaticClass() };
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAbilitiesDebugCategory);
+
+    for (const FUHLDebugCategory& DebugCategory : DEFAULT_UHL_DEBUG_CATEGORIES)
+    {
+        DebugCategories.Add(DebugCategory);
+    }
+}
 
 FName UUHLDebugSubsystemSettings::GetCategoryName() const
 {
@@ -14,6 +68,10 @@ FName UUHLDebugSubsystemSettings::GetCategoryName() const
 void UUHLDebugSubsystemSettings::PostInitProperties()
 {
     Super::PostInitProperties();
+    if (DebugCategories.IsEmpty())
+    {
+        AddOrUpdateDefualtUHLDebugCategories();
+    }
     RecreateEnabledDebugCategoriesList();
 }
 
