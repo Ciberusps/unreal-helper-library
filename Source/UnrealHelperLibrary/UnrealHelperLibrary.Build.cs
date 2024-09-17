@@ -28,6 +28,7 @@ public class UnrealHelperLibrary : ModuleRules
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
 				"GameplayAbilities",
+				"GameplayTags",
 				"GameplayTasks",
 				"AIModule",
 				"EnhancedInput",
@@ -44,7 +45,6 @@ public class UnrealHelperLibrary : ModuleRules
 				"SlateCore",
 				"UMG",
 				"AnimGraphRuntime",
-				"GameplayTags",
 				"DeveloperSettings",
 				// ... add private dependencies that you statically link with here ...
 			}
