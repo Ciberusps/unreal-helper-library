@@ -65,6 +65,7 @@ FName UUHLDebugSubsystemSettings::GetCategoryName() const
     return FApp::GetProjectName();
 }
 
+#if WITH_EDITOR
 void UUHLDebugSubsystemSettings::PostInitProperties()
 {
     Super::PostInitProperties();
@@ -197,6 +198,7 @@ void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyCha
         RecreateEnabledDebugCategoriesList();
     }
 }
+#endif
 
 void UUHLDebugSubsystemSettings::RecreateEnabledDebugCategoriesList()
 {

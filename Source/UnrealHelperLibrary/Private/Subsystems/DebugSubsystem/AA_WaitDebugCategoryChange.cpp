@@ -5,8 +5,6 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
-#include "Engine/World.h"
-#include "Editor/EditorEngine.h"
 
 UAA_WaitDebugCategoryChange* UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(const UObject* WorldContext, FGameplayTag DebugCategoryTag, bool bCheckOnStart)
 {

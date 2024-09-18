@@ -63,6 +63,7 @@ protected:
     virtual FName GetCategoryName() const override;
     //~End of UDeveloperSettings interface
 
+#if WITH_EDITOR
     virtual void PostInitProperties() override;
     virtual void PreEditChange(FProperty* PropertyAboutToChange) override;
     virtual void PreEditChange(class FEditPropertyChain& PropertyAboutToChange) override;
@@ -70,6 +71,7 @@ protected:
     virtual bool CanEditChange(const FEditPropertyChain& PropertyChain) const override;
     virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
     virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
+#endif
 
 private:
     TMap<FGameplayTag, bool> LastEnabledDebugCategories;
