@@ -73,7 +73,7 @@ float UBTD_InRange::GetCurrentDistance(const UBehaviorTreeComponent& OwnerComp, 
 
 	// TODO cache TargetCharacter when possible (on BBValue change?)
     ACharacter* TargetCharacter = Cast<ACharacter>(TargetActor);
-	if (IsValid(TargetActor) && bIncludeTargetCapsuleRadius)
+	if (IsValid(TargetCharacter) && bIncludeTargetCapsuleRadius)
 	{
 		CurrentDistance -= TargetCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
 	}
