@@ -21,7 +21,18 @@ public:
 
 	/** Move to the specified location, using the vector curve (range 0 - 1) if specified, otherwise the float curve (range 0 - 1) or fallback to linear interpolation */
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static UAT_InterpolateToPosition* InterpolateToPosition(UGameplayAbility* OwningAbility, FName TaskInstanceName, FVector Location, FRotator Rotation, float Duration, UCurveFloat* OptionalInterpolationCurve, UCurveVector* OptionalVectorInterpolationCurve, AActor* OptionalActorToInterpolate);
+	static UAT_InterpolateToPosition* InterpolateToPosition(
+	    UGameplayAbility* OwningAbility,
+	    FName TaskInstanceName,
+	    FVector Location,
+	    FRotator Rotation,
+	    float Duration,
+	    UCurveFloat* OptionalInterpolationCurve,
+	    UCurveVector* OptionalVectorInterpolationCurve,
+	    AActor* OptionalActorToInterpolate,
+	    const bool bIsIgnoreHits = true,
+	    const float DistanceToHit = 0.f
+	);
 
 	UPROPERTY(BlueprintAssignable)
 	FInterpolateToPositionSimpleDelegate OnTargetLocationReached;
@@ -58,4 +69,14 @@ private:
 	TObjectPtr<UCurveVector> LerpCurveVector;
     UPROPERTY(Replicated)
     TObjectPtr<AActor> ActorToInterpolate = nullptr;
+
+    static bool CheckHit(
+        const UWorld* World,
+        const FVector& Start,
+        const FVector& End,
+        const TArray<AActor*>& ActorsToIgnore,
+        FHitResult& OutHit
+    );
+    static FVector GetCurrentEndLocation(const FVector& Start, const FVector& End, const float DistanceToHit = 0.f);
+    static float GetCurrentDuration(const float Duration, const FVector& Start, const FVector& End, const FVector& CurrentEnd);
 };
