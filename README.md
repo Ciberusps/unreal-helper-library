@@ -105,7 +105,7 @@ UHL consists of 3 modules:
 >     - [GetHighestPoint](#gethighestpoint)
 >     - [WIP InputSystem](#InputSystem)
 > - [Subsystems](#Subsystems)
->   -
+>   - [DebugSubsystem](#debugsubsystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
 >   - ApplyDefaultPriorityLoading
 >   - ApplyStreamingPriorityLoading
