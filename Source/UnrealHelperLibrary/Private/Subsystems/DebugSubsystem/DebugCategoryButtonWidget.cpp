@@ -53,9 +53,12 @@ void UDebugCategoryButtonWidget::NativePreConstruct()
 {
     Super::NativeConstruct();
 
+    if (!WidgetTree) return;
+
     HorizontalBox = WidgetTree->ConstructWidget<UHorizontalBox>();
     CheckBox = WidgetTree->ConstructWidget<UCheckBox>();
     TextBlock = WidgetTree->ConstructWidget<UTextBlock>();
+    if (!HorizontalBox || !CheckBox || !TextBlock) return;
 
     TextBlock->SetShadowOffset(FVector2D(1.0f, 1.0f));
     TextBlock->SetShadowColorAndOpacity(FColor::FromHex("#000000FF"));
@@ -77,6 +80,7 @@ void UDebugCategoryButtonWidget::NativePreConstruct()
     UButtonSlot* HorizontalBoxButtonSlot = Cast<UButtonSlot>(Button->AddChild(HorizontalBox));
     UHorizontalBoxSlot* CheckboxHorizontalBoxSlot = Cast<UHorizontalBoxSlot>(HorizontalBox->AddChild(CheckBox));
     UHorizontalBoxSlot* TextBlockHorizontalBoxSlot = Cast<UHorizontalBoxSlot>(HorizontalBox->AddChild(TextBlock));
+    if (!HorizontalBoxButtonSlot || !CheckboxHorizontalBoxSlot || !TextBlockHorizontalBoxSlot) return;
 
     HorizontalBoxButtonSlot->SetHorizontalAlignment(HAlign_Left);
     CheckboxHorizontalBoxSlot->SetPadding(FMargin(0, 0, 10, 0));
