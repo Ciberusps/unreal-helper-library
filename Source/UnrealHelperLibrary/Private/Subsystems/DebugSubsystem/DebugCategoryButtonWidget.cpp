@@ -18,8 +18,8 @@
 void UDebugCategoryButtonWidget::SetUp(const FUHLDebugCategory& UHLDebugCategory_In)
 {
     UHLDebugCategory = UHLDebugCategory_In;
-    TextBlock->SetText(FText::FromString(UHLDebugCategory_In.ShortName));
-    UpdateCheckboxState(UHLDebugCategory_In.bEnabled);
+    TextBlock->SetText(FText::FromString(UHLDebugCategory_In.Name));
+    UpdateCheckboxState(UHLDebugCategory_In.GetIsEnabled());
     Button->SetBackgroundColor(UHLDebugCategory.Color);
     Button->OnClicked.AddUniqueDynamic(this, &UDebugCategoryButtonWidget::OnButtonClicked);
     UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetWorld());

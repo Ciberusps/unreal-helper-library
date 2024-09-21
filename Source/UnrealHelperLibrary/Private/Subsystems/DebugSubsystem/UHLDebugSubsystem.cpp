@@ -27,11 +27,11 @@ void UUHLDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
     DebugCategories = DeveloperSettings->DebugCategories;
 
-    SetUp();
     // TODO on actors initiallized enabled debug categories
     // or give opportunity to make it in PlayerController
     if (DeveloperSettings->bEnableDebugCategoriesOnStart)
     {
+		SetUp();
         // TODO:
         // GetOuter()->GetWorld()->OnWorldBeginPlay.AddWeakLambda([=]()
         // {
@@ -45,9 +45,9 @@ void UUHLDebugSubsystem::Deinitialize()
     for (FUHLDebugCategory& DebugCategory : DebugCategories)
     {
         // if (DebugCategory.bForceComponentsDeactivateOnEnd)
-        if (DebugCategory.bEnabled)
+        if (DebugCategory.GetIsEnabled())
         {
-            DebugCategory.TryDeactivate(this);
+            DebugCategory.TryDisable(this);
         }
     }
     Super::Deinitialize();
@@ -110,7 +110,7 @@ bool UUHLDebugSubsystem::IsCategoryEnabled(const FGameplayTag DebugCategoryTag) 
     });
     if (UHLDebugCategory != nullptr)
     {
-        return UHLDebugCategory->bEnabled;
+        return UHLDebugCategory->GetIsEnabled();
     }
     return false;
 }
@@ -123,35 +123,36 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
     {
         return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(DebugCategoryTag));
     });
-    if (UHLDebugCategory != nullptr)
+    if (UHLDebugCategory == nullptr) return;
+    if (UHLDebugCategory->bRequiresPlayerControllerToEnable && !bSetUpCategoriesThatRequiresPlayerController) return;
+
+    if (bEnable)
     {
-        if (bEnable)
+        // Disable blocked DebugCategories
+        for (const FUHLDebugCategory& DebugCategory : DebugCategories)
         {
-            // Disable blocked DebugCategories
-            for (const FUHLDebugCategory& DebugCategory : DebugCategories)
+            if (DebugCategory != *UHLDebugCategory
+                && DebugCategory.Tags.HasAny(UHLDebugCategory->Blocks))
             {
-                if (DebugCategory != *UHLDebugCategory
-                    && DebugCategory.Tags.HasAny(UHLDebugCategory->Blocks))
-                {
-                    EnableDebugCategory(DebugCategory.Tags.First(), false);
-                }
-            }
-
-            bActivated = UHLDebugCategory->TryActivate(this);
-        }
-        else
-        {
-            if (!bIsSetuping
-                || (bIsSetuping && UHLDebugCategory->bForceComponentsDeactivateOnEnd))
-            {
-                UHLDebugCategory->TryDeactivate(this);
+                EnableDebugCategory(DebugCategory.Tags.First(), false);
             }
         }
 
-        for (FGameplayTag GameplayTag : UHLDebugCategory->Tags.GetGameplayTagArray())
+        bActivated = UHLDebugCategory->TryEnable(this);
+    }
+    else
+    {
+        if (!bIsSetuping)
+        // TODO remove
+            // || (bIsSetuping && UHLDebugCategory->bForceComponentsDeactivateOnEnd))
         {
-            OnDebugCategoryChanged.Broadcast(GameplayTag, bActivated);
+            UHLDebugCategory->TryDisable(this);
         }
+    }
+
+    for (FGameplayTag GameplayTag : UHLDebugCategory->Tags.GetGameplayTagArray())
+    {
+        OnDebugCategoryChanged.Broadcast(GameplayTag, bActivated);
     }
 }
 

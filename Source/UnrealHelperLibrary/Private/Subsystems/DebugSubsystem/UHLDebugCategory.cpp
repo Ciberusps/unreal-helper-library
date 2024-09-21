@@ -6,7 +6,7 @@
 #include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
 
 
-bool FUHLDebugCategory::TryActivate(UObject* ContextObj)
+bool FUHLDebugCategory::TryEnable(UObject* ContextObj)
 {
     bool bResult = false;
 
@@ -32,11 +32,11 @@ bool FUHLDebugCategory::TryActivate(UObject* ContextObj)
         bResult = true;
     }
 
-    bEnabled = true;
+    bIsEnabled = true;
     return bResult;
 }
 
-void FUHLDebugCategory::TryDeactivate(UObject* ContextObj)
+void FUHLDebugCategory::TryDisable(UObject* ContextObj)
 {
     for (UUHLDebugCategoryComponent* InstancedComponent : InstancedComponents)
     {
@@ -45,7 +45,7 @@ void FUHLDebugCategory::TryDeactivate(UObject* ContextObj)
             InstancedComponent->Deactivate(ContextObj);
         }
     }
-    bEnabled = false;
+    bIsEnabled = false;
 }
 
 UUHLDebugCategoryComponent* FUHLDebugCategory::GetOrCreateDebugCategoryComponent(TSubclassOf<UUHLDebugCategoryComponent> ComponentClass, UObject* ContextObj)

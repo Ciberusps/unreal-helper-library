@@ -21,7 +21,6 @@ class UNREALHELPERLIBRARY_API UUHLDebugSubsystem : public UGameInstanceSubsystem
 public:
     UUHLDebugSubsystem();
 
-    // UPROPERTY(BlueprintAssignable)
     FOnUHLDebugCategoryChanged OnDebugCategoryChanged;
 
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -53,9 +52,6 @@ private:
 
     UPROPERTY()
     TArray<FUHLDebugCategory> DebugCategories = {};
-    // TMap<FGameplayTag, FUHLDebugCategory> EnabledDebugCategories;
-    // TArray<FGameplayTag, FUHLDebugCategory> EnabledDebugCategoriesComponent = {};
-
     UPROPERTY()
     TSubclassOf<UUHLDebugWidget> UHLDebugWidgetClass;
     UPROPERTY()

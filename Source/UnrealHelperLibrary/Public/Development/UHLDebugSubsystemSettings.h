@@ -33,10 +33,13 @@ public:
     // UPROPERTY(config, EditAnywhere, Category="DebugCategories", meta=(FullyExpand=true, ForceInlineRow, EditCondition="bDisplayShortNames", EditConditionHides))
     TMap<FString, bool> EnabledDebugCategoriesNames = {};
 
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition", meta=(FullyExpand=true))
+    // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(FullyExpand=true))
     bool bEnableDebugCategoriesOnStart = true;
+    /** List of data tables to load tags from */
+    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta = (AllowedClasses = "/Script/Engine.DataTable"))
+    TArray<FSoftObjectPath> DebugCategoriesGameplayTagsTableList;
     // TODO validate short names uniqueness or just append with random symbols if not unique (NoElementDuplicate - dont work)
-    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition", meta=(TitleProperty="ShortName", NoElementDuplicate))
+    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(TitleProperty="Name", NoElementDuplicate, Categories = "UHL.DebugCategory"))
     TArray<FUHLDebugCategory> DebugCategories = {};
     // Final decision - array > map, not often edited but easier to change priority
     // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition")
@@ -57,6 +60,9 @@ public:
     // Called if no debug categories found
     UFUNCTION(BlueprintCallable, CallInEditor)
     void AddOrUpdateDefualtUHLDebugCategories();
+    /** Loads the tag tables referenced in the GameplayTagSettings object */
+    UFUNCTION()
+    void LoadGameplayTagTables(bool bAllowAsyncLoad = false) const;
 
 protected:
     //~UDeveloperSettings interface

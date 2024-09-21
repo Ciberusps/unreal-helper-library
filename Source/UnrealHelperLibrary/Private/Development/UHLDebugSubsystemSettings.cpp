@@ -17,7 +17,7 @@ void UUHLDebugSubsystemSettings::AddOrUpdateDefualtUHLDebugCategories()
     TArray<FUHLDebugCategory> DEFAULT_UHL_DEBUG_CATEGORIES = {};
 
     FUHLDebugCategory AbilitySystemAttributesDebugCategory = {};
-    AbilitySystemAttributesDebugCategory.ShortName = "AbilitySystem Attributes";
+    AbilitySystemAttributesDebugCategory.Name = "AbilitySystem Attributes";
     AbilitySystemAttributesDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem_Attributes };
     AbilitySystemAttributesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
     AbilitySystemAttributesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem);
@@ -25,7 +25,7 @@ void UUHLDebugSubsystemSettings::AddOrUpdateDefualtUHLDebugCategories()
     DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAttributesDebugCategory);
 
     FUHLDebugCategory AbilitySystemEffectsDebugCategory = {};
-    AbilitySystemEffectsDebugCategory.ShortName = "AbilitySystem Effects";
+    AbilitySystemEffectsDebugCategory.Name = "AbilitySystem Effects";
     AbilitySystemEffectsDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem_Effects };
     AbilitySystemEffectsDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
     AbilitySystemEffectsDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem);
@@ -33,7 +33,7 @@ void UUHLDebugSubsystemSettings::AddOrUpdateDefualtUHLDebugCategories()
     DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemEffectsDebugCategory);
 
     FUHLDebugCategory AbilitySystemAbilitiesDebugCategory = {};
-    AbilitySystemAbilitiesDebugCategory.ShortName = "AbilitySystem Abilities";
+    AbilitySystemAbilitiesDebugCategory.Name = "AbilitySystem Abilities";
     AbilitySystemAbilitiesDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem_Abilities };
     AbilitySystemAbilitiesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
     AbilitySystemAbilitiesDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem);
@@ -41,18 +41,16 @@ void UUHLDebugSubsystemSettings::AddOrUpdateDefualtUHLDebugCategories()
     DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAbilitiesDebugCategory);
 
     FUHLDebugCategory EnhancedInputSystemDebugCategory = {};
-    EnhancedInputSystemDebugCategory.ShortName = "EnhancedInputSystem";
+    EnhancedInputSystemDebugCategory.Name = "EnhancedInputSystem";
     EnhancedInputSystemDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem };
     EnhancedInputSystemDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
     EnhancedInputSystemDebugCategory.Components = { UDCC_InputSystem_EnhancedInput::StaticClass() };
-    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAbilitiesDebugCategory);
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(EnhancedInputSystemDebugCategory);
 
     FUHLDebugCategory AbilityInputCacheDebugCategory = {};
-    EnhancedInputSystemDebugCategory.ShortName = "AbilityInputCache";
-    EnhancedInputSystemDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_EnhancedInputSystem };
-    EnhancedInputSystemDebugCategory.Blocks.AddTag(UHLGameplayTags::TAG_UHL_DebugCategory_AbilitySystem);
-    EnhancedInputSystemDebugCategory.Components = { UDCC_InputSystem_EnhancedInput::StaticClass() };
-    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilitySystemAbilitiesDebugCategory);
+    AbilityInputCacheDebugCategory.Name = "AbilityInputCache";
+    AbilityInputCacheDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_AbilityInputCache_Catching };
+    DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilityInputCacheDebugCategory);
 
     for (const FUHLDebugCategory& DebugCategory : DEFAULT_UHL_DEBUG_CATEGORIES)
     {
@@ -73,6 +71,7 @@ void UUHLDebugSubsystemSettings::PostInitProperties()
     {
         AddOrUpdateDefualtUHLDebugCategories();
     }
+
     RecreateEnabledDebugCategoriesList();
 }
 
@@ -160,7 +159,7 @@ void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyCha
                 {
                     FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
 					{
-						return DebugCategory.ShortName == EnabledDebugCategory.Key;
+						return DebugCategory.Name == EnabledDebugCategory.Key;
 					});
                     ChangedDebugCategoryTag = UHLDebugCategory->Tags.First();
                 }
@@ -244,7 +243,40 @@ void UUHLDebugSubsystemSettings::UpdateEnabledDebugCategoriesList()
         });
         if (UHLDebugCategory != nullptr)
         {
-            EnabledDebugCategoriesNames.Add(UHLDebugCategory->ShortName, EnabledDebugCategory.Value);
+            EnabledDebugCategoriesNames.Add(UHLDebugCategory->Name, EnabledDebugCategory.Value);
+        }
+    }
+}
+
+void UUHLDebugSubsystemSettings::LoadGameplayTagTables(bool bAllowAsyncLoad) const
+{
+#if !WITH_EDITOR
+    // If we're a cooked build and in a safe spot, start an async load so we can pipeline it
+    if (bAllowAsyncLoad && !IsLoading() && GameplayTagTableList.Num() > 0)
+    {
+        for (FSoftObjectPath DataTablePath : GameplayTagTableList)
+        {
+            LoadPackageAsync(DataTablePath.GetLongPackageName());
+        }
+
+        return;
+    }
+#endif // !WITH_EDITOR
+
+    for (FSoftObjectPath DataTablePath : DebugCategoriesGameplayTagsTableList)
+    {
+        UDataTable* TagTable = LoadObject<UDataTable>(nullptr, *DataTablePath.ToString(), nullptr, LOAD_None, nullptr);
+
+        // Handle case where the module is dynamically-loaded within a LoadPackage stack, which would otherwise
+        // result in the tag table not having its RowStruct serialized in time. Without the RowStruct, the tags manager
+        // will not be initialized correctly.
+        if (TagTable)
+        {
+            FLinkerLoad* TagLinker = TagTable->GetLinker();
+            if (TagLinker)
+            {
+                TagTable->GetLinker()->Preload(TagTable);
+            }
         }
     }
 }
