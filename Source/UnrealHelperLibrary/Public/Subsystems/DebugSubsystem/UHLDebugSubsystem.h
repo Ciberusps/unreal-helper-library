@@ -25,12 +25,12 @@ public:
 
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
-    virtual void BeginDestroy() override;
 
+    // By default called on Subsystem Initialize, no need to call by self
     // should be called as soon as possible - better on GameInstance.Init
     UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
     void SetUp();
-    // should be called when player controller available
+    // should be called when player controller available, e.g. in PlayerController.BeginPlay
     UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
     void SetUpCategoriesThatRequiresPlayerController();
 

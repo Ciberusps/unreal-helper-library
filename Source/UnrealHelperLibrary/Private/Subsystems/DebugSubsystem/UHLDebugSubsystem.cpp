@@ -9,7 +9,6 @@
 #include "Core/UHLGameplayTags.h"
 #include "Development/UHLDebugSubsystemSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
 #include "UI/UHLDebugWidget.h"
 
 
@@ -51,11 +50,6 @@ void UUHLDebugSubsystem::Deinitialize()
         }
     }
     Super::Deinitialize();
-}
-
-void UUHLDebugSubsystem::BeginDestroy()
-{
-    Super::BeginDestroy();
 }
 
 void UUHLDebugSubsystem::SetUp()

@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "UHLDebugCategory.generated.h"
+
 
 class UUHLDebugCategoryComponent;
 
@@ -20,11 +22,13 @@ struct FUHLDebugCategory
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Name = "";
     // Tags associated with this debug category, like GameplayAbilities category can be activated/deactivated by tag
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory"))
+    // WARNING for better experience tags are filtered add child to "UHL.DebugCategory" or "DebugCategory"
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = DEBUG_CATEGORIES_TAGS_FILTER))
     FGameplayTagContainer Tags = {};
 
     // What DebugCategories this DebugCategory blocks. On enabling this DebugCategory it will disable other debug categories that match "Blocks" tags
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory"))
+    // WARNING for better experience tags are filtered add child to "UHL.DebugCategory" or "DebugCategory"
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = DEBUG_CATEGORIES_TAGS_FILTER))
     FGameplayTagContainer Blocks = {};   // blocks other debug categories activation with specified tags
     // TODO BlockedBy - what categories blocks it
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory"))
@@ -43,10 +47,8 @@ struct FUHLDebugCategory
     // Mostly you want to add "SetUpCategoriesThatRequiresPlayerController" in your "PlayerController.BeginPlay"
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bRequiresPlayerControllerToEnable = true;
-    // for some specific categories like "Collisions" that keeps activated between sessions
-    // TODO probably all activated debug categories should be deactivated on end?
-    // UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bForceComponentsDeactivateOnEnd = false;
+    UPROPERTY()
+    bool bIsDefaultUHLDebugCategory = false;
 
     bool TryEnable(UObject* ContextObj);
     void TryDisable(UObject* ContextObj);

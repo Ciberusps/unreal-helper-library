@@ -6,83 +6,57 @@
 #include "GameplayTagContainer.h"
 #include "Engine/DeveloperSettingsBackedByCVars.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
+#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "UHLDebugSubsystemSettings.generated.h"
 
-class UEnvQuery;
-class AEncounterPositionPoints;
 
 /**
  *
  */
-UCLASS(config=EditorPerProjectUserSettings, MinimalAPI, PrioritizeCategories="DebugCategories")
+UCLASS(config="EditorPerProjectUserSettings", MinimalAPI, PrioritizeCategories="DebugCategories")
 class UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
 {
 	GENERATED_BODY()
 
 public:
-    // TODO
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategories")
-    bool bDisplayShortNames = false;
     UPROPERTY(config, EditAnywhere, Category="DebugCategories", meta=(FullyExpand=true, ForceInlineRow, EditCondition="!bDisplayShortNames", EditConditionHides, NoClear /**, ReadOnlyKeys **/))
     TMap<FGameplayTag, bool> EnabledDebugCategories = {};
 
-    // only for visual, changes values in EnabledDebugCategories
-    // and then gets updates self state with EnabledDebugCategories values
-    // это чисто визуалыч меняющий значения в EnabledDebugCategories,
-    // а сам только отображает состояние
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategories", meta=(FullyExpand=true, ForceInlineRow, EditCondition="bDisplayShortNames", EditConditionHides))
-    TMap<FString, bool> EnabledDebugCategoriesNames = {};
-
     // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(FullyExpand=true))
     bool bEnableDebugCategoriesOnStart = true;
-    /** List of data tables to load tags from */
-    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta = (AllowedClasses = "/Script/Engine.DataTable"))
-    TArray<FSoftObjectPath> DebugCategoriesGameplayTagsTableList;
-    // TODO validate short names uniqueness or just append with random symbols if not unique (NoElementDuplicate - dont work)
-    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(TitleProperty="Name", NoElementDuplicate, Categories = "UHL.DebugCategory"))
-    TArray<FUHLDebugCategory> DebugCategories = {};
-    // Final decision - array > map, not often edited but easier to change priority
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition")
-    TMap<FString, FUHLDebugCategory> DebugCategoriesMap = {};
 
-// TODO: add default UHL categories that can be disabled by click UPD better to add EditorCallable function
-// cause ordering is important
+    // TODO: add default UHL categories that can be disabled by click UPD better to add EditorCallable function
+    // cause ordering is important
     // useful for future updates, so user don't need to reset/merge their debug categories
+
     // if dont want to use and see UHL DebugCategories in EnabledDebugCategories at all
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition")
-    bool bExcludeUHLDebugCategories = false;
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesDefinition")
-    TArray<FUHLDebugCategory> UHLDefaultDebugCategories = {};
+    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings")
+    bool bExcludeDefaultUHLDebugCategories = false;
+
+    // TODO validate short names uniqueness or just append with random symbols if not unique (NoElementDuplicate - dont work)
+    UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(TitleProperty="Name", NoElementDuplicate))
+    TArray<FUHLDebugCategory> DebugCategories = {};
 
     // TODO: choosing debug subsystem class??? user can extend debug subsystem with own things?
-    TSubclassOf<UUHLDebugSubsystem> UHLDebugSubsystemClass;
+    // TSubclassOf<UUHLDebugSubsystem> UHLDebugSubsystemClass;
 
-    // Called if no debug categories found
-    UFUNCTION(BlueprintCallable, CallInEditor)
-    void AddOrUpdateDefualtUHLDebugCategories();
-    /** Loads the tag tables referenced in the GameplayTagSettings object */
-    UFUNCTION()
-    void LoadGameplayTagTables(bool bAllowAsyncLoad = false) const;
+    static TArray<FUHLDebugCategory> GET_DEFAULT_UHL_DEBUG_CATEGORIES();
 
 protected:
-    //~UDeveloperSettings interface
+//~UDeveloperSettings interface
     virtual FName GetCategoryName() const override;
-    //~End of UDeveloperSettings interface
+//~End of UDeveloperSettings interface
 
 #if WITH_EDITOR
     virtual void PostInitProperties() override;
     virtual void PreEditChange(FProperty* PropertyAboutToChange) override;
-    virtual void PreEditChange(class FEditPropertyChain& PropertyAboutToChange) override;
-    virtual bool CanEditChange(const FProperty* InProperty) const override;
-    virtual bool CanEditChange(const FEditPropertyChain& PropertyChain) const override;
-    virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
     virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
 #endif
 
 private:
     TMap<FGameplayTag, bool> LastEnabledDebugCategories;
-    TMap<FString, bool> LastEnabledDebugCategoriesNames;
 
     void RecreateEnabledDebugCategoriesList();
     void UpdateEnabledDebugCategoriesList();
+    void UpdateDefaultUHLDebugCategories();
 };
