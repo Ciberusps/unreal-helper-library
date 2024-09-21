@@ -2,6 +2,7 @@
 
 const FVector VECTOR_ERROR = FVector(404, 404, 404);
 const float FLOAT_ERROR = -99999.0f;
+static const FString DEBUG_CATEGORIES_TAGS_FILTER = "UHL.DebugCategory,DebugCategory";
 
 UENUM()
 enum class EBBValueType
