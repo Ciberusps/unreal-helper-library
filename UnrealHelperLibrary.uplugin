@@ -1,13 +1,13 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0",
+	"VersionName": "1.2.1",
 	"FriendlyName": "UnrealHelperLibrary",
-	"Description": "",
+	"Description": "Helps working with AI, GAS, customizing editor and so on",
 	"Category": "Other",
 	"CreatedBy": "Ciberus",
 	"CreatedByURL": "https://github.com/Ciberusps",
-	"DocsURL": "",
+	"DocsURL": "https://github.com/Ciberusps/unreal-helper-library",
 	"MarketplaceURL": "",
 	"SupportURL": "",
 	"CanContainContent": true,
@@ -15,16 +15,16 @@
 	"IsExperimentalVersion": false,
 	"Installed": false,
 	"Modules": [
-        {
-            "Name": "UnrealHelperLibrary",
-            "Type": "Runtime",
-            "LoadingPhase": "PreLoadingScreen"
-        },
-        {
-            "Name": "UnrealHelperEditor",
-            "Type": "Editor",
-            "LoadingPhase": "PostEngineInit"
-        }
+		{
+			"Name": "UnrealHelperLibrary",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "UnrealHelperEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		}
 	],
 	"Plugins": [
 		{

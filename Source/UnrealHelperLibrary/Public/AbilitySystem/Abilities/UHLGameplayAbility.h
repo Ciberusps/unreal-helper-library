@@ -27,7 +27,7 @@ enum class EUHLAbilityActivationPolicy : uint8
 /**
  *
  */
-UCLASS(Category="UnrealHelperLibrary", Blueprintable)
+UCLASS(Category="UnrealHelperLibrary", Blueprintable, BlueprintType)
 class UNREALHELPERLIBRARY_API UUHLGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
