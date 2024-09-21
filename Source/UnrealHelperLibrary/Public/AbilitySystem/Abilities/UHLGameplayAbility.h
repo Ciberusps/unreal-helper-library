@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "UHLGameplayAbility.generated.h"
 
+class UUHLAbilitySystemComponent;
 /**
  * EGCAbilityActivationPolicy
  *
@@ -48,6 +49,9 @@ public:
     FGameplayTagContainer AddingToCacheInputRequiredTags;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     FGameplayTagContainer AddingToCacheInputBlockedTags;
+
+    UFUNCTION(BlueprintCallable, Category = Ability)
+    UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
 protected:
     // Defines how this ability is meant to activate.
