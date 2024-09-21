@@ -89,7 +89,7 @@ void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyCha
     FName PropertyName = PropertyChangedEvent.GetPropertyName();
 
     bool bEditingEnabledCategoriesKey = PropertyName == "EnabledDebugCategories_Key";
-    if (bEditingEnabledCategoriesKey)
+    if (bEditingEnabledCategoriesKey || EnabledDebugCategories.IsEmpty())
     {
         RecreateEnabledDebugCategoriesList();
         return;
@@ -97,7 +97,10 @@ void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyCha
 
     Super::PostEditChangeChainProperty(PropertyChangedEvent);
 
-    bool bEditingEnabledDebugCategories = PropertyName == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategories)
+    bool bEditingEnabledDebugCategories =
+        PropertyName == GET_MEMBER_NAME_CHECKED(UUHLDebugSubsystemSettings, EnabledDebugCategories)
+        && !LastEnabledDebugCategories.IsEmpty()
+		&& !EnabledDebugCategories.IsEmpty()
         && LastEnabledDebugCategories.Num() == EnabledDebugCategories.Num();
 
     // disable other DebugCategories by "Blocks" tags
