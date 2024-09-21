@@ -441,11 +441,13 @@ Any game needs debug system, in midsize commands you always use limited set of d
 more always than others, so DebugSubsystem is tool for creating DebugSubsystem as fast as possible
 
 Components:
+
 - DebugSubsystem
 - DebugCategoryComponents
 - WaitDebugCategoryChange
 
 Features:
+
 - you can create DebugCategoryComponents that activate/deactivate console commands, event in blueprints like GAS abilities
 - you can even compose DebugCategoryComponents e.g. you want Collisions + HitBoxes, so you can create combined DebugCategory and add "DCC_Collisions" and "DCC_HitBoxes"
 - you can "Block" other DebugCategories by tag
@@ -454,12 +456,11 @@ Features:
 Setup:
 
 ```c++
-void ABPlayerCharacter::BeginPlay()
+void AUHLPlayerController::BeginPlay()
 {
     Super::BeginPlay();
-
     UUHLDebugSubsystem* UHLDebugSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<UUHLDebugSubsystem>();
-    UHLDebugSubsystem->SetUp();
+    UHLDebugSubsystem->SetUpCategoriesThatRequiresPlayerController();
 }
 ```
 
