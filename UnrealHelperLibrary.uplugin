@@ -18,7 +18,7 @@
 		{
 			"Name": "UnrealHelperLibrary",
 			"Type": "Runtime",
-			"LoadingPhase": "PreLoadingScreen"
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "UnrealHelperEditor",
