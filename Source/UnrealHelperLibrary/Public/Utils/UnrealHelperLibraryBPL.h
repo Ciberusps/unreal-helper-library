@@ -141,6 +141,20 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary file path"))
     static FString GetPathToFile(UObject* Object);
+
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug"))
+    static bool IsDebugBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug development"))
+    static bool IsDevelopmentBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug production release shipping"))
+    static bool IsShippingBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
+    static bool IsTestBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary editor InEditor withEditor"))
+    static bool IsInEditor();
+    // Are in Debug/Development/Shipping/Test build or Editor
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
+    static EUHLBuildType GetBuildType();
 /** ~Utils **/
 
 /** AI **/
