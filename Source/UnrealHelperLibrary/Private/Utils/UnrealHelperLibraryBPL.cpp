@@ -378,6 +378,65 @@ FString UUnrealHelperLibraryBPL::GetPathToFile(UObject* Object)
     return Object->GetPathName(NULL).Replace(*Object->GetName(), TEXT(""));
 }
 
+bool UUnrealHelperLibraryBPL::IsDebugBuild()
+{
+#if UE_BUILD_DEBUG
+    return true;
+#endif
+    return false;
+}
+
+bool UUnrealHelperLibraryBPL::IsDevelopmentBuild()
+{
+#if UE_BUILD_DEVELOPMENT
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool UUnrealHelperLibraryBPL::IsShippingBuild()
+{
+#if UE_BUILD_SHIPPING
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool UUnrealHelperLibraryBPL::IsTestBuild()
+{
+#if UE_BUILD_TEST
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool UUnrealHelperLibraryBPL::IsInEditor()
+{
+#if WITH_EDITOR
+    return true;
+#else
+    return false;
+#endif
+}
+
+EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
+{
+#if UE_BUILD_DEBUG
+    return EUHLBuildType::Debug;
+#elseif UE_BUILD_DEVELOPMENT
+    return EUHLBuildType::Development;
+#elseif UE_BUILD_SHIPPING
+    return EUHLBuildType::Shipping;
+#elseif UE_BUILD_TEST
+    return EUHLBuildType::Test;
+#endif
+
+    return EUHLBuildType::Editor;
+}
+
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
