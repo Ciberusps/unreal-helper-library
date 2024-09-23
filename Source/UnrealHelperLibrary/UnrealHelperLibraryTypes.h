@@ -2,7 +2,6 @@
 
 const FVector VECTOR_ERROR = FVector(404, 404, 404);
 const float FLOAT_ERROR = -99999.0f;
-static const FString DEBUG_CATEGORIES_TAGS_FILTER = "UHL.DebugCategory,DebugCategory";
 
 UENUM()
 enum class EBBValueType
@@ -49,4 +48,19 @@ enum class EUHLSettingsSource: uint8
     Actor,
 
     MAX UMETA(Hidden)
+};
+
+// EUHLBuildType not same as EBuildConfiguration, if we WITH_EDITOR returns Editor,
+// no matter what EBuildConfiguration is currently used(mostly WITH_EDITOR is Development)
+// if real build returns EBuildConfiguration
+UENUM(BlueprintType)
+enum class EUHLBuildType: uint8
+{
+    None UMETA(Hidden),
+    Editor UMETA(ToolTip="Are you in editor"),
+
+    Debug,
+    Development,
+    Shipping,
+    Test,
 };

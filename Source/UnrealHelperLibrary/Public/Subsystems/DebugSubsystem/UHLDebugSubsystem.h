@@ -23,9 +23,6 @@ public:
 
     FOnUHLDebugCategoryChanged OnDebugCategoryChanged;
 
-    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-    virtual void Deinitialize() override;
-
     // By default called on Subsystem Initialize, no need to call by self
     // should be called as soon as possible - better on GameInstance.Init
     UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem")
@@ -45,6 +42,10 @@ public:
 
     const TArray<FUHLDebugCategory>& GetDebugCategories() const { return DebugCategories; }
 
+protected:
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+    virtual void Deinitialize() override;
+
 private:
     bool bSetupped = false;
     bool bSetUpCategoriesThatRequiresPlayerController = false;
@@ -53,7 +54,7 @@ private:
     UPROPERTY()
     TArray<FUHLDebugCategory> DebugCategories = {};
     UPROPERTY()
-    TSubclassOf<UUHLDebugWidget> UHLDebugWidgetClass;
+    TSoftClassPtr<UUHLDebugWidget> UHLDebugWidgetClass;
     UPROPERTY()
     UUHLDebugWidget* DebugWidgetInstance = nullptr;
 

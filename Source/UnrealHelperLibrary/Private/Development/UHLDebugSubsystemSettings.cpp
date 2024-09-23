@@ -10,6 +10,7 @@
 #include "Subsystems/DebugSubsystem/DebugCategories/DCC_AbilitySystem_Attributes.h"
 #include "Subsystems/DebugSubsystem/DebugCategories/DCC_AbilitySystem_Effects.h"
 #include "Subsystems/DebugSubsystem/DebugCategories/DCC_InputSystem_EnhancedInput.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 
 
 TArray<FUHLDebugCategory> UUHLDebugSubsystemSettings::GET_DEFAULT_UHL_DEBUG_CATEGORIES()
@@ -71,6 +72,15 @@ void UUHLDebugSubsystemSettings::PostInitProperties()
     Super::PostInitProperties();
 
     UpdateDefaultUHLDebugCategories();
+
+    for (const FUHLDebugCategory& DebugCategory : DebugCategories)
+    {
+        if (DebugCategory.ByDefaultEnabledInBuildTypes.Contains(UUnrealHelperLibraryBPL::GetBuildType()))
+        {
+            EnabledDebugCategories.Emplace(DebugCategory.Tags.First(), true);
+        }
+    }
+
     RecreateEnabledDebugCategoriesList();
 }
 
@@ -89,7 +99,7 @@ void UUHLDebugSubsystemSettings::PostEditChangeChainProperty(struct FPropertyCha
     FName PropertyName = PropertyChangedEvent.GetPropertyName();
 
     bool bEditingEnabledCategoriesKey = PropertyName == "EnabledDebugCategories_Key";
-    if (bEditingEnabledCategoriesKey || EnabledDebugCategories.IsEmpty())
+    if (bEditingEnabledCategoriesKey || (EnabledDebugCategories.IsEmpty() && !DebugCategories.IsEmpty()))
     {
         RecreateEnabledDebugCategoriesList();
         return;

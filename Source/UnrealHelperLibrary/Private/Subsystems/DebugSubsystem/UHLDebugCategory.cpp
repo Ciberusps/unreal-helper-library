@@ -61,6 +61,7 @@ UUHLDebugCategoryComponent* FUHLDebugCategory::GetOrCreateDebugCategoryComponent
     {
         Component = *FoundComponent;
     }
+
     return Component;
 }
 

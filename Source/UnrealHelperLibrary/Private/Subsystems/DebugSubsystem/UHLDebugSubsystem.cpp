@@ -10,33 +10,18 @@
 #include "Development/UHLDebugSubsystemSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/UHLDebugWidget.h"
-
+#include "Utils/UnrealHelperLibraryBPL.h"
 
 UUHLDebugSubsystem::UUHLDebugSubsystem()
-    : Super()
 {
-    static ConstructorHelpers::FClassFinder<UUHLDebugWidget> DefaultMasterClass(TEXT("/UnrealHelperLibrary/UI/UI_UHL_DebugWidget"));
-    UHLDebugWidgetClass = DefaultMasterClass.Class;
+    UHLDebugWidgetClass = FSoftObjectPath(TEXT("/UnrealHelperLibrary/UI/UI_UHL_DebugWidget.UI_UHL_DebugWidget_C"));
 }
 
 void UUHLDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
 
-    const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
-    DebugCategories = DeveloperSettings->DebugCategories;
-
-    // TODO on actors initiallized enabled debug categories
-    // or give opportunity to make it in PlayerController
-    if (DeveloperSettings->bEnableDebugCategoriesOnStart)
-    {
-		SetUp();
-        // TODO:
-        // GetOuter()->GetWorld()->OnWorldBeginPlay.AddWeakLambda([=]()
-        // {
-        //     SetUp();
-        // });
-    }
+	SetUp();
 }
 
 void UUHLDebugSubsystem::Deinitialize()
@@ -73,6 +58,18 @@ void UUHLDebugSubsystem::SetUp()
             EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
         }
     };
+
+    EUHLBuildType BuildType = UUnrealHelperLibraryBPL::GetBuildType();
+    if (BuildType != EUHLBuildType::Editor)
+    {
+        for (const FUHLDebugCategory& DebugCategory : DebugCategories)
+        {
+            if (DebugCategory.ByDefaultEnabledInBuildTypes.Contains(BuildType))
+            {
+                EnableDebugCategory(DebugCategory.Tags.First(), true);
+            }
+        }
+    }
 }
 
 void UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController()
@@ -111,7 +108,7 @@ bool UUHLDebugSubsystem::IsCategoryEnabled(const FGameplayTag DebugCategoryTag) 
 
 void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag, bool bEnable)
 {
-    bool bActivated = bEnable;
+    bool bEnabled = bEnable;
 
     FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
     {
@@ -119,6 +116,8 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
     });
     if (UHLDebugCategory == nullptr) return;
     if (UHLDebugCategory->bRequiresPlayerControllerToEnable && !bSetUpCategoriesThatRequiresPlayerController) return;
+    if (UHLDebugCategory->GetIsEnabled() && bEnable) return;
+    if (!UHLDebugCategory->GetIsEnabled() && !bEnable) return;
 
     if (bEnable)
     {
@@ -132,7 +131,7 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
             }
         }
 
-        bActivated = UHLDebugCategory->TryEnable(this);
+        bEnabled = UHLDebugCategory->TryEnable(this);
     }
     else
     {
@@ -146,7 +145,7 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
 
     for (FGameplayTag GameplayTag : UHLDebugCategory->Tags.GetGameplayTagArray())
     {
-        OnDebugCategoryChanged.Broadcast(GameplayTag, bActivated);
+        OnDebugCategoryChanged.Broadcast(GameplayTag, bEnabled);
     }
 }
 
@@ -171,7 +170,11 @@ UUHLDebugWidget* UUHLDebugSubsystem::GetOrCreateUHLDebugWidget()
     APlayerController* PlayerController = GetPlayerController();
     if (!PlayerController) return nullptr;
 
-    DebugWidgetInstance = CreateWidget<UUHLDebugWidget>(PlayerController, UHLDebugWidgetClass);
+    const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
+    DebugCategories = DeveloperSettings->DebugCategories;
+
+    UClass* WidgetClass = UHLDebugWidgetClass.LoadSynchronous();
+    DebugWidgetInstance = CreateWidget<UUHLDebugWidget>(PlayerController, WidgetClass);
     DebugWidgetInstance->AddToViewport(99999999);
 
     return DebugWidgetInstance;
