@@ -13,27 +13,19 @@
 /**
  *
  */
-UCLASS(config="EditorPerProjectUserSettings", MinimalAPI, PrioritizeCategories="DebugCategories")
+UCLASS(config="Game", MinimalAPI, PrioritizeCategories="DebugCategories")
 class UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
 {
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(config, EditAnywhere, Category="DebugCategories", meta=(FullyExpand=true, ForceInlineRow, EditCondition="!bDisplayShortNames", EditConditionHides, NoClear /**, ReadOnlyKeys **/))
+    UPROPERTY(EditAnywhere, Category="DebugCategories", meta=(FullyExpand=true, ForceInlineRow, EditCondition="!bDisplayShortNames", EditConditionHides, NoClear /**, ReadOnlyKeys **/))
     TMap<FGameplayTag, bool> EnabledDebugCategories = {};
 
-    // UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(FullyExpand=true))
-    bool bEnableDebugCategoriesOnStart = true;
-
-    // TODO: add default UHL categories that can be disabled by click UPD better to add EditorCallable function
-    // cause ordering is important
-    // useful for future updates, so user don't need to reset/merge their debug categories
-
-    // if dont want to use and see UHL DebugCategories in EnabledDebugCategories at all
+    // if don't want to use and see UHL DebugCategories at all
     UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings")
     bool bExcludeDefaultUHLDebugCategories = false;
 
-    // TODO validate short names uniqueness or just append with random symbols if not unique (NoElementDuplicate - dont work)
     UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(TitleProperty="Name", NoElementDuplicate))
     TArray<FUHLDebugCategory> DebugCategories = {};
 

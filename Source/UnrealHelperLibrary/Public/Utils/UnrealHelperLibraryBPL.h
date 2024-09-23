@@ -152,7 +152,9 @@ public:
     static bool IsTestBuild();
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary editor InEditor withEditor"))
     static bool IsInEditor();
-    // Are in Debug/Development/Shipping/Test build or Editor
+    // Are in Debug/Development/Shipping/Test build or Editor. If we WITH_EDITOR returns Editor,
+    // no matter what EBuildConfiguration is currently used(mostly WITH_EDITOR is Development)
+    // if real build returns - FApp::GetBuildConfiguration() result, except Debug and DebugGame are same "Debug"
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
     static EUHLBuildType GetBuildType();
 /** ~Utils **/

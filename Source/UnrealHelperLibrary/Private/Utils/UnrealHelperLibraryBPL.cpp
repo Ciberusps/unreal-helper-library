@@ -380,37 +380,31 @@ FString UUnrealHelperLibraryBPL::GetPathToFile(UObject* Object)
 
 bool UUnrealHelperLibraryBPL::IsDebugBuild()
 {
-#if UE_BUILD_DEBUG
-    return true;
-#endif
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    if (BuildConfiguration == EBuildConfiguration::Debug
+        || BuildConfiguration == EBuildConfiguration::DebugGame)
+    {
+        return true;
+    }
     return false;
 }
 
 bool UUnrealHelperLibraryBPL::IsDevelopmentBuild()
 {
-#if UE_BUILD_DEVELOPMENT
-    return true;
-#else
-    return false;
-#endif
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Development;
 }
 
 bool UUnrealHelperLibraryBPL::IsShippingBuild()
 {
-#if UE_BUILD_SHIPPING
-    return true;
-#else
-    return false;
-#endif
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Shipping;
 }
 
 bool UUnrealHelperLibraryBPL::IsTestBuild()
 {
-#if UE_BUILD_TEST
-    return true;
-#else
-    return false;
-#endif
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Test;
 }
 
 bool UUnrealHelperLibraryBPL::IsInEditor()
@@ -424,17 +418,30 @@ bool UUnrealHelperLibraryBPL::IsInEditor()
 
 EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
 {
-#if UE_BUILD_DEBUG
-    return EUHLBuildType::Debug;
-#elseif UE_BUILD_DEVELOPMENT
-    return EUHLBuildType::Development;
-#elseif UE_BUILD_SHIPPING
-    return EUHLBuildType::Shipping;
-#elseif UE_BUILD_TEST
-    return EUHLBuildType::Test;
-#endif
+    if (IsInEditor()) return EUHLBuildType::Editor;
 
-    return EUHLBuildType::Editor;
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    switch (BuildConfiguration)
+    {
+        case EBuildConfiguration::Debug:
+            return EUHLBuildType::Debug;
+            break;
+        case EBuildConfiguration::DebugGame:
+            return EUHLBuildType::Debug;
+			break;
+        case EBuildConfiguration::Development:
+            return EUHLBuildType::Development;
+			break;
+        case EBuildConfiguration::Shipping:
+            return EUHLBuildType::Shipping;
+			break;
+        case EBuildConfiguration::Test:
+            return EUHLBuildType::Test;
+			break;
+        default:
+            return IsInEditor() ? EUHLBuildType::Editor : EUHLBuildType::None;
+            break;
+    }
 }
 
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
