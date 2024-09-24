@@ -19,9 +19,11 @@
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
@@ -495,5 +497,16 @@ EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	}
 
 	return Result;
+}
+
+bool UUnrealHelperLibraryBPL::IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag)
+{
+    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+    if (!IsValid(GameInstance)) return false;
+
+    UUHLDebugSubsystem* UHLDebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSubsystem>();
+    if (!IsValid(UHLDebugSubsystem)) return false;
+
+    return UHLDebugSubsystem->IsCategoryEnabled(DebugCategoryGameplayTag);
 }
 

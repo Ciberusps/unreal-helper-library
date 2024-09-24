@@ -162,6 +162,11 @@ public:
 /** AI **/
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 /** ~AI **/
+
+/** DebugSubsystem **/
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug"))
+    static bool IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag);
+/** ~DebugSubsystem **/
 };
 
 
