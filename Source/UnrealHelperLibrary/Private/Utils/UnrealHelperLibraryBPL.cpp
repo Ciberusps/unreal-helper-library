@@ -106,6 +106,12 @@ void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* A
     }
 }
 
+bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
+{
+    if (!IsValid(ASC)) return false;
+    return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
+}
+
 TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
 {
     TArray<FString> Result = {};
