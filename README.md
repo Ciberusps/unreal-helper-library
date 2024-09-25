@@ -95,6 +95,8 @@ UHL consists of 3 modules:
 >     - [DirectionToAngle](#directiontoangle)
 >   - GAS
 >     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
+>     - [TryActivateAbilityWithTag]
+>     - [UpdateStateGameplayTags]
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
