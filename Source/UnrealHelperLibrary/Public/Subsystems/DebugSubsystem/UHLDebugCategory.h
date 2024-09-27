@@ -28,7 +28,9 @@ struct FUHLDebugCategory
     bool bRequiresPlayerControllerToEnable = true;
 
     // Tags associated with this debug category, like GameplayAbilities category can be activated/deactivated by tag
-    // WARNING for better experience tags are filtered add child to "UHL.DebugCategory" or "DebugCategory"
+    // WARNING - for better experience tags are filtered add child to "UHL.DebugCategory" or "DebugCategory"
+    // WARNING 2 - NATIVE tags are not supported due to "plugin/module" restrictions, use FGameplayTag::RequestGameplayTag
+    // and gameplay tags ini files
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     FGameplayTagContainer Tags = {};
 
