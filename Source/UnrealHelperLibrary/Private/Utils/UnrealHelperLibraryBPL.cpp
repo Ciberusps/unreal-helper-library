@@ -3,6 +3,7 @@
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include "AbilitySystemComponent.h"
+#include "GameplayTagsManager.h"
 #include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
@@ -110,6 +111,30 @@ bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent*
 {
     if (!IsValid(ASC)) return false;
     return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
+}
+
+FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, bool bMatchPartialString)
+{
+    const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
+    FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
+
+    if (!Tag.IsValid() && bMatchPartialString)
+    {
+        FGameplayTagContainer AllTags;
+        Manager.RequestAllGameplayTags(AllTags, true);
+
+        for (const FGameplayTag& TestTag : AllTags)
+        {
+            if (TestTag.ToString().Contains(TagString))
+            {
+                // UE_LOG(LogUnrealHelperLibrary, Display, TEXT("Could not find exact match for tag [%s] but found partial match on tag [%s]."), *TagString, *TestTag.ToString());
+                Tag = TestTag;
+                break;
+            }
+        }
+    }
+
+    return Tag;
 }
 
 TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)

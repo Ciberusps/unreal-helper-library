@@ -74,6 +74,10 @@ public:
     static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
     static bool TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
+    // "FGameplayTag::RequestGameplayTag()" crashes build on start, use this to find tag
+    // function from Lyra
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary gameplaytag tag"))
+    static FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 /** ~GAS **/
 
 /** Utils **/
