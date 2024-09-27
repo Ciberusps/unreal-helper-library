@@ -95,6 +95,8 @@ UHL consists of 3 modules:
 >     - [DirectionToAngle](#directiontoangle)
 >   - GAS
 >     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
+>     - [TryActivateAbilityWithTag]
+>     - [UpdateStateGameplayTags]
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
@@ -104,6 +106,8 @@ UHL consists of 3 modules:
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
 >     - [WIP InputSystem](#InputSystem)
+> - [Subsystems](#Subsystems)
+>   - [DebugSubsystem](#debugsubsystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
 >   - ApplyDefaultPriorityLoading
 >   - ApplyStreamingPriorityLoading
@@ -430,6 +434,40 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 #### > Other
 
 #### `GetHighestPoint`
+
+### Subsystems
+
+#### DebugSubsystem
+
+Any game needs debug system, in midsize commands you always use limited set of debugging tools
+more always than others, so DebugSubsystem is tool for creating DebugSubsystem as fast as possible
+
+Components:
+
+- DebugSubsystem
+- DebugCategoryComponents
+- WaitDebugCategoryChange
+
+Features:
+
+- you can create DebugCategoryComponents that activate/deactivate console commands, event in blueprints like GAS abilities
+- you can even compose DebugCategoryComponents e.g. you want Collisions + HitBoxes, so you can create combined DebugCategory and add "DCC_Collisions" and "DCC_HitBoxes"
+- you can "Block" other DebugCategories by tag
+- WaitDebugCategoryChange
+
+Setup:
+
+```c++
+void AUHLPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+    UUHLDebugSubsystem* UHLDebugSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<UUHLDebugSubsystem>();
+    UHLDebugSubsystem->SetUpCategoriesThatRequiresPlayerController();
+}
+```
+
+How to add DebugCategory:
+1)
 
 ### LoadingUtilLibrary
 

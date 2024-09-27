@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "UHLGameplayAbility.generated.h"
 
+class UUHLAbilitySystemComponent;
 /**
  * EGCAbilityActivationPolicy
  *
@@ -27,7 +28,7 @@ enum class EUHLAbilityActivationPolicy : uint8
 /**
  *
  */
-UCLASS(Category="UnrealHelperLibrary", Blueprintable)
+UCLASS(Category="UnrealHelperLibrary", Blueprintable, BlueprintType)
 class UNREALHELPERLIBRARY_API UUHLGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
@@ -48,6 +49,9 @@ public:
     FGameplayTagContainer AddingToCacheInputRequiredTags;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     FGameplayTagContainer AddingToCacheInputBlockedTags;
+
+    UFUNCTION(BlueprintCallable, Category = Ability)
+    UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
 protected:
     // Defines how this ability is meant to activate.

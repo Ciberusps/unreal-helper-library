@@ -72,6 +72,8 @@ public:
      */
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
     static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
+    static bool TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
 /** ~GAS **/
 
 /** Utils **/
@@ -141,11 +143,32 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary file path"))
     static FString GetPathToFile(UObject* Object);
+
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug"))
+    static bool IsDebugBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug development"))
+    static bool IsDevelopmentBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug production release shipping"))
+    static bool IsShippingBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
+    static bool IsTestBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary editor InEditor withEditor"))
+    static bool IsInEditor();
+    // Are in Debug/Development/Shipping/Test build or Editor. If we WITH_EDITOR returns Editor,
+    // no matter what EBuildConfiguration is currently used(mostly WITH_EDITOR is Development)
+    // if real build returns - FApp::GetBuildConfiguration() result, except Debug and DebugGame are same "Debug"
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
+    static EUHLBuildType GetBuildType();
 /** ~Utils **/
 
 /** AI **/
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 /** ~AI **/
+
+/** DebugSubsystem **/
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug"))
+    static bool IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag);
+/** ~DebugSubsystem **/
 };
 
 

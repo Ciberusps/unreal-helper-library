@@ -19,9 +19,11 @@
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
@@ -102,6 +104,12 @@ void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* A
             ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
         }
     }
+}
+
+bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
+{
+    if (!IsValid(ASC)) return false;
+    return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
 }
 
 TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
@@ -378,6 +386,72 @@ FString UUnrealHelperLibraryBPL::GetPathToFile(UObject* Object)
     return Object->GetPathName(NULL).Replace(*Object->GetName(), TEXT(""));
 }
 
+bool UUnrealHelperLibraryBPL::IsDebugBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    if (BuildConfiguration == EBuildConfiguration::Debug
+        || BuildConfiguration == EBuildConfiguration::DebugGame)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool UUnrealHelperLibraryBPL::IsDevelopmentBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Development;
+}
+
+bool UUnrealHelperLibraryBPL::IsShippingBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Shipping;
+}
+
+bool UUnrealHelperLibraryBPL::IsTestBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Test;
+}
+
+bool UUnrealHelperLibraryBPL::IsInEditor()
+{
+#if WITH_EDITOR
+    return true;
+#else
+    return false;
+#endif
+}
+
+EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
+{
+    if (IsInEditor()) return EUHLBuildType::Editor;
+
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    switch (BuildConfiguration)
+    {
+        case EBuildConfiguration::Debug:
+            return EUHLBuildType::Debug;
+            break;
+        case EBuildConfiguration::DebugGame:
+            return EUHLBuildType::Debug;
+			break;
+        case EBuildConfiguration::Development:
+            return EUHLBuildType::Development;
+			break;
+        case EBuildConfiguration::Shipping:
+            return EUHLBuildType::Shipping;
+			break;
+        case EBuildConfiguration::Test:
+            return EUHLBuildType::Test;
+			break;
+        default:
+            return IsInEditor() ? EUHLBuildType::Editor : EUHLBuildType::None;
+            break;
+    }
+}
+
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
@@ -429,5 +503,16 @@ EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	}
 
 	return Result;
+}
+
+bool UUnrealHelperLibraryBPL::IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag)
+{
+    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+    if (!IsValid(GameInstance)) return false;
+
+    UUHLDebugSubsystem* UHLDebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSubsystem>();
+    if (!IsValid(UHLDebugSubsystem)) return false;
+
+    return UHLDebugSubsystem->IsCategoryEnabled(DebugCategoryGameplayTag);
 }
 
