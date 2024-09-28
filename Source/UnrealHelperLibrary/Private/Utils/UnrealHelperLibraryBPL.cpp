@@ -113,6 +113,41 @@ bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent*
     return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
 }
 
+bool UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
+{
+    if (!IsValid(ASC)) return false;
+
+    bool bResult = false;
+    TArray<FGameplayAbilitySpec*> AbilitiesToCancel;
+    ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToCancel, false);
+
+    for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToCancel)
+    {
+        TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
+        for (UGameplayAbility* Ability : AbilityInstances)
+        {
+            if (Ability->IsActive())
+            {
+                Ability->K2_CancelAbility();
+                bResult = true;
+            }
+        }
+    }
+    return bResult;
+}
+
+TArray<bool> UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags)
+{
+    if (!IsValid(ASC)) return {};
+
+    TArray<bool> Result;
+    for (auto GameplayTag : GameplayTags)
+    {
+        Result.Add(TryCancelAbilityWithTag(ASC, GameplayTag));
+    }
+    return Result;
+}
+
 FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, bool bMatchPartialString)
 {
     const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();

@@ -19,20 +19,7 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputHeldSpecHandles.Reset();
 }
 
-void UUHLAbilitySystemComponent::InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor)
-{
-	InitAbilityActorInfo(NewController, InAvatarActor);
-
-    if (bGiveAbilitiesOnStart)
-    {
-		for (auto& Ability : Abilities)
-		{
-			GiveAbility(FGameplayAbilitySpec(Ability));
-		}
-    }
-}
-
-void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor)
+void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor, bool bActivateInitialAbilities)
 {
 	InitAbilityActorInfo(NewOwner, InAvatarActor);
 
@@ -43,13 +30,28 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
             GiveAbility(FGameplayAbilitySpec(Ability));
         }
     }
+    if (bGiveAttributesSetsOnStart)
+    {
+        for (TSubclassOf<UAttributeSet> AttributeSet : AttributeSets)
+        {
+            UAttributeSet* NewSet = NewObject<UAttributeSet>(GetOwner(), AttributeSet);
+            AddAttributeSetSubobject(NewSet);
+        }
+    }
+
+    InitAttributes();
+
+    if (bActivateInitialAbilities)
+    {
+        ActivateInitialAbilities();
+    }
 }
 
 void UUHLAbilitySystemComponent::InitAttributes()
 {
     if (bInitializeGameplayAttributes)
     {
-	    SetAttributes(InitialGameplayAttributes);
+	    SetAttributes(InitialAttributes);
     }
     if (bGiveInitialGameplayTags)
     {
@@ -71,7 +73,7 @@ void UUHLAbilitySystemComponent::ActivateInitialAbilities()
 {
     if (bActivateAbilitiesOnStart)
     {
-        for (const auto AbilityTags : InitialActiveAbilities)
+        for (const auto AbilityTags : ActiveAbilitiesOnStart)
         {
             TryActivateAbilityWithTag(AbilityTags.First());
         }
@@ -89,38 +91,17 @@ void UUHLAbilitySystemComponent::OnUnregister()
 
 bool UUHLAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {
-	return TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
+	return UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(this, GameplayTag, bAllowRemoteActivation);
 }
 
 bool UUHLAbilitySystemComponent::TryCancelAbilityWithTag(FGameplayTag GameplayTag)
 {
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToCancel;
-	GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToCancel, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToCancel)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			if (Ability->IsActive())
-			{
-				Ability->K2_CancelAbility();
-				bResult = true;
-			}
-		}
-	}
-	return bResult;
+    return UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(this, GameplayTag);
 }
 
 TArray<bool> UUHLAbilitySystemComponent::TryCancelAbilitiesWithTags(TArray<FGameplayTag> GameplayTags)
 {
-	TArray<bool> Result;
-	for (auto GameplayTag : GameplayTags)
-	{
-		Result.Add(TryCancelAbilityWithTag(GameplayTag));
-	}
-	return Result;
+    return UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(this, GameplayTags);
 }
 
 int32 UUHLAbilitySystemComponent::FireGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload)
