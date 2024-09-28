@@ -62,6 +62,7 @@ UHL consists of 3 modules:
 >     - [AbilitySystemComponent](#abilitysystemcomponent)
 >       - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
 >       - [AbilityInputCache](#abilityinputcache)
+>     - [AttributeSet]
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
 > - [AI](#ai)
@@ -146,6 +147,24 @@ Features:
 - activate `InitialActiveAbilities`
 - apply `InitialGameplayTags`
 - Lyra-like "InputConfig", GAS abilities input binding
+
+Setup:
+
+```C++
+Constructor()
+{
+    AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("AbilitySystem"));
+    AbilitySystemComponent->AttributeSets = { UUHLBaseAttributeSet::StaticClass() };
+}
+
+PossessedBy()
+{
+
+    AbilitySystemComponent->InitAbilitySystem(NewController, this);
+    // optional - if bActivateInitialAbilities in "InitAbilitySystem()" false
+    AbilitySystemComponent->ActivateInitialAbilities();
+}
+```
 
 ##### InputConfig (GAS abilities input binding) [optional]
 

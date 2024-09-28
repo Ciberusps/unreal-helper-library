@@ -18,44 +18,48 @@ class UNREALHELPERLIBRARY_API UUHLAbilitySystemComponent : public UAbilitySystem
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
     bool bInitializeGameplayAttributes = true;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
     bool bGiveAbilitiesOnStart = true;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
     bool bActivateAbilitiesOnStart = true;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+    bool bGiveAttributesSetsOnStart = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
     bool bGiveInitialGameplayTags = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceInlineRow, EditCondition="bInitializeGameplayAttributes"))
-    TMap<FGameplayAttribute, float> InitialGameplayAttributes = {};
+    TMap<FGameplayAttribute, float> InitialAttributes = {};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAbilitiesOnStart"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAttributesSetsOnStart"))
+    TArray<TSubclassOf<UAttributeSet>> AttributeSets;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bActivateAbilitiesOnStart"))
-	TArray<FGameplayTagContainer> InitialActiveAbilities;
+	TArray<FGameplayTagContainer> ActiveAbilitiesOnStart;
     // TODO initial GameplayEffects?
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveInitialGameplayTags"))
     FGameplayTagContainer InitialGameplayTags;
 
     // binding inputs to tags check Readme.MD on how to setup it
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="UHL InputConfig")
     bool bUseInputConfig = false;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig"))
     UUHLInputConfig* InputConfig;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseInputConfig"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig"))
     bool bUseAbilityInputCache = false;
     // if enabled - caching works only in predefined user windows - ANS_AbilityInputCache_CacheWindow
     // if disabled - works always
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseAbilityInputCache"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig && bUseAbilityInputCache"))
     bool bUseInputCacheWindows = true;
 
-	virtual void BeginPlay() override;
-
-	virtual void InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor);
-	virtual void InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor);
+    UFUNCTION(BlueprintCallable)
+    virtual void InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor, bool bActivateInitialAbilities = true);
+    UFUNCTION(BlueprintCallable)
 	virtual void InitAttributes();
+    UFUNCTION(BlueprintCallable)
 	virtual void SetAttributes(TMap<FGameplayAttribute, float> Attributes_In);
+    UFUNCTION(BlueprintCallable)
 	virtual void ActivateInitialAbilities();
-	virtual void OnUnregister() override;
 
 /** Input Config **/
     void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
@@ -65,8 +69,10 @@ public:
 	virtual void AbilityInputTagReleased(const FGameplayTag InputTag);
 /** Input Config **/
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     UAbilityInputCache* GetAbilityInputCache() const { return AbilityInputCache; };
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
+    bool CanAddAbilityToCache(UUHLGameplayAbility* GameplayAbility_In) const;
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation = true);
@@ -82,6 +88,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual int32 FireGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload);
 
+protected:
+    virtual void BeginPlay() override;
+    virtual void OnUnregister() override;
+
 private:
     UPROPERTY()
     TObjectPtr<UAbilityInputCache> AbilityInputCache;
@@ -92,7 +102,4 @@ private:
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	// Handles to abilities that have their input held.
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
-
-    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
-    bool CanAddAbilityToCache(UUHLGameplayAbility* GameplayAbility_In) const;
 };
