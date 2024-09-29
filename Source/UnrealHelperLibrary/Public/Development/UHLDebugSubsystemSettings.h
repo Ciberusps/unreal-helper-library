@@ -6,9 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "Engine/DeveloperSettingsBackedByCVars.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "UHLDebugSubsystemSettings.generated.h"
-
 
 /**
  *
@@ -19,10 +17,10 @@ class UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, Category="DebugCategories", meta=(FullyExpand=true, ForceInlineRow, EditCondition="!bDisplayShortNames", EditConditionHides, NoClear /**, ReadOnlyKeys **/))
+    UPROPERTY(EditAnywhere, Category="DebugCategories", NoClear, meta=(FullyExpand=true, ForceInlineRow /**, ReadOnlyKeys **/))
     TMap<FGameplayTag, bool> EnabledDebugCategories = {};
 
-    // if don't want to use and see UHL DebugCategories at all
+    // don't use/show default UHLDebugCategories
     UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings")
     bool bExcludeDefaultUHLDebugCategories = false;
 
