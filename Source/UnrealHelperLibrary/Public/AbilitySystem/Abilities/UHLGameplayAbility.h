@@ -21,6 +21,7 @@ enum class EUHLAbilityActivationPolicy : uint8
     // Continually try to activate the ability while the input is active. To cancel ability use WaitInputRelease
     WhileInputActive,
 
+    // TODO:
     // Try to activate the ability when an avatar is assigned.
     // OnSpawn
 };
@@ -28,7 +29,7 @@ enum class EUHLAbilityActivationPolicy : uint8
 /**
  *
  */
-UCLASS(Category="UnrealHelperLibrary", Blueprintable, BlueprintType)
+UCLASS(Abstract, Category="UnrealHelperLibrary", Blueprintable, BlueprintType)
 class UNREALHELPERLIBRARY_API UUHLGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
@@ -57,4 +58,18 @@ protected:
     // Defines how this ability is meant to activate.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     EUHLAbilityActivationPolicy ActivationPolicy = EUHLAbilityActivationPolicy::OnInputTriggered;
+	
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+	virtual void OnPawnAvatarSet();
+	
+	/** Called when this ability is granted to the ability system component. */
+	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
+	void K2_OnAbilityAdded();
+	/** Called when this ability is removed from the ability system component. */
+	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
+	void K2_OnAbilityRemoved();
+	/** Called when the ability system is initialized with a pawn avatar. */
+	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
+	void K2_OnPawnAvatarSet();
 };

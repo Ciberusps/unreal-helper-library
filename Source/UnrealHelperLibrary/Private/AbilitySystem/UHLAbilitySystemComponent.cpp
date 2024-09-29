@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include "AbilitySystem/UHLAbilitySet.h"
 #include "AbilitySystem/Abilities/UHLGameplayAbility.h"
 #include "Core/UHLGameplayTags.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
@@ -19,6 +20,8 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
+    
+	AbilitySetGrantedHandles.Reset();
 }
 
 void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor, bool bActivateInitialAbilities)
@@ -30,6 +33,13 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
         for (auto& Ability : Abilities)
         {
             GiveAbility(FGameplayAbilitySpec(Ability));
+        }
+    }
+    if (bGiveAbilitySetsOnStart)
+    {
+        for (const TObjectPtr<const UUHLAbilitySet>& AbilitySet : AbilitySets)
+        {
+            GiveAbilitySet(AbilitySet);
         }
     }
     if (bGiveAttributesSetsOnStart)
@@ -82,6 +92,26 @@ void UUHLAbilitySystemComponent::ActivateInitialAbilities()
     }
 }
 
+void UUHLAbilitySystemComponent::GiveAbilitySet(const UUHLAbilitySet* AbilitySet)
+{
+    FUHLAbilitySet_GrantedHandles OutGrantedHandles;
+    AbilitySet->GiveToAbilitySystem(this, &OutGrantedHandles, this);
+    AbilitySetGrantedHandles.Add(OutGrantedHandles);
+}
+
+void UUHLAbilitySystemComponent::RemoveAbilitySetByTag(const FGameplayTag& GameplayTag)
+{
+    for (int32 i = 0; i < AbilitySetGrantedHandles.Num(); i++)
+    {
+        FUHLAbilitySet_GrantedHandles& AbilitySetGrantedHandle = AbilitySetGrantedHandles[i];
+        if (AbilitySetGrantedHandle.GetAbilitySetTags().HasAny(FGameplayTagContainer(GameplayTag)))
+        {
+            AbilitySetGrantedHandle.TakeFromAbilitySystem(this);
+            AbilitySetGrantedHandles.RemoveAt(i, 1);
+        }
+    }
+}
+
 void UUHLAbilitySystemComponent::OnUnregister()
 {
 	FGameplayTagContainer AllTags;
@@ -90,6 +120,51 @@ void UUHLAbilitySystemComponent::OnUnregister()
 
 	Super::OnUnregister();
 }
+
+#if WITH_EDITOR
+void UUHLAbilitySystemComponent::PostInitProperties()
+{
+    Super::PostInitProperties();
+
+    UpdatePreviewAbilitiesMap();
+}
+
+void UUHLAbilitySystemComponent::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+{
+    Super::PostEditChangeProperty(PropertyChangedEvent);
+
+    if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AbilitySets)
+        || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, DebugPreviewAbilitiesFromAbilitySets))
+    {
+        UpdatePreviewAbilitiesMap();
+    }
+}
+
+void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
+{
+    DebugPreviewAbilitiesFromAbilitySets.Reset();
+
+    if (!bPreviewAllAbilities)
+    {
+        return;
+    }
+
+    for (const UUHLAbilitySet* AbilitySet : AbilitySets)
+    {
+        if (!AbilitySet) continue;
+
+        TTuple<FString, FString> TuplePreview;
+        TuplePreview.Key += AbilitySet->GetName() + "\n";
+
+        for (const TSubclassOf<UGameplayAbility>& AbilityRef : AbilitySet->GetAllAbilitiesList())
+        {
+            if (!AbilityRef.Get()) continue; 
+            TuplePreview.Value += AbilityRef->GetName().Replace(TEXT("_C"), TEXT("")) + "\n";
+        }
+        DebugPreviewAbilitiesFromAbilitySets.Add(TuplePreview);
+    }
+}
+#endif
 
 bool UUHLAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {

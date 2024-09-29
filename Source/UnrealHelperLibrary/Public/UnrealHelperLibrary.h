@@ -4,7 +4,8 @@
 
 #include "Modules/ModuleManager.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogUnrealHelperLibrary, Log, All);
+UNREALHELPERLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(LogUnrealHelperLibrary, Log, All);
+UNREALHELPERLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(LogUHLAbilitySystem, Log, All);
 
 class FUnrealHelperLibraryModule : public IModuleInterface
 {
