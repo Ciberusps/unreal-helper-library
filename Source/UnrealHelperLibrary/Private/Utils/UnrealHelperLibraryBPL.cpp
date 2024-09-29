@@ -26,6 +26,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {

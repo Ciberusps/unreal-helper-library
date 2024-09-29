@@ -7,6 +7,8 @@
 #include "Core/UHLGameplayTags.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAbilitySystemComponent)
+
 void UUHLAbilitySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();

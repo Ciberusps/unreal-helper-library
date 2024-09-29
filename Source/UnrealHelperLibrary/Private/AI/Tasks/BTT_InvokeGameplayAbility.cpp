@@ -8,6 +8,8 @@
 #include "AIController.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_InvokeGameplayAbility)
+
 UBTT_InvokeGameplayAbility::UBTT_InvokeGameplayAbility(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

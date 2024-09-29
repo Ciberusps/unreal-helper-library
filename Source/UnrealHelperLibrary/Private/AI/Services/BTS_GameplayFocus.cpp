@@ -5,6 +5,8 @@
 
 #include "AIController.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTS_GameplayFocus)
+
 UBTS_GameplayFocus::UBTS_GameplayFocus(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

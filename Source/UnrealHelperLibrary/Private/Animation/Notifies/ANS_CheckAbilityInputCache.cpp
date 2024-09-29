@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_CheckAbilityInputCache)
 
 void UANS_CheckAbilityInputCache::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {

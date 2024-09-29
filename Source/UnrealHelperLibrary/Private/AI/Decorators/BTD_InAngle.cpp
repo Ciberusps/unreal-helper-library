@@ -14,6 +14,8 @@
 #include "GameFramework/Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTD_InAngle)
+
 UBTD_InAngle::UBTD_InAngle(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

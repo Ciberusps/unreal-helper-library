@@ -12,6 +12,7 @@
 #include "Subsystems/DebugSubsystem/DebugCategories/DCC_InputSystem_EnhancedInput.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugSubsystemSettings)
 
 TArray<FUHLDebugCategory> UUHLDebugSubsystemSettings::GET_DEFAULT_UHL_DEBUG_CATEGORIES()
 {

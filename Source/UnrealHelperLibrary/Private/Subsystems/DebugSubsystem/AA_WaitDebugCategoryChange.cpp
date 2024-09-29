@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(AA_WaitDebugCategoryChange)
+
 UAA_WaitDebugCategoryChange* UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(const UObject* WorldContext, FGameplayTag DebugCategoryTag, bool bCheckOnStart)
 {
     // We must have a valid contextual world for this action, so we don't even make it

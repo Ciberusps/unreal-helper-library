@@ -3,6 +3,8 @@
 
 #include "AI/Decorators/BTD_TimeLimitRandom.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTD_TimeLimitRandom)
+
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
 struct FBTimeLimitRandomMemory
 {

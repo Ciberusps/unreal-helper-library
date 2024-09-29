@@ -5,6 +5,8 @@
 
 #include "Kismet/KismetSystemLibrary.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(DCC_InputSystem_EnhancedInput)
+
 void UDCC_InputSystem_EnhancedInput::Activate_Implementation(UObject* ContextObject)
 {
     UKismetSystemLibrary::ExecuteConsoleCommand(ContextObject->GetWorld(), FString("showdebug enhancedinput"));

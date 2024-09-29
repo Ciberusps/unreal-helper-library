@@ -13,6 +13,8 @@
 #include "Subsystems/DebugSubsystem/DebugCategoryButtonWidget.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugCategoriesListWidget)
+
 bool UUHLDebugCategoriesListWidget::Initialize()
 {
     bool bIsWidgetInitialized = Super::Initialize();

@@ -8,6 +8,8 @@
 #include "UHECustomThumbnail.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHEBlueprintThumbnailRenderer)
+
 void UUHEBlueprintThumbnailRenderer::GetThumbnailSize(UObject* Object, float Zoom, uint32& OutWidth, uint32& OutHeight) const
 {
     UBlueprint* Blueprint = Cast<UBlueprint>(Object);
