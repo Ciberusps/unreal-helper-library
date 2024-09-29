@@ -3,57 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Actors/UHLActorSettings.h"
 #include "GameFramework/Character.h"
 #include "UHLBaseCharacter.generated.h"
 
-class UUHLBaseCharacterAttributeSet;
-
+/**
+ * Character with base interfaces and features implemented,
+ * except AbilitySystem implementation cause its may vary on project setup
+ * ASC can be inited on PlayerState/Character
+ */
 UCLASS()
 class UNREALHELPERLIBRARY_API AUHLBaseCharacter : public ACharacter,
-    public IAbilitySystemInterface,
 	public IUHLActorSettings
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AUHLBaseCharacter();
+	AUHLBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UTurnSettingsDataAsset* TurnSettingsDataAsset;
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-    virtual void PossessedBy(AController* NewController) override;
-
-/** IAbilitySystemInterface **/
-    virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
-    // virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return nullptr; };
-/** ~IAbilitySystemInterface **/
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTurnSettingsDataAsset* TurnSettingsDataAsset;
+	
 /** IUHLActorSettings */
-    // virtual void GetTurnSettings_Implementation(FTurnSettings& TurnSettings) const override;
+	virtual FTurnSettings GetTurnSettings_Implementation() const override;
 /** ~IUHLActorSettings */
-
-protected:
-/** GameplayAbilities */
-    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-    UUHLAbilitySystemComponent* AbilitySystemComponent;
-    UPROPERTY()
-    const UUHLBaseCharacterAttributeSet* AbilitySystemTestAttributeSet;
-/** ~GameplayAbilities */
-
 };

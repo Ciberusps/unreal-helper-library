@@ -67,6 +67,9 @@ UHL consists of 3 modules:
 >     - [GameplayAbility] - additional events and functionality like InputCache
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
+>   - BaseCharacters
+>     - [BaseCharacter] - only some UHL interfaces supported
+>     - [BaseCharacterWithASC] - ASC created on start and inited on PossessedBy(can be turned off)
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -111,6 +114,9 @@ UHL consists of 3 modules:
 >     - [WIP InputSystem](#InputSystem)
 > - [Subsystems](#Subsystems)
 >   - [DebugSubsystem](#debugsubsystem)
+>     - [IsUHLDebugSubsystemEnabled]
+>     - [WaitDebugCategoryChanged]
+>     - [DCC]
 > - [LoadingUtilLibrary](#loadingutillibrary)
 >   - ApplyDefaultPriorityLoading
 >   - ApplyStreamingPriorityLoading
