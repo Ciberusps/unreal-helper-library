@@ -33,11 +33,11 @@ public:
 
     // TODO filter gameplayTags, allow using only values from DebugCategories `meta=(Categories="")`
     // probably "Godreaper.DebugCategories." required, or "ProjectName.DebugCategories"...
-    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     bool IsCategoryEnabled(const FGameplayTag DebugCategoryTag) const;
-    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     void EnableDebugCategory(const FGameplayTag DebugCategoryTag, bool bEnable);
-    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem")
+    UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     void ToggleDebugCategory(const FGameplayTag DebugCategoryTag);
 
     const TArray<FUHLDebugCategory>& GetDebugCategories() const { return DebugCategories; }

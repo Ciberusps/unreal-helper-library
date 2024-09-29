@@ -51,7 +51,7 @@ public:
 	TArray<UUHLAbilitySet*> AbilitySets;
 	UPROPERTY(EditAnywhere, Transient, BlueprintReadWrite, AdvancedDisplay, meta=(InlineEditConditionToggle))
 	bool bPreviewAllAbilities = true;
-	UPROPERTY(VisibleDefaultsOnly, Transient, AdvancedDisplay, meta=(EditCondition="bPreviewAllAbilities"))
+	UPROPERTY(VisibleDefaultsOnly, Transient, AdvancedDisplay, meta=(EditCondition="bPreviewAllAbilities", MultiLine=true))
 	TMap<FString, FString> DebugPreviewAbilitiesFromAbilitySets;
 
     // binding inputs to tags check Readme.MD on how to setup it

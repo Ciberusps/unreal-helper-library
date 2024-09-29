@@ -154,7 +154,7 @@ void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
         if (!AbilitySet) continue;
 
         TTuple<FString, FString> TuplePreview;
-        TuplePreview.Key += AbilitySet->GetName() + "\n";
+        TuplePreview.Key = AbilitySet->GetName();
 
         for (const TSubclassOf<UGameplayAbility>& AbilityRef : AbilitySet->GetAllAbilitiesList())
         {
