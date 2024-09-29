@@ -62,7 +62,9 @@ UHL consists of 3 modules:
 >     - [AbilitySystemComponent](#abilitysystemcomponent)
 >       - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
 >       - [AbilityInputCache](#abilityinputcache)
->     - [AttributeSet]
+>     - [AttributeSet] - just default things for AttributeSet
+>     - [AbilitySet] - set of abilities that can be added/removed to player
+>     - [GameplayAbility] - additional events and functionality like InputCache
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
 > - [AI](#ai)

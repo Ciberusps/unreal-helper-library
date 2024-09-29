@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "UHLAbilitySet.h"
 #include "Input/AbilityInputCache.h"
 #include "UHLAbilitySystemComponent.generated.h"
 
+class UUHLAbilitySet;
 class UUHLInputConfig;
 class UUHLGameplayAbility;
+
 /**
  *
  */
@@ -32,13 +35,24 @@ public:
     TMap<FGameplayAttribute, float> InitialAttributes = {};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAbilitiesOnStart"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAttributesSetsOnStart"))
     TArray<TSubclassOf<UAttributeSet>> AttributeSets;
+	// TODO replace by "EUHLAbilityActivationPolicy::OnSpawn"
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bActivateAbilitiesOnStart"))
 	TArray<FGameplayTagContainer> ActiveAbilitiesOnStart;
     // TODO initial GameplayEffects?
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveInitialGameplayTags"))
     FGameplayTagContainer InitialGameplayTags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, meta=(InlineEditConditionToggle))
+	bool bGiveAbilitySetsOnStart = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay, meta=(EditCondition="bGiveAbilitySetsOnStart"))
+	TArray<UUHLAbilitySet*> AbilitySets;
+	UPROPERTY(EditAnywhere, Transient, BlueprintReadWrite, AdvancedDisplay, meta=(InlineEditConditionToggle))
+	bool bPreviewAllAbilities = true;
+	UPROPERTY(VisibleDefaultsOnly, Transient, AdvancedDisplay, meta=(EditCondition="bPreviewAllAbilities"))
+	TMap<FString, FString> DebugPreviewAbilitiesFromAbilitySets;
 
     // binding inputs to tags check Readme.MD on how to setup it
     UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="UHL InputConfig")
@@ -60,6 +74,11 @@ public:
 	virtual void SetAttributes(TMap<FGameplayAttribute, float> Attributes_In);
     UFUNCTION(BlueprintCallable)
 	virtual void ActivateInitialAbilities();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void GiveAbilitySet(const UUHLAbilitySet* AbilitySet);
+	UFUNCTION(BlueprintCallable)
+	virtual void RemoveAbilitySetByTag(const FGameplayTag& GameplayTag);
 
 /** Input Config **/
     void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
@@ -92,6 +111,12 @@ protected:
     virtual void BeginPlay() override;
     virtual void OnUnregister() override;
 
+#if WITH_EDITOR
+	virtual void PostInitProperties() override;
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	void UpdatePreviewAbilitiesMap();
+#endif
+
 private:
     UPROPERTY()
     TObjectPtr<UAbilityInputCache> AbilityInputCache;
@@ -102,4 +127,6 @@ private:
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	// Handles to abilities that have their input held.
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
+	// AbilitySets given to ASC 
+	TArray<FUHLAbilitySet_GrantedHandles> AbilitySetGrantedHandles;
 };
