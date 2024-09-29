@@ -5,6 +5,7 @@
 
 // #include "UnrealHelperLibraryBPLibrary.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLTraceUtilsBPL)
 
 bool UUHLTraceUtilsBPL::SweepCapsuleSingleByChannel(const UWorld* World, FHitResult& OutHit, const FVector& Start,
                                                const FVector& End, float Radius, float HalfHeight,

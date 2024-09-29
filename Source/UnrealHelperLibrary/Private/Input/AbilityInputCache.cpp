@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(AbilityInputCache)
 
 DEFINE_LOG_CATEGORY(Log_UHL_AbilityInputCache);
 

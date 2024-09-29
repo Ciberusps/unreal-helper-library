@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLPlayerController)
+
 void AUHLPlayerController::BeginPlay()
 {
     Super::BeginPlay();

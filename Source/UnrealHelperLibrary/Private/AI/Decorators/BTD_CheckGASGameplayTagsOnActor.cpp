@@ -8,6 +8,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTD_CheckGASGameplayTagsOnActor)
+
 UBTD_CheckGASGameplayTagsOnActor::UBTD_CheckGASGameplayTagsOnActor(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {

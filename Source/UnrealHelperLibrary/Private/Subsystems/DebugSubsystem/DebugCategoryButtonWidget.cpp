@@ -14,6 +14,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/DebugSubsystem/UHLDebugCategory.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(DebugCategoryButtonWidget)
 
 void UDebugCategoryButtonWidget::SetUp(const FUHLDebugCategory& UHLDebugCategory_In)
 {

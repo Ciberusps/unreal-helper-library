@@ -3,6 +3,8 @@
 
 #include "AI/Data/TurnSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(TurnSettings)
+
 void FTurnSettings::Cleanup()
 {
     TurnRangesGroups.Empty();

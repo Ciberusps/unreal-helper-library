@@ -12,6 +12,8 @@
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTD_InRange)
+
 UBTD_InRange::UBTD_InRange(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

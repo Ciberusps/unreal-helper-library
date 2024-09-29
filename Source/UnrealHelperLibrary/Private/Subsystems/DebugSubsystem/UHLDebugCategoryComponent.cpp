@@ -1,5 +1,7 @@
 ﻿#include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugCategoryComponent)
+
 bool UUHLDebugCategoryComponent::CanActivate_Implementation(UObject* ContextObject) const
 {
     return true;

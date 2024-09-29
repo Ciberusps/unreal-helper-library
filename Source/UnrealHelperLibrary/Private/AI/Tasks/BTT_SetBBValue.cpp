@@ -19,6 +19,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_SetBBValue)
 
 UBTT_SetBBValue::UBTT_SetBBValue(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

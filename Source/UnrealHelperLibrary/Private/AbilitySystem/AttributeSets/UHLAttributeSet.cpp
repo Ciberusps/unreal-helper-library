@@ -5,6 +5,8 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAttributeSet)
+
 UUHLAttributeSet::UUHLAttributeSet()
 {
 }

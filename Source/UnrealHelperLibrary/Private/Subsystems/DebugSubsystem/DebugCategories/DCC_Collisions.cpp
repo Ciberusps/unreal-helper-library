@@ -5,6 +5,8 @@
 
 #include "Kismet/KismetSystemLibrary.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(DCC_Collisions)
+
 void UDCC_Collisions::Activate_Implementation(UObject* ContextObject)
 {
     UKismetSystemLibrary::ExecuteConsoleCommand(ContextObject->GetWorld(), FString("ShowFlag.Collision 1"));

@@ -5,6 +5,7 @@
 
 #include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugCategory)
 
 bool FUHLDebugCategory::TryEnable(UObject* ContextObj)
 {

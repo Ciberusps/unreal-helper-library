@@ -12,6 +12,8 @@
 #include "UI/UHLDebugWidget.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugSubsystem)
+
 UUHLDebugSubsystem::UUHLDebugSubsystem()
 {
     UHLDebugWidgetClass = FSoftObjectPath(TEXT("/UnrealHelperLibrary/UI/UI_UHL_DebugWidget.UI_UHL_DebugWidget_C"));

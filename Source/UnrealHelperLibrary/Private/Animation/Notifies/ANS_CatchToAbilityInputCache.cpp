@@ -7,6 +7,7 @@
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Core/UHLGameplayTags.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_CatchToAbilityInputCache)
 
 void UANS_CatchToAbilityInputCache::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {

@@ -7,6 +7,8 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTD_RandomChance)
+
 UBTD_RandomChance::UBTD_RandomChance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

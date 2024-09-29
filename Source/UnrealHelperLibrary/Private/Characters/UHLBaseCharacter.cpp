@@ -8,6 +8,8 @@
 #include "AbilitySystem/AttributeSets/UHLBaseCharacterAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLBaseCharacter)
+
 // Sets default values
 AUHLBaseCharacter::AUHLBaseCharacter()
 {

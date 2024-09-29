@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/AttributeSets/UHLBaseCharacterAttributeSet.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLBaseCharacterAttributeSet)
+
 void UUHLBaseCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
