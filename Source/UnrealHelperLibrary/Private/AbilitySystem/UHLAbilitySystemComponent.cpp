@@ -20,7 +20,7 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
-    
+
 	AbilitySetGrantedHandles.Reset();
 }
 
@@ -52,6 +52,7 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
     }
 
     InitAttributes();
+    GiveInitialTags();
 
     if (bActivateInitialAbilities)
     {
@@ -59,12 +60,16 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
     }
 }
 
-void UUHLAbilitySystemComponent::InitAttributes()
+void UUHLAbilitySystemComponent::InitAttributes_Implementation()
 {
     if (bInitializeGameplayAttributes)
     {
-	    SetAttributes(InitialAttributes);
+        SetAttributes(InitialAttributes);
     }
+}
+
+void UUHLAbilitySystemComponent::GiveInitialTags()
+{
     if (bGiveInitialGameplayTags)
     {
         AddLooseGameplayTags(InitialGameplayTags, 1);
@@ -158,7 +163,7 @@ void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
 
         for (const TSubclassOf<UGameplayAbility>& AbilityRef : AbilitySet->GetAllAbilitiesList())
         {
-            if (!AbilityRef.Get()) continue; 
+            if (!AbilityRef.Get()) continue;
             TuplePreview.Value += AbilityRef->GetName().Replace(TEXT("_C"), TEXT("")) + "\n";
         }
         DebugPreviewAbilitiesFromAbilitySets.Add(TuplePreview);

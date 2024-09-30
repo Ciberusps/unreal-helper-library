@@ -68,8 +68,11 @@ public:
 
     UFUNCTION(BlueprintCallable)
     virtual void InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor, bool bActivateInitialAbilities = true);
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void InitAttributes();
+    virtual void InitAttributes_Implementation();
     UFUNCTION(BlueprintCallable)
-	virtual void InitAttributes();
+    virtual void GiveInitialTags();
     UFUNCTION(BlueprintCallable)
 	virtual void SetAttributes(TMap<FGameplayAttribute, float> Attributes_In);
     UFUNCTION(BlueprintCallable)
@@ -127,6 +130,6 @@ private:
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	// Handles to abilities that have their input held.
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
-	// AbilitySets given to ASC 
+	// AbilitySets given to ASC
 	TArray<FUHLAbilitySet_GrantedHandles> AbilitySetGrantedHandles;
 };
