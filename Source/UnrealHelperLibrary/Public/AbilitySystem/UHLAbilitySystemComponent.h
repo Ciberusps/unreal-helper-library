@@ -130,6 +130,6 @@ private:
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	// Handles to abilities that have their input held.
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
-	// AbilitySets given to ASC
+	// AbilitySets given to ASC 
 	TArray<FUHLAbilitySet_GrantedHandles> AbilitySetGrantedHandles;
 };

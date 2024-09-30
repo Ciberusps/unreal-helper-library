@@ -28,6 +28,18 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
 {
 	InitAbilityActorInfo(NewOwner, InAvatarActor);
 
+	if (bGiveAttributesSetsOnStart)
+	{
+		for (TSubclassOf<UAttributeSet> AttributeSet : AttributeSets)
+		{
+			UAttributeSet* NewSet = NewObject<UAttributeSet>(GetOwner(), AttributeSet);
+			AddAttributeSetSubobject(NewSet);
+		}
+	}
+
+	InitAttributes();
+	GiveInitialTags();
+	
     if (bGiveAbilitiesOnStart)
     {
         for (auto& Ability : Abilities)
@@ -35,6 +47,11 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
             GiveAbility(FGameplayAbilitySpec(Ability));
         }
     }
+
+	// TODO:
+	// What if I want to give AbilitySet that initialized with my attributes?
+	// Move attributes initialize to AbilitySet? Already can be done through GameplayEffect?
+	// Try to initialize only attributes from AttributeSet? and after abilities/gameplayeffects?
     if (bGiveAbilitySetsOnStart)
     {
         for (const TObjectPtr<const UUHLAbilitySet>& AbilitySet : AbilitySets)
@@ -42,17 +59,6 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
             GiveAbilitySet(AbilitySet);
         }
     }
-    if (bGiveAttributesSetsOnStart)
-    {
-        for (TSubclassOf<UAttributeSet> AttributeSet : AttributeSets)
-        {
-            UAttributeSet* NewSet = NewObject<UAttributeSet>(GetOwner(), AttributeSet);
-            AddAttributeSetSubobject(NewSet);
-        }
-    }
-
-    InitAttributes();
-    GiveInitialTags();
 
     if (bActivateInitialAbilities)
     {
@@ -163,7 +169,7 @@ void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
 
         for (const TSubclassOf<UGameplayAbility>& AbilityRef : AbilitySet->GetAllAbilitiesList())
         {
-            if (!AbilityRef.Get()) continue;
+            if (!AbilityRef.Get()) continue; 
             TuplePreview.Value += AbilityRef->GetName().Replace(TEXT("_C"), TEXT("")) + "\n";
         }
         DebugPreviewAbilitiesFromAbilitySets.Add(TuplePreview);

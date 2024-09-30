@@ -7,8 +7,9 @@
 #include "UHLGameplayAbility.generated.h"
 
 class UUHLAbilitySystemComponent;
+
 /**
- * EGCAbilityActivationPolicy
+ * EUHLAbilityActivationPolicy
  *
  *	Defines how an ability is meant to activate.
  */
@@ -21,9 +22,8 @@ enum class EUHLAbilityActivationPolicy : uint8
     // Continually try to activate the ability while the input is active. To cancel ability use WaitInputRelease
     WhileInputActive,
 
-    // TODO:
     // Try to activate the ability when an avatar is assigned.
-    // OnSpawn
+    OnSpawn
 };
 
 /**
@@ -54,6 +54,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = Ability)
     UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
+	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
+	
 protected:
     // Defines how this ability is meant to activate.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
