@@ -58,11 +58,11 @@ FString UBTT_PlayAnimMontage::GetStaticDescription() const
 {
 	return FString::Printf(
 		TEXT(
-		"AnimMontage: %s\n "
-		"PlayRate: %f\n "
+		"AnimMontage: %s\n"
+		"PlayRate: %f\n"
 		"StartingPosition: %f\n"
 		"StartSectionName: %s\n"
-		"StopMontageOnAbort: %s\n "
+		"StopMontageOnAbort: %s\n"
 		"TaskNodeEndPolicy: %s"),
 		AnimMontage ? *AnimMontage->GetName() : TEXT("None"),
 		PlayRate,
