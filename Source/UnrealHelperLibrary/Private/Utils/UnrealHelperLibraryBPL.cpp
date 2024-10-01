@@ -60,6 +60,19 @@ void UUnrealHelperLibraryBPL::DebugPrintStrings(const FString& A, const FString&
 	);
 }
 
+void UUnrealHelperLibraryBPL::DebugPrintString(const FString& A, float Duration, const FName Key, const bool bEnabled)
+{
+	FString StringResult;
+	StringResult.Empty(A.Len() + 1); // adding one for the string terminator
+
+	if (!bEnabled) return;
+
+	UKismetSystemLibrary::PrintString(
+		nullptr, StringResult,true, true,
+		FLinearColor(0, 0.66, 1), Duration, Key
+	);
+}
+
 void UUnrealHelperLibraryBPL::DrawDebugBar()
 {
 }
