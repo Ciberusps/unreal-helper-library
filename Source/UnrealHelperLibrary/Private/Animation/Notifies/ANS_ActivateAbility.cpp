@@ -29,14 +29,6 @@ void UANS_ActivateAbility::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSe
 	{
 		ActorWithASC->GetAbilitySystemComponent()->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayAbilityTag), bAllowRemoteActivation);
 	}
-	if (bDeactivateOnMontageBlendingOut)
-	{
-		CurrentAnimMontage = EventReference.GetNotify()->GetLinkedMontage();
-		if (CurrentAnimMontage.IsValid())
-		{
-			MeshComp->AnimScriptInstance->OnMontageBlendingOut.AddUniqueDynamic(this, &UANS_ActivateAbility::OnMontageBlendingOut);
-		}
-	}
 }
 
 void UANS_ActivateAbility::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -48,17 +40,20 @@ void UANS_ActivateAbility::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 		UUnrealHelperLibraryBPL::DebugPrintString(FString::Printf(TEXT("%s GameplayAbilityTag not set"), *this->GetName()));
 		return;
 	}
-	
-	MeshComp->AnimScriptInstance->OnMontageBlendingOut.RemoveDynamic(this, &UANS_ActivateAbility::OnMontageBlendingOut);
-	
+
 	CancelAbility();
 }
 
 void UANS_ActivateAbility::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (CurrentAnimMontage.IsValid()
-		&& ActorWithASC.IsValid()
-		&& Montage == CurrentAnimMontage)
+	if (!bDeactivateOnMontageBlendingOut
+		|| !CurrentAnimMontage.IsValid()
+		|| Montage != CurrentAnimMontage)
+	{
+		return;
+	}
+		
+	if (ActorWithASC.IsValid())
 	{
 		CancelAbility();
 	}
