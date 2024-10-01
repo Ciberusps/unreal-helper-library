@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "ANS_UnrealHelperLibrary.h"
 #include "GameplayTagContainer.h"
-#include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "ANS_ActivateAbility.generated.h"
 
 class IAbilitySystemInterface;
@@ -41,12 +40,11 @@ protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;	
 
+	virtual void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) override;
+	
 private:
-	TWeakObjectPtr<const UAnimMontage> CurrentAnimMontage;
 	TWeakInterfacePtr<IAbilitySystemInterface> ActorWithASC;
 	
-	UFUNCTION()
-	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION()
 	void CancelAbility();
 };
