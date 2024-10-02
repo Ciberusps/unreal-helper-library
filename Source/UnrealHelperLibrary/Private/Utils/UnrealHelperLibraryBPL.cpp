@@ -238,6 +238,33 @@ float UUnrealHelperLibraryBPL::RelativeAngleToVector(AActor* ActorRelativeToWhom
     );
 }
 
+EUHLDirection UUnrealHelperLibraryBPL::GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor)
+{
+	const FVector& ActorLocation = TargetActor->GetActorLocation();
+	// PointPlaneDist is super cheap - 1 vector subtraction, 1 dot product.
+	float DistanceToFrontBackPlane = FVector::PointPlaneDist(SourceActorLocation, ActorLocation, TargetActor->GetActorRightVector());
+	float DistanceToRightLeftPlane = FVector::PointPlaneDist(SourceActorLocation, ActorLocation, TargetActor->GetActorForwardVector());
+
+	if (FMath::Abs(DistanceToFrontBackPlane) <= FMath::Abs(DistanceToRightLeftPlane))
+	{
+		// Determine if Front or Back
+
+		// Can see if it's left or right of Left/Right plane which would determine Front or Back
+		if (DistanceToRightLeftPlane >= 0)
+		{
+			return EUHLDirection::Front;
+		}
+		return EUHLDirection::Back;
+	}
+	// Determine if Right or Left
+
+	if (DistanceToFrontBackPlane >= 0)
+	{
+		return EUHLDirection::Right;
+	}
+	return EUHLDirection::Left;
+}
+
 UActorComponent* UUnrealHelperLibraryBPL::GetActorComponentByName(AActor* Actor, FString Name)
 {
     if (!IsValid(Actor)) return nullptr;
