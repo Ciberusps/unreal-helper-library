@@ -47,6 +47,12 @@ public:
 	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
     static float RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector);
+	// Get HitReactDirection - direction(front/back/left/right) opposite to character(SourceActorLocation) that made hit
+	// TODO add
+	// - GetHitSourceDirection
+	// - bool bUse8Directions
+	UFUNCTION(BlueprintPure)
+	static EUHLDirection GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor);
 /** Gameplay **/
 
 /** Debug **/
