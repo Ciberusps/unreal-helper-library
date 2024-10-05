@@ -63,6 +63,13 @@ public:
     static void DrawDebugBar();
 /** ~Debug **/
 
+/** Anims **/
+	// TODO dont work correctly, fix
+	// if SectionName not specified will be used first section
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary anim montage"))
+	static float GetAnimMontageSectionLengthByName(UAnimMontage* AnimMontage, FName SectionName = NAME_None);
+/** ~Anims **/
+
 /** GAS **/
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug GAS Development"))
     static FGameplayEffectSpec CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser, const FHitResult& HitResult, const UObject* SourceObject);
