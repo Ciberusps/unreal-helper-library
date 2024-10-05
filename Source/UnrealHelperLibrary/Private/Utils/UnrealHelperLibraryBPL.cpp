@@ -77,6 +77,20 @@ void UUnrealHelperLibraryBPL::DrawDebugBar()
 {
 }
 
+float UUnrealHelperLibraryBPL::GetAnimMontageSectionLengthByName(UAnimMontage* AnimMontage, FName SectionName)
+{
+	float Result = -1;
+
+	if (!IsValid(AnimMontage)) return Result;
+	int32 SectionIdx = SectionName.IsNone() ? 0 : AnimMontage->GetSectionIndex(SectionName);
+
+	if (SectionIdx == INDEX_NONE) return Result;
+	DebugPrintString(FString::Printf(TEXT("Section %s %i"), *SectionName.ToString(), SectionIdx), Result);
+	Result = AnimMontage->GetSectionLength(SectionIdx);
+
+	return Result;
+}
+
 FGameplayEffectSpec UUnrealHelperLibraryBPL::CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser,
     const FHitResult& HitResult, const UObject* SourceObject)
 {
