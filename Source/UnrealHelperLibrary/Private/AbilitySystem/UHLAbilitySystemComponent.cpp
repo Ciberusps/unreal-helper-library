@@ -6,6 +6,7 @@
 #include "AbilitySystem/UHLAbilitySet.h"
 #include "AbilitySystem/Abilities/UHLGameplayAbility.h"
 #include "Core/UHLGameplayTags.h"
+#include "Development/UHLSettings.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAbilitySystemComponent)
@@ -24,8 +25,22 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	AbilitySetGrantedHandles.Reset();
 }
 
+UUHLAbilitySystemComponent::UUHLAbilitySystemComponent()
+{
+	const UUHLSettings* UHLSettings = GetDefault<UUHLSettings>();
+	if (UHLSettings->bUseAbilitySystemConfigDefaultsInASC)
+	{
+		FillSettingsFromConfig(UHLSettings->AbilitySystemConfigDefaults);
+	}
+}
+
 void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor, bool bActivateInitialAbilities)
 {
+	if (bUseAbilitySystemConfig && AbilitySystemConfig)
+	{
+		FillSettingsFromConfig(AbilitySystemConfig->Settings);
+	}
+	
 	InitAbilityActorInfo(NewOwner, InAvatarActor);
 
 	if (bGiveAttributesSetsOnStart)
@@ -174,6 +189,66 @@ void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
         }
         DebugPreviewAbilitiesFromAbilitySets.Add(TuplePreview);
     }
+}
+
+bool UUHLAbilitySystemComponent::CanEditChange(const FProperty* InProperty) const
+{
+	const bool ParentVal = Super::CanEditChange(InProperty);
+
+	if (InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bInitializeGameplayAttributes)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialAttributes)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, Abilities)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAttributesSetsOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AttributeSets)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bActivateAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, ActiveAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveInitialGameplayTags)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialGameplayTags)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitySetsOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AbilitySets)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bPreviewAllAbilities)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, DebugPreviewAbilitiesFromAbilitySets)
+
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputConfig)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InputConfig)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseAbilityInputCache)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputCacheWindows)
+	)
+	{
+		return !bUseAbilitySystemConfig;
+	}
+
+	return ParentVal;
+}
+
+void UUHLAbilitySystemComponent::FillSettingsFromConfig(const FUHLAbilitySystemSettings& AbilitySystemConfig_In)
+{
+	bInitializeGameplayAttributes = AbilitySystemConfig_In.bInitializeGameplayAttributes;
+	InitialAttributes = AbilitySystemConfig_In.InitialAttributes;
+
+	bGiveAbilitiesOnStart = AbilitySystemConfig_In.bGiveAbilitiesOnStart;
+	Abilities = AbilitySystemConfig_In.Abilities;
+
+	bGiveAttributesSetsOnStart = AbilitySystemConfig_In.bGiveAttributesSetsOnStart;
+	AttributeSets = AbilitySystemConfig_In.AttributeSets;
+
+	bActivateAbilitiesOnStart = AbilitySystemConfig_In.bActivateAbilitiesOnStart;
+	ActiveAbilitiesOnStart = AbilitySystemConfig_In.ActiveAbilitiesOnStart;
+
+	bGiveInitialGameplayTags = AbilitySystemConfig_In.bGiveInitialGameplayTags;
+	InitialGameplayTags = AbilitySystemConfig_In.InitialGameplayTags;
+	
+	bGiveAbilitySetsOnStart = AbilitySystemConfig_In.bGiveAbilitySetsOnStart;
+	AbilitySets = AbilitySystemConfig_In.AbilitySets;
+
+	// bPreviewAllAbilities = AbilitySystemConfig_In.bPreviewAllAbilities;
+	// DebugPreviewAbilitiesFromAbilitySets = AbilitySystemConfig_In.DebugPreviewAbilitiesFromAbilitySets;
+
+	bUseInputConfig = AbilitySystemConfig_In.bUseInputConfig;
+	InputConfig = AbilitySystemConfig_In.InputConfig;
+	bUseAbilityInputCache = AbilitySystemConfig_In.bUseAbilityInputCache;
+	bUseInputCacheWindows = AbilitySystemConfig_In.bUseInputCacheWindows;
 }
 #endif
 

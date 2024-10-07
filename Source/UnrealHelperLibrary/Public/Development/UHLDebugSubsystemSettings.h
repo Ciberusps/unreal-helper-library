@@ -11,8 +11,8 @@
 /**
  *
  */
-UCLASS(config="Game", defaultconfig, MinimalAPI, PrioritizeCategories="DebugCategories")
-class UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
+UCLASS(config="Game", defaultconfig, PrioritizeCategories="DebugCategories")
+class UNREALHELPERLIBRARY_API UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
 {
 	GENERATED_BODY()
 
@@ -34,7 +34,7 @@ public:
 
 protected:
 //~UDeveloperSettings interface
-    virtual FName GetCategoryName() const override;
+    virtual FName GetCategoryName() const override { return FApp::GetProjectName(); };
 //~End of UDeveloperSettings interface
 
 #if WITH_EDITOR

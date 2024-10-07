@@ -70,11 +70,6 @@ TArray<FUHLDebugCategory> UUHLDebugSubsystemSettings::GET_DEFAULT_UHL_DEBUG_CATE
     return DEFAULT_UHL_DEBUG_CATEGORIES;
 }
 
-FName UUHLDebugSubsystemSettings::GetCategoryName() const
-{
-    return FApp::GetProjectName();
-}
-
 #if WITH_EDITOR
 void UUHLDebugSubsystemSettings::PostInitProperties()
 {

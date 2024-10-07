@@ -3,8 +3,6 @@
 #include "UnrealHelperLibrary.h"
 
 #include "GameplayTagsManager.h"
-#include "NativeGameplayTags.h"
-#include "Fonts/UnicodeBlockRange.h"
 
 #define LOCTEXT_NAMESPACE "FUnrealHelperLibraryModule"
 
@@ -16,7 +14,7 @@ void FUnrealHelperLibraryModule::StartupModule()
     UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
     TagsManager.AddTagIniSearchPath(FPaths::ProjectPluginsDir() / TEXT("UnrealHelperLibrary/Config/Tags"));
-
+	
   //   TArray<TSharedPtr<FGameplayTagNode>> OutTagArray;
   //   TArray<FString> OutPaths;
   //   TagsManager.GetTagSourceSearchPaths(OutPaths);
