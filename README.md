@@ -3,7 +3,7 @@
 **UHL** - unreal helper library, toolset to help developers working with AI, GAS and so on.
 Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions)
 
-Support: tested `UE5.4`
+Support: tested `UE5.4 - UE5.5-preview`
 
 ## Install
 
@@ -141,6 +141,8 @@ UHL consists of 3 modules:
 ---
 
 ### GAS
+
+Many things based on "Lyra" sample project.
 
 #### `AbilitySystemComponent`
 
