@@ -148,6 +148,38 @@ void UUHLAbilitySystemComponent::OnUnregister()
 }
 
 #if WITH_EDITOR
+
+bool UUHLAbilitySystemComponent::CanEditChange(const FProperty* InProperty) const
+{
+	const bool ParentVal = Super::CanEditChange(InProperty);
+
+	if (InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bInitializeGameplayAttributes)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialAttributes)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, Abilities)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAttributesSetsOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AttributeSets)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bActivateAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, ActiveAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveInitialGameplayTags)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialGameplayTags)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitySetsOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AbilitySets)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bPreviewAllAbilities)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, DebugPreviewAbilitiesFromAbilitySets)
+
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputConfig)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InputConfig)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseAbilityInputCache)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputCacheWindows)
+	)
+	{
+		return !bUseAbilitySystemConfig;
+	}
+
+	return ParentVal;
+}
+
 void UUHLAbilitySystemComponent::PostInitProperties()
 {
     Super::PostInitProperties();
@@ -190,37 +222,7 @@ void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
         DebugPreviewAbilitiesFromAbilitySets.Add(TuplePreview);
     }
 }
-
-bool UUHLAbilitySystemComponent::CanEditChange(const FProperty* InProperty) const
-{
-	const bool ParentVal = Super::CanEditChange(InProperty);
-
-	if (InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bInitializeGameplayAttributes)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialAttributes)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitiesOnStart)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, Abilities)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAttributesSetsOnStart)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AttributeSets)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bActivateAbilitiesOnStart)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, ActiveAbilitiesOnStart)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveInitialGameplayTags)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialGameplayTags)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitySetsOnStart)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AbilitySets)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bPreviewAllAbilities)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, DebugPreviewAbilitiesFromAbilitySets)
-
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputConfig)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InputConfig)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseAbilityInputCache)
-		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputCacheWindows)
-	)
-	{
-		return !bUseAbilitySystemConfig;
-	}
-
-	return ParentVal;
-}
+#endif
 
 void UUHLAbilitySystemComponent::FillSettingsFromConfig(const FUHLAbilitySystemSettings& AbilitySystemConfig_In)
 {
@@ -250,7 +252,6 @@ void UUHLAbilitySystemComponent::FillSettingsFromConfig(const FUHLAbilitySystemS
 	bUseAbilityInputCache = AbilitySystemConfig_In.bUseAbilityInputCache;
 	bUseInputCacheWindows = AbilitySystemConfig_In.bUseInputCacheWindows;
 }
-#endif
 
 bool UUHLAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {
