@@ -43,8 +43,13 @@ public:
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
 /** Gameplay **/
+	/**
+	 * Calculates relative angle to other actor [-180, 180]
+	 * @param bUseActorBackForCalculation sometimes you want to know actors that nearest to character backside
+	 */
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
-	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor);
+	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor, bool bUseActorBackForCalculation = false);
+	//
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
     static float RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector);
 	// Get HitReactDirection - direction(front/back/left/right) opposite to character(SourceActorLocation) that made hit
@@ -58,7 +63,8 @@ public:
 /** Debug **/
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
     static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const FName Key = NAME_None, const bool bEnabled = true);
-    static void DebugPrintString(const FString& A, float Duration = 2.0f, const FName Key = NAME_None, const bool bEnabled = true);
+	UFUNCTION(Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
+    static void DebugPrintString(const UObject* WorldContextObject, const FString& A, float Duration = 2.0f, const FName Key = NAME_None, const bool bEnabled = true);
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
     static void DrawDebugBar();
 /** ~Debug **/
@@ -99,6 +105,11 @@ public:
     static FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 /** ~GAS **/
 
+/** Angles **/
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary")
+	static EUHLDirection GetOppositeDirection(EUHLDirection Direction_In);
+/** ~Angles **/
+	
 /** Utils **/
     // Get project version from "Project Settings"
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary version"))

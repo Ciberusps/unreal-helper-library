@@ -40,6 +40,9 @@ public:
     UFUNCTION(Exec, BlueprintCallable, Category="UHLDebugSubsystem", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     void ToggleDebugCategory(const FGameplayTag DebugCategoryTag);
 
+	UFUNCTION(BlueprintCallable, Category="UHLDebugSubsystem", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
+	const FUHLDebugCategory& GetDebugCategoryByTag(const FGameplayTag DebugCategoryTag) const;
+	
     const TArray<FUHLDebugCategory>& GetDebugCategories() const { return DebugCategories; }
 
 protected:

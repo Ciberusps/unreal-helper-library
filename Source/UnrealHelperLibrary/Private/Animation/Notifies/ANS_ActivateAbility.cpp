@@ -20,7 +20,7 @@ void UANS_ActivateAbility::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSe
 
 	if (!GameplayAbilityTag.IsValid())
 	{
-		UUnrealHelperLibraryBPL::DebugPrintString(FString::Printf(TEXT("%s GameplayAbilityTag not set"), *this->GetName()));
+		UUnrealHelperLibraryBPL::DebugPrintString(MeshComp->GetWorld(), FString::Printf(TEXT("%s GameplayAbilityTag not set"), *this->GetName()));
 		return;
 	}
 	
@@ -37,7 +37,7 @@ void UANS_ActivateAbility::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 
 	if (!GameplayAbilityTag.IsValid())
 	{
-		UUnrealHelperLibraryBPL::DebugPrintString(FString::Printf(TEXT("%s GameplayAbilityTag not set"), *this->GetName()));
+		UUnrealHelperLibraryBPL::DebugPrintString(MeshComp->GetWorld(), FString::Printf(TEXT("%s GameplayAbilityTag not set"), *this->GetName()));
 		return;
 	}
 
