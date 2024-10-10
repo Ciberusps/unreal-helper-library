@@ -12,6 +12,8 @@
 
 #include <cfloat>
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLLoadingUtilLibrary)
+
 bool UUHLLoadingUtilLibrary::HasCapturedDefaults = false;
 float UUHLLoadingUtilLibrary::DefaultLevelStreamingComponentsRegistrationGranularity;
 float UUHLLoadingUtilLibrary::DefaultLevelStreamingActorsUpdateTimeLimit;

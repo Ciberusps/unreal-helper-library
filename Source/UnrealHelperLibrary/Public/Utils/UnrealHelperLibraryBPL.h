@@ -43,18 +43,38 @@ public:
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
 /** Gameplay **/
+	/**
+	 * Calculates relative angle to other actor [-180, 180]
+	 * @param bUseActorBackForCalculation sometimes you want to know actors that nearest to character backside
+	 */
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
-	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor);
+	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor, bool bUseActorBackForCalculation = false);
+	//
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
     static float RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector);
+	// Get HitReactDirection - direction(front/back/left/right) opposite to character(SourceActorLocation) that made hit
+	// TODO add
+	// - GetHitSourceDirection
+	// - bool bUse8Directions
+	UFUNCTION(BlueprintPure)
+	static EUHLDirection GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor);
 /** Gameplay **/
 
 /** Debug **/
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
     static void DebugPrintStrings(const FString& A, const FString& B = "", const FString& C = "", const FString& D = "", const FString& E = "", const FString& F = "", const FString& G = "", const FString& H = "", const FString& I = "", const FString& J = "", float Duration = 2.0f, const FName Key = NAME_None, const bool bEnabled = true);
+	UFUNCTION(Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug Development", AdvancedDisplay="D,E,F,G,H,I,J,Duration"))
+    static void DebugPrintString(const UObject* WorldContextObject, const FString& A, float Duration = 2.0f, const FName Key = NAME_None, const bool bEnabled = true);
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development"))
     static void DrawDebugBar();
 /** ~Debug **/
+
+/** Anims **/
+	// TODO dont work correctly, fix
+	// if SectionName not specified will be used first section
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary anim montage"))
+	static float GetAnimMontageSectionLengthByName(UAnimMontage* AnimMontage, FName SectionName = NAME_None);
+/** ~Anims **/
 
 /** GAS **/
     UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug GAS Development"))
@@ -70,10 +90,26 @@ public:
             FGameplayTag::EmptyTag);
 		bCondition = true ? TAG_Character_State_HasMoveInput : NONE
      */
-    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary ability"))
     static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary ability"))
+    static bool TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary ability"))
+    static bool TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary ability"))
+    static TArray<bool> TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags);
+
+    // "FGameplayTag::RequestGameplayTag()" crashes build on start, use this to find tag
+    // function from Lyra
+    UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary gameplaytag tag"))
+    static FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 /** ~GAS **/
 
+/** Angles **/
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary")
+	static EUHLDirection GetOppositeDirection(EUHLDirection Direction_In);
+/** ~Angles **/
+	
 /** Utils **/
     // Get project version from "Project Settings"
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary version"))
@@ -109,9 +145,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay="bDebug,DebugLifetime,DebugColor,DebugText"))
     static void GetPointAtRelativeDirection(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White, const FText DebugText = FText());
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
-    static FVector GetPointAtAngleRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    static void GetPointAtAngleRelativeToOtherActor(FVector& Point, FRotator& PointRotation, const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
-    static FVector GetPointAtDirectionRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    static void GetPointAtDirectionRelativeToOtherActor(FVector& Point, FRotator& PointRotation, const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     static float DirectionToAngle(const EUHLDirection DirectionIn);
     // e.g. 60% -> x0.4, 40% -> x0.6, 100% -> x0.0, 0% -> x1.0
@@ -141,11 +177,32 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary file path"))
     static FString GetPathToFile(UObject* Object);
+
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug"))
+    static bool IsDebugBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug development"))
+    static bool IsDevelopmentBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug production release shipping"))
+    static bool IsShippingBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
+    static bool IsTestBuild();
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary editor InEditor withEditor"))
+    static bool IsInEditor();
+    // Are in Debug/Development/Shipping/Test build or Editor. If we WITH_EDITOR returns Editor,
+    // no matter what EBuildConfiguration is currently used(mostly WITH_EDITOR is Development)
+    // if real build returns - FApp::GetBuildConfiguration() result, except Debug and DebugGame are same "Debug"
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary build debug test"))
+    static EUHLBuildType GetBuildType();
 /** ~Utils **/
 
 /** AI **/
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 /** ~AI **/
+
+/** DebugSubsystem **/
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Categories = "UHL.DebugCategory,DebugCategory", WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug"))
+    static bool IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag);
+/** ~DebugSubsystem **/
 };
 
 

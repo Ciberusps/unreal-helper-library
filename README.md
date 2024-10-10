@@ -1,9 +1,11 @@
 # Unreal Helper Library [UHL]
 
 **UHL** - unreal helper library, toolset to help developers working with AI, GAS and so on.
-Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions)
+Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions).
 
-Support: tested `UE5.4`
+GAS things not required to be used at all, but provides much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/documentation/en-us/unreal-engine/lyra-sample-game-in-unreal-engine?application_version=5.5) features. All GAS features designed in mind that they or their part can be added or dropped by you in development in any time.
+
+Support: tested `UE5.4 - UE5.5-preview`
 
 ## Install
 
@@ -30,10 +32,10 @@ Support: tested `UE5.4`
 ```
 
 > [!NOTE]
-> don't forget to update `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update plugin(s) - `git submodule update --remote`
+> Don't forget to update your `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update submodules/plugin(s) - `git submodule update --remote`
 
 > [!NOTE]
-> and add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
+> Add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
 
 #### From marketplace:
 
@@ -43,7 +45,7 @@ later this year
 
 From source:
 
-- `git submodule update --remote` to update library from source
+- `git submodule update --remote` to update plugin from source
 
 ## Modules
 
@@ -60,15 +62,29 @@ UHL consists of 3 modules:
 > - [GAS](#gas)
 >   - Components
 >     - [AbilitySystemComponent](#abilitysystemcomponent)
->       - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
+>     - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
 >       - [AbilityInputCache](#abilityinputcache)
+>     - [GameplayAbility](#gameplayability)
+>     - [AttributeSet](#attributeset)
+>     - [AbilitySet](#abilityset)
+>     - [AbilitySystem Config](#abilitysystem-config)
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
+>   - BaseCharacters
+>     - BaseCharacter - only some UHL interfaces supported
+>     - BaseCharacterWithASC - ASC created on start and inited on PossessedBy(can be turned off)
+>   - AnimNotifyState (ANS)
+>     - ANS_UnrealHelperLibrary - base AnimNotifyState with events like "OnMontageBlendOut"
+>     - ANS_ActivateAbility
+>     - ANS_CatchToInputCache
+>     - ANS_CheckInputCache
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
 >   - Composite
 >     - [RandomSelector](#btc_randomselector)
+>   - Services
+>     - [GameplayFocus](#setgameplayfocus)
 >   - Decorators
 >     - [CheckGASGameplayTagsOnActor](#checkgasgameplaytagsonactor)
 >     - [InAngle](#inangle)
@@ -76,8 +92,6 @@ UHL consists of 3 modules:
 >     - [LoopRandomCount](#looprandomcount)
 >     - [RandomChance](#randomchance)
 >     - [TimeLimitRandom](#timelimitrandom)
->   - Services
->     - [GameplayFocus](#setgameplayfocus)
 >   - Tasks
 >     - [SetBBValue](#setbbvalue)
 >     - [DebugPrintBBValue](#debugprintbbvalue)
@@ -85,6 +99,8 @@ UHL consists of 3 modules:
 >     - [InvokeGameplayAbility](#invokegameplayability)
 >     - [PlayAnimMontage](#playanimmontage)
 >     - [TurnTo](#turnto)
+> - [Subsystems](#Subsystems)
+>   - [DebugSubsystem](#debugsubsystem)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - RelativeAngles
 >     - [RelativeAngleToActor](#relativeangletoactor)
@@ -95,22 +111,28 @@ UHL consists of 3 modules:
 >     - [DirectionToAngle](#directiontoangle)
 >   - GAS
 >     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
+>     - [TryActivateAbilityWithTag]
+>     - [TryCancelAbilityWithTag]
+>     - [TryCancelAbilitiesWithTags]
+>     - [UpdateStateGameplayTags]
+>     - [FindTagByString]
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
 >     - [GetAssetsOfClass](#getassetsofclass)
+>     - GetBuildType
 >     - GetActorComponentByName
 >     - GetSceneComponentByName
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
 >     - [WIP InputSystem](#InputSystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
->   - ApplyDefaultPriorityLoading
->   - ApplyStreamingPriorityLoading
->   - ApplyHighestPriorityLoading
->   - ApplyCustomPriorityLoading
->   - ForceGarbageCollection
->   - FlushLevelStreaming
+>   - [ApplyDefaultPriorityLoading](#applydefaultpriorityloading)
+>   - [ApplyStreamingPriorityLoading](#applystreamingpriorityloading)
+>   - [ApplyHighestPriorityLoading](#applyhighestpriorityloading)
+>   - [ApplyCustomPriorityLoading](#applycustompriorityloading)
+>   - [ForceGarbageCollection](#forcegarbagecollection)
+>   - [FlushLevelStreaming](#flushlevelstreaming)
 > - [TraceUtilsBPL](#traceutilsbpl)
 >   - SweepCapsuleSingleByChannel
 
@@ -129,6 +151,8 @@ UHL consists of 3 modules:
 
 ### GAS
 
+Many things based on "Lyra" sample project.
+
 #### `AbilitySystemComponent`
 
 ![AbilitySystemComponent](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/fc6b751f-fc5d-4394-b133-aea69c9034c5)
@@ -143,10 +167,29 @@ Features:
 - apply `InitialGameplayTags`
 - Lyra-like "InputConfig", GAS abilities input binding
 
-##### InputConfig (GAS abilities input binding) [optional]
+Setup:
+
+```C++
+Constructor()
+{
+    AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("AbilitySystem"));
+    AbilitySystemComponent->AttributeSets = { UUHLBaseAttributeSet::StaticClass() };
+}
+
+PossessedBy()
+{
+
+    AbilitySystemComponent->InitAbilitySystem(NewController, this);
+    // optional - if bActivateInitialAbilities in "InitAbilitySystem()" false
+    AbilitySystemComponent->ActivateInitialAbilities();
+}
+```
+
+##### InputConfig (GAS abilities input binding)
 
 Binding InputActions to GameplayAbilities using tags, like in Lyra but enhanced and adopted for 3d action game.
 
+TODO: delete and replace
 ![image](https://github.com/user-attachments/assets/2c72400e-1122-40b2-aa73-4bfc1e212d0f)
 
 Setup:
@@ -221,6 +264,7 @@ private:
 ```
 
 How to use:
+
 - every `UHLGameplayAbility`
 
 ##### AbilityInputCache
@@ -238,6 +282,28 @@ How it works:
 Debug:
 
 - write in console `ToggleAbilityInputDebug`, don't forget to add `ProcessConsoleExec` to your `BGameInstance` or it won't work
+
+#### AttributeSet
+
+Just default things that every `AttributeSet` wants like `ATTRIBUTE_ACCESSORS`
+
+#### AbilitySet
+
+Set of `Abilities, AttributeSets, GameplayEffects`, that can be added to player, or removed by tag
+
+#### AbilitySystem Config
+
+Option for teams to edit ASC config completly externally to not locking characters
+
+Defaults can be changed in `UHL Settings`
+
+#### GameplayAbility
+
+Additional events - OnSpawn
+
+Activation policy - InputTriggered, WhileInputActive, OnSpawn
+
+InputCache - to use it required to nest from GameplayAbility
 
 #### `InterpolateToPosition`
 
@@ -409,7 +475,7 @@ To get settings from actor requires `IUHLActorSettings` to be implemented on cha
 
 #### > GAS
 
-#### `CreateGenericGASGameplayEffectSpec`
+#### `CreateGenericGASGameplayEffectSpec` - TODO: rename, remove "GAS"
 
 #### > Misc
 
@@ -431,9 +497,57 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 
 #### `GetHighestPoint`
 
+### Subsystems
+
+#### DebugSubsystem
+
+Any game needs debug system, in midsize commands you always use limited set of debugging tools
+more always than others, so DebugSubsystem is tool for creating your debug system as fast as possible
+
+Components:
+
+- DebugSubsystem
+- DebugCategoryComponents (DCC)
+- WaitDebugCategoryChange
+- IsUHLDebugSubsystemEnabled
+
+Features:
+
+- you can create DebugCategoryComponents that activate/deactivate console commands, event in blueprints like GAS abilities
+- you can even compose DebugCategoryComponents e.g. you want Collisions + HitBoxes, so you can create combined DebugCategory and add "DCC_Collisions" and "DCC_HitBoxes"
+- you can "Block" other DebugCategories by tag
+- WaitDebugCategoryChange
+
+Setup:
+
+```c++
+void AUHLPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+    UUHLDebugSubsystem* UHLDebugSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<UUHLDebugSubsystem>();
+    UHLDebugSubsystem->SetUpCategoriesThatRequiresPlayerController();
+}
+```
+
+How to add DebugCategory:
+1)
+
 ### LoadingUtilLibrary
 
 **UHLLoadingUtilLibrary** - loading utils from Lyra
+
+#### ApplyDefaultPriorityLoading
+
+#### ApplyStreamingPriorityLoading
+
+#### ApplyHighestPriorityLoading
+
+#### ApplyCustomPriorityLoading
+
+#### ForceGarbageCollection
+
+#### FlushLevelStreaming
+
 
 ### TraceUtilsBPL
 

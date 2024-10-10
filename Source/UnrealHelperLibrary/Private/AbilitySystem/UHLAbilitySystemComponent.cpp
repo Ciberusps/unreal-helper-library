@@ -3,9 +3,13 @@
 
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 
+#include "AbilitySystem/UHLAbilitySet.h"
 #include "AbilitySystem/Abilities/UHLGameplayAbility.h"
 #include "Core/UHLGameplayTags.h"
+#include "Development/UHLSettings.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAbilitySystemComponent)
 
 void UUHLAbilitySystemComponent::BeginPlay()
 {
@@ -17,25 +21,40 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
+
+	AbilitySetGrantedHandles.Reset();
 }
 
-void UUHLAbilitySystemComponent::InitAbilitySystem(TObjectPtr<AController> NewController, TObjectPtr<AActor> InAvatarActor)
+UUHLAbilitySystemComponent::UUHLAbilitySystemComponent()
 {
-	InitAbilityActorInfo(NewController, InAvatarActor);
-
-    if (bGiveAbilitiesOnStart)
-    {
-		for (auto& Ability : Abilities)
-		{
-			GiveAbility(FGameplayAbilitySpec(Ability));
-		}
-    }
+	const UUHLSettings* UHLSettings = GetDefault<UUHLSettings>();
+	if (UHLSettings->bUseAbilitySystemConfigDefaultsInASC)
+	{
+		FillSettingsFromConfig(UHLSettings->AbilitySystemConfigDefaults);
+	}
 }
 
-void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor)
+void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InAvatarActor, bool bActivateInitialAbilities)
 {
+	if (bUseAbilitySystemConfig && AbilitySystemConfig)
+	{
+		FillSettingsFromConfig(AbilitySystemConfig->Settings);
+	}
+	
 	InitAbilityActorInfo(NewOwner, InAvatarActor);
 
+	if (bGiveAttributesSetsOnStart)
+	{
+		for (TSubclassOf<UAttributeSet> AttributeSet : AttributeSets)
+		{
+			UAttributeSet* NewSet = NewObject<UAttributeSet>(GetOwner(), AttributeSet);
+			AddAttributeSetSubobject(NewSet);
+		}
+	}
+
+	InitAttributes();
+	GiveInitialTags();
+	
     if (bGiveAbilitiesOnStart)
     {
         for (auto& Ability : Abilities)
@@ -43,14 +62,35 @@ void UUHLAbilitySystemComponent::InitAbilitySystem(AActor* NewOwner, AActor* InA
             GiveAbility(FGameplayAbilitySpec(Ability));
         }
     }
+
+	// TODO:
+	// What if I want to give AbilitySet that initialized with my attributes?
+	// Move attributes initialize to AbilitySet? Already can be done through GameplayEffect?
+	// Try to initialize only attributes from AttributeSet? and after abilities/gameplayeffects?
+    if (bGiveAbilitySetsOnStart)
+    {
+        for (const TObjectPtr<const UUHLAbilitySet>& AbilitySet : AbilitySets)
+        {
+            GiveAbilitySet(AbilitySet);
+        }
+    }
+
+    if (bActivateInitialAbilities)
+    {
+        ActivateInitialAbilities();
+    }
 }
 
-void UUHLAbilitySystemComponent::InitAttributes()
+void UUHLAbilitySystemComponent::InitAttributes_Implementation()
 {
     if (bInitializeGameplayAttributes)
     {
-	    SetAttributes(InitialGameplayAttributes);
+        SetAttributes(InitialAttributes);
     }
+}
+
+void UUHLAbilitySystemComponent::GiveInitialTags()
+{
     if (bGiveInitialGameplayTags)
     {
         AddLooseGameplayTags(InitialGameplayTags, 1);
@@ -71,9 +111,29 @@ void UUHLAbilitySystemComponent::ActivateInitialAbilities()
 {
     if (bActivateAbilitiesOnStart)
     {
-        for (const auto AbilityTags : InitialActiveAbilities)
+        for (const auto AbilityTags : ActiveAbilitiesOnStart)
         {
             TryActivateAbilityWithTag(AbilityTags.First());
+        }
+    }
+}
+
+void UUHLAbilitySystemComponent::GiveAbilitySet(const UUHLAbilitySet* AbilitySet)
+{
+    FUHLAbilitySet_GrantedHandles OutGrantedHandles;
+    AbilitySet->GiveToAbilitySystem(this, &OutGrantedHandles, this);
+    AbilitySetGrantedHandles.Add(OutGrantedHandles);
+}
+
+void UUHLAbilitySystemComponent::RemoveAbilitySetByTag(const FGameplayTag& GameplayTag)
+{
+    for (int32 i = 0; i < AbilitySetGrantedHandles.Num(); i++)
+    {
+        FUHLAbilitySet_GrantedHandles& AbilitySetGrantedHandle = AbilitySetGrantedHandles[i];
+        if (AbilitySetGrantedHandle.GetAbilitySetTags().HasAny(FGameplayTagContainer(GameplayTag)))
+        {
+            AbilitySetGrantedHandle.TakeFromAbilitySystem(this);
+            AbilitySetGrantedHandles.RemoveAt(i, 1);
         }
     }
 }
@@ -87,40 +147,125 @@ void UUHLAbilitySystemComponent::OnUnregister()
 	Super::OnUnregister();
 }
 
+#if WITH_EDITOR
+
+bool UUHLAbilitySystemComponent::CanEditChange(const FProperty* InProperty) const
+{
+	const bool ParentVal = Super::CanEditChange(InProperty);
+
+	if (InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bInitializeGameplayAttributes)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialAttributes)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, Abilities)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAttributesSetsOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AttributeSets)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bActivateAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, ActiveAbilitiesOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveInitialGameplayTags)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InitialGameplayTags)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bGiveAbilitySetsOnStart)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AbilitySets)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bPreviewAllAbilities)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, DebugPreviewAbilitiesFromAbilitySets)
+
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputConfig)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, InputConfig)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseAbilityInputCache)
+		|| InProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, bUseInputCacheWindows)
+	)
+	{
+		return !bUseAbilitySystemConfig;
+	}
+
+	return ParentVal;
+}
+
+void UUHLAbilitySystemComponent::PostInitProperties()
+{
+    Super::PostInitProperties();
+
+    UpdatePreviewAbilitiesMap();
+}
+
+void UUHLAbilitySystemComponent::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+{
+    Super::PostEditChangeProperty(PropertyChangedEvent);
+
+    if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, AbilitySets)
+        || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UUHLAbilitySystemComponent, DebugPreviewAbilitiesFromAbilitySets))
+    {
+        UpdatePreviewAbilitiesMap();
+    }
+}
+
+void UUHLAbilitySystemComponent::UpdatePreviewAbilitiesMap()
+{
+    DebugPreviewAbilitiesFromAbilitySets.Reset();
+
+    if (!bPreviewAllAbilities)
+    {
+        return;
+    }
+
+    for (const UUHLAbilitySet* AbilitySet : AbilitySets)
+    {
+        if (!AbilitySet) continue;
+
+        TTuple<FString, FString> TuplePreview;
+        TuplePreview.Key = AbilitySet->GetName();
+
+        for (const TSubclassOf<UGameplayAbility>& AbilityRef : AbilitySet->GetAllAbilitiesList())
+        {
+            if (!AbilityRef.Get()) continue; 
+            TuplePreview.Value += AbilityRef->GetName().Replace(TEXT("_C"), TEXT("")) + "\n";
+        }
+        DebugPreviewAbilitiesFromAbilitySets.Add(TuplePreview);
+    }
+}
+#endif
+
+void UUHLAbilitySystemComponent::FillSettingsFromConfig(const FUHLAbilitySystemSettings& AbilitySystemConfig_In)
+{
+	bInitializeGameplayAttributes = AbilitySystemConfig_In.bInitializeGameplayAttributes;
+	InitialAttributes = AbilitySystemConfig_In.InitialAttributes;
+
+	bGiveAbilitiesOnStart = AbilitySystemConfig_In.bGiveAbilitiesOnStart;
+	Abilities = AbilitySystemConfig_In.Abilities;
+
+	bGiveAttributesSetsOnStart = AbilitySystemConfig_In.bGiveAttributesSetsOnStart;
+	AttributeSets = AbilitySystemConfig_In.AttributeSets;
+
+	bActivateAbilitiesOnStart = AbilitySystemConfig_In.bActivateAbilitiesOnStart;
+	ActiveAbilitiesOnStart = AbilitySystemConfig_In.ActiveAbilitiesOnStart;
+
+	bGiveInitialGameplayTags = AbilitySystemConfig_In.bGiveInitialGameplayTags;
+	InitialGameplayTags = AbilitySystemConfig_In.InitialGameplayTags;
+	
+	bGiveAbilitySetsOnStart = AbilitySystemConfig_In.bGiveAbilitySetsOnStart;
+	AbilitySets = AbilitySystemConfig_In.AbilitySets;
+
+	// bPreviewAllAbilities = AbilitySystemConfig_In.bPreviewAllAbilities;
+	// DebugPreviewAbilitiesFromAbilitySets = AbilitySystemConfig_In.DebugPreviewAbilitiesFromAbilitySets;
+
+	bUseInputConfig = AbilitySystemConfig_In.bUseInputConfig;
+	InputConfig = AbilitySystemConfig_In.InputConfig;
+	bUseAbilityInputCache = AbilitySystemConfig_In.bUseAbilityInputCache;
+	bUseInputCacheWindows = AbilitySystemConfig_In.bUseInputCacheWindows;
+}
+
 bool UUHLAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {
-	return TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
+	return UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(this, GameplayTag, bAllowRemoteActivation);
 }
 
 bool UUHLAbilitySystemComponent::TryCancelAbilityWithTag(FGameplayTag GameplayTag)
 {
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToCancel;
-	GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToCancel, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToCancel)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			if (Ability->IsActive())
-			{
-				Ability->K2_CancelAbility();
-				bResult = true;
-			}
-		}
-	}
-	return bResult;
+    return UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(this, GameplayTag);
 }
 
 TArray<bool> UUHLAbilitySystemComponent::TryCancelAbilitiesWithTags(TArray<FGameplayTag> GameplayTags)
 {
-	TArray<bool> Result;
-	for (auto GameplayTag : GameplayTags)
-	{
-		Result.Add(TryCancelAbilityWithTag(GameplayTag));
-	}
-	return Result;
+    return UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(this, GameplayTags);
 }
 
 int32 UUHLAbilitySystemComponent::FireGameplayEvent(FGameplayTag EventTag, const FGameplayEventData& Payload)

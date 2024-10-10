@@ -3,6 +3,7 @@
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include "AbilitySystemComponent.h"
+#include "GameplayTagsManager.h"
 #include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
@@ -19,10 +20,13 @@
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {
@@ -56,8 +60,35 @@ void UUnrealHelperLibraryBPL::DebugPrintStrings(const FString& A, const FString&
 	);
 }
 
+void UUnrealHelperLibraryBPL::DebugPrintString(const UObject* WorldContextObject, const FString& A, float Duration, const FName Key, const bool bEnabled)
+{
+	FString StringResult;
+	StringResult.Empty(A.Len() + 1); // adding one for the string terminator
+
+	if (!bEnabled) return;
+
+	UKismetSystemLibrary::PrintString(
+		WorldContextObject, StringResult,true, true,
+		FLinearColor(0, 0.66, 1), Duration, Key
+	);
+}
+
 void UUnrealHelperLibraryBPL::DrawDebugBar()
 {
+}
+
+float UUnrealHelperLibraryBPL::GetAnimMontageSectionLengthByName(UAnimMontage* AnimMontage, FName SectionName)
+{
+	float Result = -1;
+
+	if (!IsValid(AnimMontage)) return Result;
+	int32 SectionIdx = SectionName.IsNone() ? 0 : AnimMontage->GetSectionIndex(SectionName);
+
+	if (SectionIdx == INDEX_NONE) return Result;
+	DebugPrintString(AnimMontage->GetWorld(), FString::Printf(TEXT("Section %s %i"), *SectionName.ToString(), SectionIdx), Result);
+	Result = AnimMontage->GetSectionLength(SectionIdx);
+
+	return Result;
 }
 
 FGameplayEffectSpec UUnrealHelperLibraryBPL::CreateGenericGASGameplayEffectSpec(TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser,
@@ -104,6 +135,83 @@ void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* A
     }
 }
 
+bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
+{
+    if (!IsValid(ASC)) return false;
+    return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
+}
+
+bool UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
+{
+    if (!IsValid(ASC)) return false;
+
+    bool bResult = false;
+    TArray<FGameplayAbilitySpec*> AbilitiesToCancel;
+    ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToCancel, false);
+
+    for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToCancel)
+    {
+        TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
+        for (UGameplayAbility* Ability : AbilityInstances)
+        {
+            if (Ability->IsActive())
+            {
+                Ability->K2_CancelAbility();
+                bResult = true;
+            }
+        }
+    }
+    return bResult;
+}
+
+TArray<bool> UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags)
+{
+    if (!IsValid(ASC)) return {};
+
+    TArray<bool> Result;
+    for (auto GameplayTag : GameplayTags)
+    {
+        Result.Add(TryCancelAbilityWithTag(ASC, GameplayTag));
+    }
+    return Result;
+}
+
+FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, bool bMatchPartialString)
+{
+    const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
+    FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
+
+    if (!Tag.IsValid() && bMatchPartialString)
+    {
+        FGameplayTagContainer AllTags;
+        Manager.RequestAllGameplayTags(AllTags, true);
+
+        for (const FGameplayTag& TestTag : AllTags)
+        {
+            if (TestTag.ToString().Contains(TagString))
+            {
+                // UE_LOG(LogUnrealHelperLibrary, Display, TEXT("Could not find exact match for tag [%s] but found partial match on tag [%s]."), *TagString, *TestTag.ToString());
+                Tag = TestTag;
+                break;
+            }
+        }
+    }
+
+    return Tag;
+}
+
+EUHLDirection UUnrealHelperLibraryBPL::GetOppositeDirection(EUHLDirection Direction_In)
+{
+	switch (Direction_In)
+	{
+		case EUHLDirection::Left: return EUHLDirection::Right;
+		case EUHLDirection::Right: return EUHLDirection::Left;
+		case EUHLDirection::Front: return EUHLDirection::Back;
+		case EUHLDirection::Back: return EUHLDirection::Front;
+		default: return EUHLDirection::None;
+	}
+}
+
 TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
 {
     TArray<FString> Result = {};
@@ -138,12 +246,15 @@ TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* O
 }
 
 float UUnrealHelperLibraryBPL::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
-	AActor* TargetActor)
+	AActor* TargetActor, bool bUseActorBackForCalculation)
 {
     if (!IsValid(ActorRelativeToWhomAngleCalculated) || !IsValid(TargetActor)) return FLOAT_ERROR;
+
+	float Multiplier = bUseActorBackForCalculation ? 1 : -1;
+	
 	return UKismetAnimationLibrary::CalculateDirection(
 		ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
-		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
+		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * Multiplier).ToOrientationRotator()
 	);
 }
 
@@ -154,6 +265,33 @@ float UUnrealHelperLibraryBPL::RelativeAngleToVector(AActor* ActorRelativeToWhom
         ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetVector,
         (ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
     );
+}
+
+EUHLDirection UUnrealHelperLibraryBPL::GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor)
+{
+	const FVector& ActorLocation = TargetActor->GetActorLocation();
+	// PointPlaneDist is super cheap - 1 vector subtraction, 1 dot product.
+	float DistanceToFrontBackPlane = FVector::PointPlaneDist(SourceActorLocation, ActorLocation, TargetActor->GetActorRightVector());
+	float DistanceToRightLeftPlane = FVector::PointPlaneDist(SourceActorLocation, ActorLocation, TargetActor->GetActorForwardVector());
+
+	if (FMath::Abs(DistanceToFrontBackPlane) <= FMath::Abs(DistanceToRightLeftPlane))
+	{
+		// Determine if Front or Back
+
+		// Can see if it's left or right of Left/Right plane which would determine Front or Back
+		if (DistanceToRightLeftPlane >= 0)
+		{
+			return EUHLDirection::Front;
+		}
+		return EUHLDirection::Back;
+	}
+	// Determine if Right or Left
+
+	if (DistanceToFrontBackPlane >= 0)
+	{
+		return EUHLDirection::Right;
+	}
+	return EUHLDirection::Left;
 }
 
 UActorComponent* UUnrealHelperLibraryBPL::GetActorComponentByName(AActor* Actor, FString Name)
@@ -253,44 +391,49 @@ void UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(FVector& Point, FRotat
     }
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtAngleRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
+void UUnrealHelperLibraryBPL::GetPointAtAngleRelativeToOtherActor(FVector& Point, FRotator& PointRotation, const AActor* Actor1, const AActor* Actor2, const float Angle, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
-    if (!IsValid(Actor1) || !IsValid(Actor2)) return VECTOR_ERROR;
-    const FVector Actor1Location = Actor1->GetActorLocation();
+    if (!IsValid(Actor1) || !IsValid(Actor2)) return;
+
+	const FVector Actor1Location = Actor1->GetActorLocation();
     const FVector Actor2Location = Actor2->GetActorLocation();
     const FVector DirectionBetweenActors = (Actor2Location - Actor1Location).GetSafeNormal();
-    FVector Result = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance);
-    Result.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
+    Point = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance);
+    Point.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
+	PointRotation = (Point - Actor1Location).ToOrientationRotator();
+	
     if (bDebug)
     {
-        DrawDebugString(Actor1->GetWorld(), Result, FString::Printf(TEXT("Angle %.2f\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
-        DrawDebugSphere(Actor1->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        DrawDebugString(Actor1->GetWorld(), Point, FString::Printf(TEXT("Angle %.2f\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        DrawDebugSphere(Actor1->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
         FVector ArrowLineEnd = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * (Distance - 10));
-        Result.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
+        Point.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
         DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 1);
         DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
     }
-    return Result;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtDirectionRelativeToOtherActor(const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
+void UUnrealHelperLibraryBPL::GetPointAtDirectionRelativeToOtherActor(FVector& Point, FRotator& PointRotation, const AActor* Actor1, const AActor* Actor2, const EUHLDirection Direction, const float Distance, const bool bTakeZFromActor1, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
-    if (!IsValid(Actor1) || !IsValid(Actor2)) return VECTOR_ERROR;
-    float Angle = DirectionToAngle(Direction);
-    FVector Result = GetPointAtAngleRelativeToOtherActor(Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
+    if (!IsValid(Actor1) || !IsValid(Actor2)) return;
+
+	float Angle = DirectionToAngle(Direction);
+	GetPointAtAngleRelativeToOtherActor(Point, PointRotation, Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
+	
     if (bDebug)
     {
         const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
         if (EnumPtr)
         {
-            DrawDebugString(Actor1->GetWorld(), Result, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+            DrawDebugString(Actor1->GetWorld(), Point, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
         }
-        DrawDebugSphere(Actor1->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
-        FVector ArrowLineEnd = GetPointAtAngleRelativeToOtherActor(Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
+        DrawDebugSphere(Actor1->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+    	FVector ArrowLineEnd;
+    	FRotator ArrowLineEndRotation;
+        GetPointAtAngleRelativeToOtherActor(ArrowLineEnd, ArrowLineEndRotation, Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
         DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 1);
         DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
     }
-    return Result;
 }
 
 float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
@@ -378,6 +521,72 @@ FString UUnrealHelperLibraryBPL::GetPathToFile(UObject* Object)
     return Object->GetPathName(NULL).Replace(*Object->GetName(), TEXT(""));
 }
 
+bool UUnrealHelperLibraryBPL::IsDebugBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    if (BuildConfiguration == EBuildConfiguration::Debug
+        || BuildConfiguration == EBuildConfiguration::DebugGame)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool UUnrealHelperLibraryBPL::IsDevelopmentBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Development;
+}
+
+bool UUnrealHelperLibraryBPL::IsShippingBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Shipping;
+}
+
+bool UUnrealHelperLibraryBPL::IsTestBuild()
+{
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    return BuildConfiguration == EBuildConfiguration::Test;
+}
+
+bool UUnrealHelperLibraryBPL::IsInEditor()
+{
+#if WITH_EDITOR
+    return true;
+#else
+    return false;
+#endif
+}
+
+EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
+{
+    if (IsInEditor()) return EUHLBuildType::Editor;
+
+    EBuildConfiguration BuildConfiguration = FApp::GetBuildConfiguration();
+    switch (BuildConfiguration)
+    {
+        case EBuildConfiguration::Debug:
+            return EUHLBuildType::Debug;
+            break;
+        case EBuildConfiguration::DebugGame:
+            return EUHLBuildType::Debug;
+			break;
+        case EBuildConfiguration::Development:
+            return EUHLBuildType::Development;
+			break;
+        case EBuildConfiguration::Shipping:
+            return EUHLBuildType::Shipping;
+			break;
+        case EBuildConfiguration::Test:
+            return EUHLBuildType::Test;
+			break;
+        default:
+            return IsInEditor() ? EUHLBuildType::Editor : EUHLBuildType::None;
+            break;
+    }
+}
+
 EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	FBlackboardKeySelector BlackboardKey)
 {
@@ -429,5 +638,16 @@ EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	}
 
 	return Result;
+}
+
+bool UUnrealHelperLibraryBPL::IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag)
+{
+    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+    if (!IsValid(GameInstance)) return false;
+
+    UUHLDebugSubsystem* UHLDebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSubsystem>();
+    if (!IsValid(UHLDebugSubsystem)) return false;
+
+    return UHLDebugSubsystem->IsCategoryEnabled(DebugCategoryGameplayTag);
 }
 

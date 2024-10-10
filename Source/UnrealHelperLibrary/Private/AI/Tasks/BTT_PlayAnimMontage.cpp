@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "GameFramework/Character.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_PlayAnimMontage)
+
 DEFINE_LOG_CATEGORY(LogBTT_PlayAnimMontage);
 
 UBTT_PlayAnimMontage::UBTT_PlayAnimMontage(const FObjectInitializer& ObjectInitializer)
@@ -56,11 +58,11 @@ FString UBTT_PlayAnimMontage::GetStaticDescription() const
 {
 	return FString::Printf(
 		TEXT(
-		"AnimMontage: %s\n "
-		"PlayRate: %f\n "
+		"AnimMontage: %s\n"
+		"PlayRate: %f\n"
 		"StartingPosition: %f\n"
 		"StartSectionName: %s\n"
-		"StopMontageOnAbort: %s\n "
+		"StopMontageOnAbort: %s\n"
 		"TaskNodeEndPolicy: %s"),
 		AnimMontage ? *AnimMontage->GetName() : TEXT("None"),
 		PlayRate,

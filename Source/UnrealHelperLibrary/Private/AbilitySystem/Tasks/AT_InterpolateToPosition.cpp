@@ -6,6 +6,7 @@
 #include "Curves/CurveVector.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AT_InterpolateToPosition)
@@ -18,8 +19,18 @@ UAT_InterpolateToPosition::UAT_InterpolateToPosition(const FObjectInitializer& O
     bIsFinished = false;
 }
 
-UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(UGameplayAbility* OwningAbility, FName TaskInstanceName, FVector Location, FRotator Rotation, float Duration,
-    UCurveFloat* OptionalInterpolationCurve, UCurveVector* OptionalVectorInterpolationCurve, AActor* OptionalActorToInterpolate)
+UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(
+    UGameplayAbility* OwningAbility,
+    const FName TaskInstanceName,
+    FVector Location,
+    const FRotator Rotation,
+    float Duration,
+    UCurveFloat* OptionalInterpolationCurve,
+    UCurveVector* OptionalVectorInterpolationCurve,
+    AActor* OptionalActorToInterpolate,
+    const bool bIsIgnoreHit,
+    const float DistanceToHit
+)
 {
     UAT_InterpolateToPosition* MyObj = NewAbilityTask<UAT_InterpolateToPosition>(OwningAbility, TaskInstanceName);
 
@@ -28,6 +39,19 @@ UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(UGam
     {
         MyObj->StartLocation = MyObj->ActorToInterpolate->GetActorLocation();
         MyObj->StartRotation = MyObj->ActorToInterpolate->GetActorRotation();
+    }
+
+    if (!bIsIgnoreHit)
+    {
+        FHitResult OutHit {};
+        if (CheckHit(MyObj->GetWorld(),MyObj->ActorToInterpolate->GetActorLocation(),Location, {MyObj->ActorToInterpolate}, OutHit))
+        {
+            const FVector Start = MyObj->ActorToInterpolate->GetActorLocation();
+            const FVector CurrentEnd = GetCurrentEndLocation(Start, OutHit.Location, DistanceToHit);
+
+            Duration = GetCurrentDuration(Duration, Start, Location, CurrentEnd);
+            Location = CurrentEnd;
+        }
     }
 
     MyObj->TargetLocation = Location;
@@ -39,7 +63,6 @@ UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(UGam
     MyObj->LerpCurveVector = OptionalVectorInterpolationCurve;
 
     return MyObj;
-
 }
 
 void UAT_InterpolateToPosition::InitSimulatedTask(UGameplayTasksComponent& InGameplayTasksComponent)
@@ -76,8 +99,7 @@ void UAT_InterpolateToPosition::TickTask(float DeltaTime)
             }
         }
 
-
-        float CurrentTime = GetWorld()->GetTimeSeconds();
+        const float CurrentTime = GetWorld()->GetTimeSeconds();
 
         if (CurrentTime >= TimeMoveWillEnd)
         {
@@ -119,7 +141,7 @@ void UAT_InterpolateToPosition::TickTask(float DeltaTime)
             }
 
             MyActor->SetActorLocation(NewLocation);
-			MyActor->SetActorRotation(NewRotation);
+            MyActor->SetActorRotation(NewRotation);
         }
     }
     else
@@ -163,4 +185,45 @@ void UAT_InterpolateToPosition::OnDestroy(bool bInOwnerFinished)
     }
 
     Super::OnDestroy(bInOwnerFinished);
+}
+
+bool UAT_InterpolateToPosition::CheckHit(
+    const UWorld* World,
+    const FVector& Start,
+    const FVector& End,
+    const TArray<AActor*>& ActorsToIgnore,
+    FHitResult& OutHit
+)
+{
+    return UKismetSystemLibrary::LineTraceSingle(
+        World,
+        Start,
+        End,
+        ETraceTypeQuery::TraceTypeQuery1,
+        false,
+        ActorsToIgnore,
+        EDrawDebugTrace::None,
+        OutHit,
+        true
+    );
+}
+
+FVector UAT_InterpolateToPosition::GetCurrentEndLocation(const FVector& Start, const FVector& End, const float DistanceToHit)
+{
+    FVector Result {};
+    const FVector Direction = End - Start;
+    const float Distance = FMath::Max(Direction.Length() - DistanceToHit, 0.f);
+    Result = Start + Direction.GetSafeNormal() * Distance;
+
+    return Result;
+}
+
+float UAT_InterpolateToPosition::GetCurrentDuration(const float Duration, const FVector& Start, const FVector& End, const FVector& CurrentEnd)
+{
+    float Result = Duration;
+    const float OriginalDistance = (End - Start).Size();
+    const float NewDistance = (CurrentEnd - Start).Size();
+    Result = Duration * (NewDistance / OriginalDistance);
+
+    return Result;
 }

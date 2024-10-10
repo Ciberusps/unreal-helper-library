@@ -9,6 +9,8 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_NativeEnum.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_DebugPrintBBValue)
+
 UBTT_DebugPrintBBValue::UBTT_DebugPrintBBValue(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

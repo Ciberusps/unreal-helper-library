@@ -4,8 +4,9 @@
 #include "Animation/Notifies/ANS_MagnetTo.h"
 
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_MagnetTo)
 
 void UANS_MagnetTo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {

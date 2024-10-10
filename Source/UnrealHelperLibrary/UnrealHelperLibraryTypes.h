@@ -49,3 +49,18 @@ enum class EUHLSettingsSource: uint8
 
     MAX UMETA(Hidden)
 };
+
+// EUHLBuildType not same as EBuildConfiguration, if we WITH_EDITOR returns Editor,
+// no matter what EBuildConfiguration is currently used(mostly WITH_EDITOR is Development)
+// if real build returns EBuildConfiguration
+UENUM(BlueprintType)
+enum class EUHLBuildType: uint8
+{
+    None UMETA(Hidden),
+    Editor UMETA(ToolTip="Are you in editor"),
+
+    Debug,
+    Development,
+    Shipping,
+    Test,
+};

@@ -7,6 +7,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/TextBlock.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugWidget)
 
 void UUHLDebugWidget::ToggleAbilityInputCache(UUHLAbilitySystemComponent* ASC_In)
 {

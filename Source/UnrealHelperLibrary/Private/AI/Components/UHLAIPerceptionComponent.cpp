@@ -5,6 +5,8 @@
 
 #include "Perception/AISense_Sight.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAIPerceptionComponent)
+
 void UUHLAIPerceptionComponent::HandleExpiredStimulus(FAIStimulus& StimulusStore)
 {
     Super::HandleExpiredStimulus(StimulusStore);

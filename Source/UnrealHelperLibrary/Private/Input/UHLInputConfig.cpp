@@ -6,6 +6,7 @@
 // #include "Settings/LyraSettingsLocal.h"
 // #include "Player/LyraLocalPlayer.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLInputConfig)
 
 UUHLInputConfig::UUHLInputConfig(const FObjectInitializer& ObjectInitializer)
 {

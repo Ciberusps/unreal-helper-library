@@ -11,6 +11,8 @@
 #include "GameFramework/Character.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_TurnTo)
+
 void UBTT_TurnTo::SetupPreset_Default_90_180()
 {
     TurnSettings.SetupPreset_Default_90_180();

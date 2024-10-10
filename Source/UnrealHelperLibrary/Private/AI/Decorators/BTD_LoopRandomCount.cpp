@@ -3,6 +3,8 @@
 
 #include "AI/Decorators/BTD_LoopRandomCount.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(BTD_LoopRandomCount)
+
 UBTD_LoopRandomCount::UBTD_LoopRandomCount(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
