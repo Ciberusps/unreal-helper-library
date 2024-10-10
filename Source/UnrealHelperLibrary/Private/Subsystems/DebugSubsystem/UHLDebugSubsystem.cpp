@@ -156,6 +156,15 @@ void UUHLDebugSubsystem::ToggleDebugCategory(const FGameplayTag DebugCategoryTag
     EnableDebugCategory(DebugCategoryTag, !IsCategoryEnabled(DebugCategoryTag));
 }
 
+const FUHLDebugCategory& UUHLDebugSubsystem::GetDebugCategoryByTag(const FGameplayTag DebugCategoryTag) const
+{
+	const FUHLDebugCategory* UHLDebugCategory = DebugCategories.FindByPredicate([=](const FUHLDebugCategory& DebugCategory)
+	{
+		return DebugCategory.Tags.HasAnyExact(FGameplayTagContainer(DebugCategoryTag));
+	});
+	return *UHLDebugCategory;
+}
+
 void UUHLDebugSubsystem::ToggleAbilityInputDebug()
 {
     UUHLAbilitySystemComponent* UHLASC = GetPlayerAbilitySystemComponent();

@@ -60,7 +60,7 @@ void UUnrealHelperLibraryBPL::DebugPrintStrings(const FString& A, const FString&
 	);
 }
 
-void UUnrealHelperLibraryBPL::DebugPrintString(const FString& A, float Duration, const FName Key, const bool bEnabled)
+void UUnrealHelperLibraryBPL::DebugPrintString(const UObject* WorldContextObject, const FString& A, float Duration, const FName Key, const bool bEnabled)
 {
 	FString StringResult;
 	StringResult.Empty(A.Len() + 1); // adding one for the string terminator
@@ -68,7 +68,7 @@ void UUnrealHelperLibraryBPL::DebugPrintString(const FString& A, float Duration,
 	if (!bEnabled) return;
 
 	UKismetSystemLibrary::PrintString(
-		nullptr, StringResult,true, true,
+		WorldContextObject, StringResult,true, true,
 		FLinearColor(0, 0.66, 1), Duration, Key
 	);
 }
@@ -85,7 +85,7 @@ float UUnrealHelperLibraryBPL::GetAnimMontageSectionLengthByName(UAnimMontage* A
 	int32 SectionIdx = SectionName.IsNone() ? 0 : AnimMontage->GetSectionIndex(SectionName);
 
 	if (SectionIdx == INDEX_NONE) return Result;
-	DebugPrintString(FString::Printf(TEXT("Section %s %i"), *SectionName.ToString(), SectionIdx), Result);
+	DebugPrintString(AnimMontage->GetWorld(), FString::Printf(TEXT("Section %s %i"), *SectionName.ToString(), SectionIdx), Result);
 	Result = AnimMontage->GetSectionLength(SectionIdx);
 
 	return Result;
@@ -200,6 +200,18 @@ FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, 
     return Tag;
 }
 
+EUHLDirection UUnrealHelperLibraryBPL::GetOppositeDirection(EUHLDirection Direction_In)
+{
+	switch (Direction_In)
+	{
+		case EUHLDirection::Left: return EUHLDirection::Right;
+		case EUHLDirection::Right: return EUHLDirection::Left;
+		case EUHLDirection::Front: return EUHLDirection::Back;
+		case EUHLDirection::Back: return EUHLDirection::Front;
+		default: return EUHLDirection::None;
+	}
+}
+
 TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* OwnerObject, UClass* Class)
 {
     TArray<FString> Result = {};
@@ -234,12 +246,15 @@ TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* O
 }
 
 float UUnrealHelperLibraryBPL::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
-	AActor* TargetActor)
+	AActor* TargetActor, bool bUseActorBackForCalculation)
 {
     if (!IsValid(ActorRelativeToWhomAngleCalculated) || !IsValid(TargetActor)) return FLOAT_ERROR;
+
+	float Multiplier = bUseActorBackForCalculation ? 1 : -1;
+	
 	return UKismetAnimationLibrary::CalculateDirection(
 		ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
-		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
+		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * Multiplier).ToOrientationRotator()
 	);
 }
 
