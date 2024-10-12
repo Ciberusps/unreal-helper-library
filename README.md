@@ -12,7 +12,7 @@ Support: tested `UE5.4 - UE5.5-preview`
 #### From source (recommended):
 
 - `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder
-- add code to file `<ProjectName>.Build.cs`
+- to use C++ things add code to file `<ProjectName>.Build.cs`
 
 ```C#
     // <ProjectName>.Build.cs
@@ -39,7 +39,7 @@ Support: tested `UE5.4 - UE5.5-preview`
 
 #### From marketplace:
 
-later this year
+later this year on **FAB**
 
 ## Update
 
@@ -501,14 +501,26 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 
 #### DebugSubsystem
 
-Any game needs debug system, in midsize commands you always use limited set of debugging tools
-more always than others, so DebugSubsystem is tool for creating your debug system as fast as possible
+Any game needs debug system, in mid-size commands you always use limited set of debugging tools
+more always than others, so **DebugSubsystem** is as tool for creating your debug system as fast as possible
+
+Use case:
+I want to have debug for AbilitySystem, it should turn on/off, available in editor between sessions and
 
 Components:
 
-- `DebugSubsystem`
-- `DebugCategoryComponents` (DCC) - adfa
-- `WaitDebugCategoryChange` - blueprint node
+##### DebugSubsystem
+
+- you can get `IsDebugCategoryEnabled`
+
+##### DebugSubsystemSettings
+
+- add new categories, turn on/off default state, every debug category is a tag
+- `DebugCategoryComponents` (DCC)
+
+##### Check is category enabled/subscribe on debug category state change
+
+- `WaitDebugCategoryChange` - blueprint node to easier check `isDebugCategoryEnabled` or not and wait for its changes
 - `IsUHLDebugSubsystemEnabled` - blueprint node
 - `DebugCategoriesList` - UI component for quick integration in your debug menu
 
