@@ -151,7 +151,7 @@ UHL consists of 3 modules:
 
 ### GAS
 
-Many things based on "Lyra" sample project.
+Many GAS-related things based on "Lyra" sample project.
 
 #### `AbilitySystemComponent`
 
@@ -161,28 +161,44 @@ Many things based on "Lyra" sample project.
 
 Features:
 
-- set `InitialGameplayAttributes`
+- set `InitialAttributes`
 - give `Abilities` on start
 - activate `InitialActiveAbilities`
 - apply `InitialGameplayTags`
-- Lyra-like "InputConfig", GAS abilities input binding
+- "Lyra"-like "InputConfig", GAS abilities input binding
 
 Setup:
 
+##### Option 1
+
+Easy way with zero setup, just nest your character from `AUHLBaseCharacterWithASC`, fits new projects
+there you don't want to waste time at all.
+
+##### Option 2
+
+Easy BP way if you don't want to 
+
+##### Option 3
+
+A bit harder and requires small C++ works, fits for projects with GAS already integrated.
+Follow instructions below or just check `AUHLBaseCharacterWithASC` example
+
 ```C++
-Constructor()
+AUHLBaseCharacterWithASC::AUHLBaseCharacterWithASC(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer)
 {
-    AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("AbilitySystem"));
-    AbilitySystemComponent->AttributeSets = { UUHLBaseAttributeSet::StaticClass() };
+    AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("UHLAbilitySystem"));
 }
 
-PossessedBy()
+void AUHLBaseCharacterWithASC::PossessedBy(AController* NewController)
 {
+    Super::PossessedBy(NewController);
 
     AbilitySystemComponent->InitAbilitySystem(NewController, this);
-    // optional - if bActivateInitialAbilities in "InitAbilitySystem()" false
-    AbilitySystemComponent->ActivateInitialAbilities();
 }
+
+// later if you want some custom attributes init you can do it in by overriding "InitAttributes_Implementation"
+
 ```
 
 ##### InputConfig (GAS abilities input binding)
