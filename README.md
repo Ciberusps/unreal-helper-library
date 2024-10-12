@@ -63,7 +63,7 @@ UHL consists of 3 modules:
 >   - Components
 >     - [AbilitySystemComponent](#abilitysystemcomponent)
 >     - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
->       - [AbilityInputCache](#abilityinputcache)
+>       - [AbilityInputCache (beta)](#abilityinputcache)
 >     - [GameplayAbility](#gameplayability)
 >     - [AttributeSet](#attributeset)
 >     - [AbilitySet](#abilityset)
@@ -269,7 +269,7 @@ How to use:
 
 ##### AbilityInputCache
 
-`AbilityInputCache`
+`AbilityInputCache` (beta) - cache abilities activation
 
 How it works:
 
@@ -506,10 +506,11 @@ more always than others, so DebugSubsystem is tool for creating your debug syste
 
 Components:
 
-- DebugSubsystem
-- DebugCategoryComponents (DCC)
-- WaitDebugCategoryChange
-- IsUHLDebugSubsystemEnabled
+- `DebugSubsystem`
+- `DebugCategoryComponents` (DCC) - adfa
+- `WaitDebugCategoryChange` - blueprint node
+- `IsUHLDebugSubsystemEnabled` - blueprint node
+- `DebugCategoriesList` - UI component for quick integration in your debug menu
 
 Features:
 
@@ -611,3 +612,7 @@ Thanks to [this post](https://www.quodsoler.com/blog/customize-your-unreal-class
 Combines separate `Occlusion`, `Roughness`, `Metalic` textures into one `ORM`
 
 TODO check ref - https://github.com/Atulin/ChannelMerger
+
+## Special Thanks
+
+[@Ingarnm](https://github.com/Ingarnm), [@Vamp1rk0](https://github.com/Vamp1rk0) for feedback
