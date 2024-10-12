@@ -19,6 +19,9 @@ enum class EUHLAbilityActivationPolicy : uint8
     // Try to activate the ability when the input is triggered.
     OnInputTriggered,
 
+    // Don't work, known issue, fix will come soon,
+    // for now just use "WaitInputRelease" in GameplayAbility to check when input released and "EndAbility"
+    //
     // Continually try to activate the ability while the input is active. To cancel ability use WaitInputRelease
     WhileInputActive,
 
@@ -55,16 +58,16 @@ public:
     UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
-	
+
 protected:
     // Defines how this ability is meant to activate.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     EUHLAbilityActivationPolicy ActivationPolicy = EUHLAbilityActivationPolicy::OnInputTriggered;
-	
+
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	virtual void OnPawnAvatarSet();
-	
+
 	/** Called when this ability is granted to the ability system component. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
 	void K2_OnAbilityAdded();

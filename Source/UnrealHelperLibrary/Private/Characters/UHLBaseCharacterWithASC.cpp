@@ -12,6 +12,10 @@ AUHLBaseCharacterWithASC::AUHLBaseCharacterWithASC(const FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("UHLAbilitySystem"));
+
+    // some attribute sets can be added here, but its not only option
+    // you can use UHL Settings to set defaults for every AbilitySystemComponent and add default AttributeSet
+    // AbilitySystemComponent->AttributeSets = { UUHLBaseCharacterAttributeSet::StaticClass() };
 }
 
 void AUHLBaseCharacterWithASC::PossessedBy(AController* NewController)
@@ -20,8 +24,10 @@ void AUHLBaseCharacterWithASC::PossessedBy(AController* NewController)
 
 	if (bInitUHLAbilitySystemOnPosses)
 	{
-		AbilitySystemComponent->InitAbilitySystem(NewController, this);
-		AbilitySystemComponent->InitAttributes();
-		AbilitySystemComponent->ActivateInitialAbilities();
+	    AbilitySystemComponent->InitAbilitySystem(NewController, this);
+
+	    // Advanced setup if you want to make something after attributes set, but before abilities activated
+	    // AbilitySystemComponent->InitAbilitySystem(NewController, this, false);
+	    // AbilitySystemComponent->ActivateInitialAbilities();
 	}
 }

@@ -3,7 +3,7 @@
 **UHL** - unreal helper library, toolset to help developers working with AI, GAS and so on.
 Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions).
 
-GAS things not required to be used at all, but provides much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/documentation/en-us/unreal-engine/lyra-sample-game-in-unreal-engine?application_version=5.5) features. All GAS features designed in mind that they or their part can be added or dropped by you in development in any time.
+**GAS things not required to be used at all, you can use library only for AI things**, but provides much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/documentation/en-us/unreal-engine/lyra-sample-game-in-unreal-engine?application_version=5.5) features. All GAS features designed in mind that they or their part can be added or dropped by you in development in any time.
 
 Support: tested `UE5.4 - UE5.5-preview`
 
@@ -99,9 +99,16 @@ UHL consists of 3 modules:
 >     - [InvokeGameplayAbility](#invokegameplayability)
 >     - [PlayAnimMontage](#playanimmontage)
 >     - [TurnTo](#turnto)
-> - [Subsystems](#Subsystems)
+> - [Subsystems](#subsystems)
 >   - [DebugSubsystem](#debugsubsystem)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
+>   - GAS
+>     - [TryActivateAbilityWithTag]
+>     - [TryCancelAbilityWithTag]
+>     - [TryCancelAbilitiesWithTags]
+>     - [UpdateStateGameplayTags]
+>     - [FindTagByString]
+>     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
 >   - RelativeAngles
 >     - [RelativeAngleToActor](#relativeangletoactor)
 >     - [GetPointAtRelativeAngle](#getpointatrelativeangle)
@@ -109,13 +116,6 @@ UHL consists of 3 modules:
 >     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
 >     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
->   - GAS
->     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
->     - [TryActivateAbilityWithTag]
->     - [TryCancelAbilityWithTag]
->     - [TryCancelAbilitiesWithTags]
->     - [UpdateStateGameplayTags]
->     - [FindTagByString]
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
@@ -155,7 +155,7 @@ Many GAS-related things based on "Lyra" sample project.
 
 #### `AbilitySystemComponent`
 
-![AbilitySystemComponent](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/fc6b751f-fc5d-4394-b133-aea69c9034c5)
+![UHLAbilitySystemComponent](https://github.com/user-attachments/assets/fe56c7a2-43e6-484a-ac65-635e3670204e)
 
 **UHLAbilitySystemComponent** - for quick start with GAS. You can nest from it on start and than turn off its functions when you ready to replace them with your custom solution.
 
@@ -169,24 +169,27 @@ Features:
 
 Setup:
 
-##### Option 1
+##### Option 1 - zero setup
 
 Easy way with zero setup, just nest your character from `AUHLBaseCharacterWithASC`, fits new projects
 there you don't want to waste time at all.
 
-##### Option 2
+##### Option 2 - BP way
 
-Easy BP way if you don't want to 
+Easy way - just add `UHLAbilitySystemComponent` to your character and call `InitAbilitySystem` on `BeginPlay`/`Possessed`
 
-##### Option 3
+![image](https://github.com/user-attachments/assets/781e3b92-7af2-42db-a47a-b19f6bdd1b71)
 
-A bit harder and requires small C++ works, fits for projects with GAS already integrated.
+##### Option 3 - C++
+
+A bit harder and requires small C++ work, fits for projects with GAS already integrated.
 Follow instructions below or just check `AUHLBaseCharacterWithASC` example
 
 ```C++
 AUHLBaseCharacterWithASC::AUHLBaseCharacterWithASC(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
+    // create AbilitySystemComponent if you don't have it
     AbilitySystemComponent = CreateDefaultSubobject<UUHLAbilitySystemComponent>(TEXT("UHLAbilitySystem"));
 }
 
@@ -194,29 +197,33 @@ void AUHLBaseCharacterWithASC::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
 
+    // init AbilitySystem
     AbilitySystemComponent->InitAbilitySystem(NewController, this);
 }
-
-// later if you want some custom attributes init you can do it in by overriding "InitAttributes_Implementation"
-
 ```
 
-##### InputConfig (GAS abilities input binding)
+If you want custom attributes init you can do it
 
-Binding InputActions to GameplayAbilities using tags, like in Lyra but enhanced and adopted for 3d action game.
+- by overriding `InitAttributes_Implementation` - recommended
+- or just don't activate abilities `AbilitySystemComponent->InitAbilitySystem(NewController, this, false)` and make your own attributes init, and then call `AbilitySystemComponent->ActivateInitialAbilities()`
 
-TODO: delete and replace
-![image](https://github.com/user-attachments/assets/2c72400e-1122-40b2-aa73-4bfc1e212d0f)
+#### InputConfig (GAS abilities input binding)
 
-Setup:
+Binding InputActions to GameplayAbilities using tags, based on `Lyra` but enhanced and adopted for 3D action game.
+
+![image](https://github.com/user-attachments/assets/78355f0a-bd98-430d-acda-c98405f4017d)
+
+##### Setup
 
 - turn on `bUseInputConfig` on `UHLAbilitySystemComponent`
 - create `InputConfig` - `DataAsset` nested from `UHLInputConfig`
-- abilities should nest from `UHLGameplayAbility` for `ActivationPolicy` work correctly
+- add `InputConfig` to your character `UHLAbilitySystemComponent`
 - in `Project Settings -> Input -> Default Input Component Class` -> set `UHLInputComponent`
 - in your PlayerCharacter class add lines in `SetupPlayerInputComponent` for binding actions from `InputConfig`
 
-```c++
+For now only C++ setup tested (blueprint option will be later)
+
+```C++
 // Your PlayerCharacter class
 void AUHLPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -228,14 +235,14 @@ void AUHLPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
     UHLInputComponent->BindAbilityActions(UHLInputConfig, AbilitySystemComponent, &UUHLAbilitySystemComponent::AbilityInputTagPressed, &UUHLAbilitySystemComponent::AbilityInputTagReleased, BindHandles);
 
     // optional
-    if (UHLInputComponent)
-    {
-        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputMove);
-        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Completed, this, &AUHLPlayerCharacter::InputStopMove);
+    // if (UHLInputComponent)
+    // {
+    //     UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputMove);
+    //     UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_Move.InputAction, ETriggerEvent::Completed, this, &AUHLPlayerCharacter::InputStopMove);
 
-        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_LookMouse.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputLook);
-        UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_LookStick.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputLook);
-    }
+    //     UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_LookMouse.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputLook);
+    //     UHLInputComponent->BindAction(UHLInputConfig->NativeInputAction_LookStick.InputAction, ETriggerEvent::Triggered, this, &AUHLPlayerCharacter::InputLook);
+    // }
 }
 ```
 
@@ -254,14 +261,13 @@ void AUHLPlayerController::PostProcessInput(const float DeltaTime, const bool bG
 {
     Super::PostProcessInput(DeltaTime, bGamePaused);
 
-    if (CachedPlayerCharacter.Get() == nullptr) return;
+    if (!CachedPlayerCharacter.IsValid()) return;
 
     if (UUHLAbilitySystemComponent* ASC = CachedPlayerCharacter.Get()->GetUHLAbilitySystemComponent())
     {
         ASC->ProcessAbilityInput(DeltaTime, bGamePaused);
     }
 }
-
 
 
 // Your PlayerController.h
@@ -279,33 +285,56 @@ private:
 };
 ```
 
-How to use:
+- now create `InputAction`(IA) and map it in your `InputMappingContext`(IMC)
+- add `InputAction` to created `InputConfig` and map it to `AbilityTags`
+- now Abilities associated with `AbilityTags` will activates when `InputAction` triggered
+- WARN! abilities should nest from `UHLGameplayAbility` for `ActivationPolicy` work correctly
+- to controll ability activation, every `UHLGameplayAbility` have `ActivationPolicy`
+  - `OnInputTriggered` - will activate when InputAction triggered
+  - `WhileInputActive` - activates ability when input pressed and deactivates when input released
+  - `OnSpawn` - activates ability when it gived(granted) to character
 
-- every `UHLGameplayAbility`
+#### AbilityInputCache
 
-##### AbilityInputCache
+`AbilityInputCache` (beta) - caches abilities activation. If you want to have input quality like in AAA games when you need cache some inputs and fire whem when its available. Abilities/Inputs to cache may vary depending on project e.g. for 3D actions(souls-likes, slashers) its critical, for shooters less important
 
-`AbilityInputCache` (beta) - cache abilities activation
+> [!WARN]
+> dont work without [UHLAbilitySystemComponent](#abilitysystemcomponent) and [InputConfig](#inputconfig-gas-abilities-input-binding) enabled
 
-How it works:
+![image](https://github.com/user-attachments/assets/ecc013bf-cc5a-4211-a51c-ced5fe557ec2)
 
-- activate `bUseAbilityInputCache` in `UHLAbilitySystemComponent` (nest your own AbilitySystem from `UHLAbilitySystemComponent`)
-- in GameplayAbility activate `bInputCache`
-- add anim notifies to your attack animation
-  - `ANS_CatchToAbilityInputCache` - to mark when its possible to cache ability  - best practice - on 2nd frame of attack and until "BlockAction" end
-  - `ANS_CheckAbilityInputCache` - when you want to check cache and activate ability best practice - on end of "BlockAction" with 5-10frames duration
+##### Setup:
 
-Debug:
+Instructions here provided with souls-like developing background. Remember you can control `AbilityInputCache` wherever `ASC(AbilitySystemComponent)` is available just take `AbilityInputCache` from `ASC` and call `AddTagToCache`, `CheckCache`, `ClearCache`.... If you need "input window" just add `UHL.AbilityInputCache.Catching` on your character by hand and remove when window not required
 
-- write in console `ToggleAbilityInputDebug`, don't forget to add `ProcessConsoleExec` to your `BGameInstance` or it won't work
+- activate `bUseAbilityInputCache` in `UHLAbilitySystemComponent`
+- [optionaly] strongly recommended to activate `bUseInputCacheWindows` also. If `bUseInputCacheWindows` not activated any GameplayAbility marked with `bInputCache` that you try to activate in any time on fail will be added to `AbilityInputCache` thats not what you want in 3D action game
+- in `GameplayAbility` that you want to cache activate `bInputCache` and fill if required
+  - `AddingToCacheInputRequiredTags` - tags that required to be on your character for this ability to be added to `AbilityInputCache`
+  - `AddingToCacheInputBlockedTags` - tags that blocks adding this ability to `AbilityInputCache`
+- prepare you attack animation - add anim notifies
+  - `ANS_CatchToAbilityInputCache` - to mark when its possible to cache ability. Best practice - leave some frames on start(5-10frames at least) and finish when your "BlockAction" end
+  - `ANS_CheckAbilityInputCache` - when you want to check cache and activate ability. Best practice - on end of "BlockAction" with 5-10frames duration
+
+##### Debug:
+
+- activate `AbilityInputCache` debug category in [DebugSubsystem](#debugsubsystem) from
+  - `ProjectSettings -> UHL DebugSubsystem Settings`
+  - or in runtime via `UHLDebugCategoriesListWidget`
+- write in console `ToggleAbilityInputDebug`, don't forget to add `ProcessConsoleExec` to your `GameInstance` or it won't work
 
 #### AttributeSet
 
-Just default things that every `AttributeSet` wants like `ATTRIBUTE_ACCESSORS`
+Just class with default things that every `AttributeSet` wants like `ATTRIBUTE_ACCESSORS`. Nest your `AttributeSets` from it to not duplicate same things other and other again.
 
 #### AbilitySet
 
-Set of `Abilities, AttributeSets, GameplayEffects`, that can be added to player, or removed by tag
+"Lyra"-like set of `Abilities, AttributeSets, GameplayEffects`, that can be added to character and removed later by tag
+
+Can be controlled
+
+- by external source when giving(`ASC->GiveAbilitySet(UUHLAbilitySet* AbilitySet)`) and removing AbilitySet controlled by external entity, `AbilitySetGrantedHandles.TakeFromAbilitySystem`
+- gived by external but removed by tag calling `ASC->RemoveAbilitySetByTag()`
 
 #### AbilitySystem Config
 
