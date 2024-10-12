@@ -22,11 +22,12 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
+
+static const int32 DEPTH_PRIORITY = -1;
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {
@@ -245,17 +246,36 @@ TArray<FString> UUnrealHelperLibraryBPL::GetNamesOfComponentsOnObject(UObject* O
     return Result;
 }
 
-float UUnrealHelperLibraryBPL::RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated,
-	AActor* TargetActor, bool bUseActorBackForCalculation)
+float UUnrealHelperLibraryBPL::RelativeAngleToActor(
+	AActor* ActorRelativeToWhomAngleCalculated,
+	AActor* TargetActor,
+	bool bRelativeToActorBack,
+	const bool bDebug,
+	const float DebugLifetime,
+	const FLinearColor DebugColor
+)
 {
     if (!IsValid(ActorRelativeToWhomAngleCalculated) || !IsValid(TargetActor)) return FLOAT_ERROR;
 
-	float Multiplier = bUseActorBackForCalculation ? 1 : -1;
-	
-	return UKismetAnimationLibrary::CalculateDirection(
+	float Multiplier = bRelativeToActorBack ? 1 : -1;
+	float Result = UKismetAnimationLibrary::CalculateDirection(
 		ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
 		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * Multiplier).ToOrientationRotator()
 	);
+	
+	if (bDebug)
+	{
+		UWorld* DebugWorld = ActorRelativeToWhomAngleCalculated->GetWorld();
+		FColor DebugCol = DebugColor.ToFColor(true);
+		FVector LineStart = ActorRelativeToWhomAngleCalculated->GetActorLocation();
+		FVector LineEnd = TargetActor->GetActorLocation();
+		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
+
+		DrawDebugString(DebugWorld, TextLocation, FString::Printf(TEXT("RelativeAngle: %.2f°"), Result), 0, DebugCol, DebugLifetime, true, 1.0f);
+		DrawDebugDirectionalArrow(DebugWorld, LineStart, LineEnd, RELATIVE_POINT_ARROW_SIZE, DebugCol, true, DebugLifetime, DEPTH_PRIORITY, 2);
+	}
+	
+	return Result;
 }
 
 float UUnrealHelperLibraryBPL::RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector)
@@ -265,6 +285,14 @@ float UUnrealHelperLibraryBPL::RelativeAngleToVector(AActor* ActorRelativeToWhom
         ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetVector,
         (ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * -1).ToOrientationRotator()
     );
+}
+
+float UUnrealHelperLibraryBPL::RelativeAngleVectorToVector(FVector VectorRelativeToWhomAngleCalculated, FVector TargetVector)
+{
+	return UKismetAnimationLibrary::CalculateDirection(
+		VectorRelativeToWhomAngleCalculated - TargetVector,
+		(VectorRelativeToWhomAngleCalculated * -1).ToOrientationRotator()
+	);
 }
 
 EUHLDirection UUnrealHelperLibraryBPL::GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor)
@@ -356,18 +384,23 @@ FVector UUnrealHelperLibraryBPL::GetHighestPointInBox(const USceneComponent* Com
     return FBox(BoxMin, BoxMax).Max;
 }
 
-FVector UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
+void UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
-    if (!IsValid(ActorIn)) return VECTOR_ERROR;
+    if (!IsValid(ActorIn))
+    {
+    	Point = VECTOR_ERROR;
+	    return;
+    }
     FVector Result = ActorIn->GetActorLocation() + ActorIn->GetActorForwardVector().RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance;
     if (bDebug)
     {
-        DrawDebugString(ActorIn->GetWorld(), Result, FString::Printf(TEXT("Angle %.2f\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
-        DrawDebugSphere(ActorIn->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        DrawDebugString(ActorIn->GetWorld(), Result, FString::Printf(TEXT("Angle %.2f°\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        DrawDebugSphere(ActorIn->GetWorld(), Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, DEPTH_PRIORITY, 1);
         FVector ArrowLineEnd = ActorIn->GetActorLocation() + ActorIn->GetActorForwardVector().RotateAngleAxis(Angle, FVector(0, 0, 1)) * (Distance - 10);
-        DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
+        DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, DEPTH_PRIORITY, 2);
     }
-    return Result;
+	Point = Result;
+	PointRotation = (Point - ActorIn->GetActorLocation()).ToOrientationRotator();
 }
 
 void UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor, const FText DebugText)
@@ -375,8 +408,7 @@ void UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(FVector& Point, FRotat
     if (!IsValid(ActorIn)) return;
 
     float Angle = DirectionToAngle(Direction);
-    Point = GetPointAtRelativeAngle(ActorIn, Angle, Distance);
-    PointRotation = (Point - ActorIn->GetActorLocation()).ToOrientationRotator();
+    GetPointAtRelativeAngle(Point, PointRotation, ActorIn, Angle, Distance);
 
     if (bDebug)
     {
@@ -385,9 +417,11 @@ void UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(FVector& Point, FRotat
         {
 	        DrawDebugString(ActorIn->GetWorld(), Point, FString::Printf(TEXT("%s \nDirection %s\nDistance %.2f"), *DebugText.BuildSourceString(), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
         }
-        DrawDebugSphere(ActorIn->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
-        FVector ArrowLineEnd = GetPointAtRelativeAngle(ActorIn, Angle, Distance - 10);
-        DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
+        DrawDebugSphere(ActorIn->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, DEPTH_PRIORITY, 1);
+        FVector ArrowLineEnd;
+    	FRotator ArrowLineEndRotation;
+        GetPointAtRelativeAngle(ArrowLineEnd, ArrowLineEndRotation, ActorIn, Angle, Distance - 10);
+        DrawDebugDirectionalArrow(ActorIn->GetWorld(), ActorIn->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, DEPTH_PRIORITY, 2);
     }
 }
 
@@ -404,12 +438,13 @@ void UUnrealHelperLibraryBPL::GetPointAtAngleRelativeToOtherActor(FVector& Point
 	
     if (bDebug)
     {
-        DrawDebugString(Actor1->GetWorld(), Point, FString::Printf(TEXT("Angle %.2f\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
-        DrawDebugSphere(Actor1->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+    	UWorld* DebugWorld = Actor1->GetWorld();
+        DrawDebugString(DebugWorld, Point, FString::Printf(TEXT("Angle %.2f°\nDistance %.2f"), Angle, Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
+        DrawDebugSphere(DebugWorld, Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, DEPTH_PRIORITY, 1);
         FVector ArrowLineEnd = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * (Distance - 10));
         Point.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
-        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 1);
-        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
+        DrawDebugDirectionalArrow(DebugWorld, Actor1Location, Actor2Location, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, DEPTH_PRIORITY, 1);
+        DrawDebugDirectionalArrow(DebugWorld, Actor1Location, ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, DEPTH_PRIORITY, 2);
     }
 }
 
@@ -427,12 +462,12 @@ void UUnrealHelperLibraryBPL::GetPointAtDirectionRelativeToOtherActor(FVector& P
         {
             DrawDebugString(Actor1->GetWorld(), Point, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
         }
-        DrawDebugSphere(Actor1->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, 0, 1);
+        DrawDebugSphere(Actor1->GetWorld(), Point, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, DEPTH_PRIORITY, 1);
     	FVector ArrowLineEnd;
     	FRotator ArrowLineEndRotation;
         GetPointAtAngleRelativeToOtherActor(ArrowLineEnd, ArrowLineEndRotation, Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
-        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 1);
-        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, 0, 2);
+        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), Actor2->GetActorLocation(), RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, DEPTH_PRIORITY, 1);
+        DrawDebugDirectionalArrow(Actor1->GetWorld(), Actor1->GetActorLocation(), ArrowLineEnd, RELATIVE_POINT_ARROW_SIZE, FColor::White, true, DebugLifetime, DEPTH_PRIORITY, 2);
     }
 }
 
@@ -638,6 +673,24 @@ EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(
 	}
 
 	return Result;
+}
+
+FColor UUnrealHelperLibraryBPL::RandomColor(int32 Seed)
+{
+	if (Seed >= 0)
+	{
+		return FColor::MakeRandomSeededColor(Seed);
+	}
+	return FColor::MakeRandomColor();
+}
+
+FLinearColor UUnrealHelperLibraryBPL::RandomLinearColor(int32 Seed)
+{
+	if (Seed >= 0)
+	{
+		return FLinearColor::MakeRandomSeededColor(Seed);
+	}
+	return FLinearColor::MakeRandomColor();
 }
 
 bool UUnrealHelperLibraryBPL::IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag)

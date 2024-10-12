@@ -43,15 +43,6 @@ public:
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
 /** Gameplay **/
-	/**
-	 * Calculates relative angle to other actor [-180, 180]
-	 * @param bUseActorBackForCalculation sometimes you want to know actors that nearest to character backside
-	 */
-	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
-	static float RelativeAngleToActor(AActor* ActorRelativeToWhomAngleCalculated, AActor* TargetActor, bool bUseActorBackForCalculation = false);
-	//
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
-    static float RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector);
 	// Get HitReactDirection - direction(front/back/left/right) opposite to character(SourceActorLocation) that made hit
 	// TODO add
 	// - GetHitSourceDirection
@@ -106,6 +97,28 @@ public:
 /** ~GAS **/
 
 /** Angles **/
+	/**
+	 * Calculates relative angle to other actor [-180, 180]
+	 * @param ActorRelativeToWhomAngleCalculated
+	 * @param TargetActor
+	 * @param bRelativeToActorBack sometimes you want to know actors that nearest to character backside
+	 * @param bDebug
+	 * @param DebugLifetime
+	 * @param DebugColor
+	 */
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorRelativeToWhomAngleCalculated", Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo", AdvancedDisplay="bDebug,DebugLifetime,DebugColor,bRelativeToActorBack"))
+	static float RelativeAngleToActor(
+		AActor* ActorRelativeToWhomAngleCalculated,
+		AActor* TargetActor,
+		bool bRelativeToActorBack = false,
+		const bool bDebug = false,
+		const float DebugLifetime = -1,
+		const FLinearColor DebugColor = FLinearColor::White
+	);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorRelativeToWhomAngleCalculated", Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
+	static float RelativeAngleToVector(AActor* ActorRelativeToWhomAngleCalculated, FVector TargetVector);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary debug Development angle relative GetAngle RelativeTo"))
+	static float RelativeAngleVectorToVector(FVector VectorRelativeToWhomAngleCalculated, FVector TargetVector);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary")
 	static EUHLDirection GetOppositeDirection(EUHLDirection Direction_In);
 /** ~Angles **/
@@ -141,7 +154,7 @@ public:
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
     static FVector GetHighestPointInBox(const USceneComponent* Component);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay="bDebug,DebugLifetime,DebugColor"))
-    static FVector GetPointAtRelativeAngle(const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
+    static void GetPointAtRelativeAngle(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay="bDebug,DebugLifetime,DebugColor,DebugText"))
     static void GetPointAtRelativeDirection(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const EUHLDirection Direction, const float Distance, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White, const FText DebugText = FText());
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor1", AdvancedDisplay="bTakeZFromActor1,bDebug,DebugLifetime,DebugColor"))
@@ -198,6 +211,17 @@ public:
 /** AI **/
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 /** ~AI **/
+
+/** Colors **/
+	// "Makes a random but quite nice color" - literally C++ FColor::MakeRandomColor
+	// if seed >= 0 than FColor::MakeRandomSeededColor will be used
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary color random", AdvancedDisplay="Seed"))
+	static FColor RandomColor(int32 Seed = -1);
+	// "Makes a random but quite nice color" - literally C++ FLinearColor::MakeRandomColor
+	// if seed >= 0 than FLinearColor::MakeRandomSeededColor will be used
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta=(Keywords = "UnrealHelperLibrary color random", AdvancedDisplay="Seed"))
+	static FLinearColor RandomLinearColor(int32 Seed = -1);
+/** ~Colors **/
 
 /** DebugSubsystem **/
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Categories = "UHL.DebugCategory,DebugCategory", WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug"))
