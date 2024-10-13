@@ -177,6 +177,11 @@ TArray<bool> UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(UAbilitySystemC
     return Result;
 }
 
+int32 UUnrealHelperLibraryBPL::FireGameplayEvent(UAbilitySystemComponent* ASC, FGameplayTag EventTag, const FGameplayEventData& Payload)
+{
+    return ASC->HandleGameplayEvent(EventTag, &Payload);
+}
+
 FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, bool bMatchPartialString)
 {
     const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
@@ -262,7 +267,7 @@ float UUnrealHelperLibraryBPL::RelativeAngleToActor(
 		ActorRelativeToWhomAngleCalculated->GetActorLocation() - TargetActor->GetActorLocation(),
 		(ActorRelativeToWhomAngleCalculated->GetActorForwardVector() * Multiplier).ToOrientationRotator()
 	);
-	
+
 	if (bDebug)
 	{
 		UWorld* DebugWorld = ActorRelativeToWhomAngleCalculated->GetWorld();
@@ -274,7 +279,7 @@ float UUnrealHelperLibraryBPL::RelativeAngleToActor(
 		DrawDebugString(DebugWorld, TextLocation, FString::Printf(TEXT("RelativeAngle: %.2f°"), Result), 0, DebugCol, DebugLifetime, true, 1.0f);
 		DrawDebugDirectionalArrow(DebugWorld, LineStart, LineEnd, RELATIVE_POINT_ARROW_SIZE, DebugCol, true, DebugLifetime, DEPTH_PRIORITY, 2);
 	}
-	
+
 	return Result;
 }
 
@@ -435,7 +440,7 @@ void UUnrealHelperLibraryBPL::GetPointAtAngleRelativeToOtherActor(FVector& Point
     Point = Actor1Location + (DirectionBetweenActors.RotateAngleAxis(Angle, FVector(0, 0, 1)) * Distance);
     Point.Z = bTakeZFromActor1 ? Actor1Location.Z : Actor2Location.Z;
 	PointRotation = (Point - Actor1Location).ToOrientationRotator();
-	
+
     if (bDebug)
     {
     	UWorld* DebugWorld = Actor1->GetWorld();
@@ -454,7 +459,7 @@ void UUnrealHelperLibraryBPL::GetPointAtDirectionRelativeToOtherActor(FVector& P
 
 	float Angle = DirectionToAngle(Direction);
 	GetPointAtAngleRelativeToOtherActor(Point, PointRotation, Actor1, Actor2, Angle, Distance, bTakeZFromActor1);
-	
+
     if (bDebug)
     {
         const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
