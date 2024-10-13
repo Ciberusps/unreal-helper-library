@@ -122,7 +122,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary")
 	static EUHLDirection GetOppositeDirection(EUHLDirection Direction_In);
 /** ~Angles **/
-	
+
 /** Utils **/
     // Get project version from "Project Settings"
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary version"))
@@ -183,10 +183,10 @@ public:
     // UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
     // static EUHLDirection AngleToDirection(const float AngleIn);
 
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Actor", Keywords = "UnrealHelperLibrary angle distance"))
     static bool IsOtherActorInAngle(AActor* Actor, AActor* OtherActor, TArray<FFloatRange> Ranges);
-    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary angle distance"))
-    static bool IsOtherCharacterInRange(ACharacter* Actor, ACharacter* OtherActor, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
+    UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "Character", Keywords = "UnrealHelperLibrary angle distance"))
+    static bool IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
 
     UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (Keywords = "UnrealHelperLibrary file path"))
     static FString GetPathToFile(UObject* Object);

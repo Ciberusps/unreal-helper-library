@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ANS_UnrealHelperLibrary.h"
+#include "ANS_UHL_Base.h"
 #include "GameplayTagContainer.h"
 #include "ANS_ActivateAbility.generated.h"
 
@@ -13,7 +13,7 @@ class IAbilitySystemInterface;
  * 
  */
 UCLASS()
-class UNREALHELPERLIBRARY_API UANS_ActivateAbility : public UANS_UnrealHelperLibrary
+class UNREALHELPERLIBRARY_API UANS_ActivateAbility : public UANS_UHL_Base
 {
 	GENERATED_BODY()
 
