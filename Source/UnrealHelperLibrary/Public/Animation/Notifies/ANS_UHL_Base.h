@@ -10,7 +10,7 @@
  * with events like OnMontageBlendOut, OnMontageInterrupted...
  * you can disable subscribing OnMontageBlendOut, by "bUseOnMontageBlendingOut=false" in constructor
  */
-UCLASS()
+UCLASS(Blueprintable, Category="UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UANS_UHL_Base : public UAnimNotifyState
 {
 	GENERATED_BODY()
@@ -18,9 +18,10 @@ class UNREALHELPERLIBRARY_API UANS_UHL_Base : public UAnimNotifyState
 public:
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ANS_UHL_Base")
 	bool bUseOnMontageBlendingOut = true;
-	TWeakObjectPtr<const UAnimMontage> CurrentAnimMontage;
+
+    TWeakObjectPtr<const UAnimMontage> CurrentAnimMontage;
 
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
