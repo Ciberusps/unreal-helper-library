@@ -1,9 +1,14 @@
 # Unreal Helper Library [UHL]
 
-**UHL** - unreal helper library, toolset to help developers working with AI, GAS and so on.
-Goal is to became a tool that insta-installed on new project creation. All tools are mostly tested on melee combat so if you have other background and think that something should work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions).
+**UHL** - unreal helper library, toolset to help developers working with AI, GAS, customizing editor and so on.
+Goal is to became a tool that insta-installed on new project creation.
+All tools are mostly tested on melee combat so if you have other background and think that something should
+work another way or have an idea on how to improve developer experience feel free to [discuss](https://github.com/Ciberusps/unreal-helper-library/discussions).
 
-**GAS things not required to be used at all, you can use library only for AI things**, but provides much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/documentation/en-us/unreal-engine/lyra-sample-game-in-unreal-engine?application_version=5.5) features. All GAS features designed in mind that they or their part can be added or dropped by you in development in any time.
+**GAS things not required to be used at all, you can use library only for AI things**. GAS features provides
+much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/documentation/en-us/unreal-engine/lyra-sample-game-in-unreal-engine?application_version=5.5) features.
+All GAS features designed in mind that they or their part can be added or dropped by you in development in any time
+and replaced by something custom that fits your project needs
 
 Support: tested `UE5.4 - UE5.5-preview`
 
@@ -71,13 +76,13 @@ UHL consists of 3 modules:
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
 >   - BaseCharacters
->     - BaseCharacter - only some UHL interfaces supported
->     - BaseCharacterWithASC - ASC created on start and inited on PossessedBy(can be turned off)
+>     - [BaseCharacter](#basecharacter)
+>     - [BaseCharacterWithASC (recommended for start)](#basecharacterwithasc)
 >   - AnimNotifyState (ANS)
->     - ANS_UnrealHelperLibrary - base AnimNotifyState with events like "OnMontageBlendOut"
->     - ANS_ActivateAbility
->     - ANS_CatchToInputCache
->     - ANS_CheckInputCache
+>     - [ANS_UHL_Base](#ans_uhl_base)
+>     - [ANS_ActivateAbility](#ans_activateability)
+<!-- >     - ANS_CatchToInputCache -->
+<!-- >     - ANS_CheckInputCache -->
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -103,12 +108,13 @@ UHL consists of 3 modules:
 >   - [DebugSubsystem](#debugsubsystem)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - GAS
->     - [TryActivateAbilityWithTag]
->     - [TryCancelAbilityWithTag]
->     - [TryCancelAbilitiesWithTags]
->     - [UpdateStateGameplayTags]
->     - [FindTagByString]
->     - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
+>     - TryActivateAbilityWithTag
+>     - TryCancelAbilityWithTag
+>     - TryCancelAbilitiesWithTags
+>     - FireGameplayEvent
+>     - UpdateStateGameplayTags
+>     - FindTagByString
+>    <!--  - CreateGenericGASGameplayEffectSpec -->
 >   - RelativeAngles
 >     - [RelativeAngleToActor](#relativeangletoactor)
 >     - [GetPointAtRelativeAngle](#getpointatrelativeangle)
@@ -121,11 +127,10 @@ UHL consists of 3 modules:
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
 >     - [GetAssetsOfClass](#getassetsofclass)
 >     - GetBuildType
->     - GetActorComponentByName
->     - GetSceneComponentByName
+>    <!--  - GetActorComponentByName -->
+>    <!--  - GetSceneComponentByName -->
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
->     - [WIP InputSystem](#InputSystem)
 > - [LoadingUtilLibrary](#loadingutillibrary)
 >   - [ApplyDefaultPriorityLoading](#applydefaultpriorityloading)
 >   - [ApplyStreamingPriorityLoading](#applystreamingpriorityloading)
@@ -135,6 +140,8 @@ UHL consists of 3 modules:
 >   - [FlushLevelStreaming](#flushlevelstreaming)
 > - [TraceUtilsBPL](#traceutilsbpl)
 >   - SweepCapsuleSingleByChannel
+> - [Settings](#settings)
+>   - [UHL Settings](#)
 
 **UnrealHelperEditor**
 
@@ -206,6 +213,15 @@ If you want custom attributes init you can do it
 
 - by overriding `InitAttributes_Implementation` - recommended
 - or just don't activate abilities `AbilitySystemComponent->InitAbilitySystem(NewController, this, false)` and make your own attributes init, and then call `AbilitySystemComponent->ActivateInitialAbilities()`
+
+You have 3 levels of advancement using GAS with UHL
+
+1) entry - just using abilities/attributes in your character on start of a project
+2) when you understand that you want to share some abilities to other characters - use [AbilitySets](#abilityset)
+3) when your team grows and you understand that locking whole character just to add ability is or change some ability system settings is too much - use [AbilitySystem Config](#abilitysystem-config) and optionally defaults in UHLSettings
+
+![image](https://github.com/user-attachments/assets/d0a47867-dacc-4fbf-bd52-dafa70c8939d)
+
 
 #### InputConfig (GAS abilities input binding)
 
@@ -331,16 +347,24 @@ Just class with default things that every `AttributeSet` wants like `ATTRIBUTE_A
 
 "Lyra"-like set of `Abilities, AttributeSets, GameplayEffects`, that can be added to character and removed later by tag
 
-Can be controlled
+![image](https://github.com/user-attachments/assets/7f7a54dc-3276-4bc3-a866-ba992f506efc)
 
-- by external source when giving(`ASC->GiveAbilitySet(UUHLAbilitySet* AbilitySet)`) and removing AbilitySet controlled by external entity, `AbilitySetGrantedHandles.TakeFromAbilitySystem`
-- gived by external but removed by tag calling `ASC->RemoveAbilitySetByTag()`
+AbilitySet - is second level of advancement of using GAS in UHL, when you understand that you want to
+share some abilities to other characters - use AbilitySets
+
+Use cases:
+
+- gived by external source using  or `AbilitySet->GiveToAbilitySystem` and removed by external source via `AbilitySetGrantedHandles.TakeFromAbilitySystem`
+- gived by external source using `ASC->GiveAbilitySet(UUHLAbilitySet* AbilitySet)` and removed by tag calling `ASC->RemoveAbilitySetByTag()`, of course if tag associated with set by defining `AbilitySetTags` in `AbilitySet`
 
 #### AbilitySystem Config
 
-Option for teams to edit ASC config completly externally to not locking characters
+DataAsset - option for teams to edit `AbilitySystem` config externally to not locking character
+for just changing abilities/initial attributes
 
-Defaults can be changed in `UHL Settings`
+![image](https://github.com/user-attachments/assets/1cfe4ebd-da39-44b3-9955-73ff6e4708ac)
+
+Defaults can be changed in `ProjectSettings -> UHL Settings`
 
 #### GameplayAbility
 
@@ -356,7 +380,35 @@ InputCache - to use it required to nest from GameplayAbility
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/764ddf72-595e-4316-9149-b7b0accc2b89)
 
+#### `BaseCharacter`
+
+**UHLBaseCharacter** - simplest BaseCharacter with only UHL interfaces implemented, so you don't need to do it by yourself
+
+#### `BaseCharacterWithASC`
+
+**UHLBaseCharacterWithASC** - recommended BaseCharacter for start - ASC created on start and
+inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOnPosses`
+
+#### `ANS_UHL_Base`
+
+**ANS_UHL_Base** - base `AnimNotifyState` class with commonly used features like
+
+- subscribing `OnMontageBlendingOut` by overriding `OnMontageBlendingOut` can be disabled by `bUseOnMontageBlendingOut=false(true by default)`
+- more come later
+
+#### `ANS_ActivateAbility`
+
+**ANS_ActivateAbility** - commonly used ANS that just activate ability on start and deactivate on end
+
+![image](https://github.com/user-attachments/assets/a1212bb9-dc09-45a7-8f3d-354ac8f2afa6)
+
+- `GameplayAbilityTag` - tag associated with ability to activate
+- `bDeactivateOnMontageBlendingOut` - should ability deactivates on montage blends out
+- `bAllowRemoteActivation` - you can allow remote activation
+
 #### `UHLAIPerceptionComponent`
+
+⚒️ InProgress
 
 <!-- with ability to subscribe on
 
@@ -394,11 +446,11 @@ Select random child node using weights
 **BTD_CheckGASGameplayTagsOnActor** - checks that actor has GAS gameplay tags specified.
 
 > [!WARNING]
-> Don't mess with `UBTDecorator_CheckGameplayTagsOnActor` - its only checks GameplayTags on actor itself not on AbilitySystem.
+> Don't mess with `UBTDecorator_CheckGameplayTagsOnActor` - its only checks `GameplayTags` on actor itself not on `AbilitySystem`.
 
 Requirements:
 
-- actor should implement `IAbilitySystemInterface` to get AbilitySystemComponent
+- actor should implement `IAbilitySystemInterface` to get `AbilitySystemComponent`
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/f1581009-b9cd-408f-84de-2475b43012ae)
 
@@ -499,6 +551,8 @@ To get settings from actor requires `IUHLActorSettings` to be implemented on cha
 #### > RelativeAngles
 
 #### `RelativeAngleToActor`
+
+for most cases you want to use "InRange" like `IsOtherActorInAngle` (or `IsOtherCharacterInRange` if you want to check distance)
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/4a695df4-9583-451c-801b-98e63c8ad5c8)
 
@@ -606,10 +660,16 @@ How to add DebugCategory:
 
 #### FlushLevelStreaming
 
-
 ### TraceUtilsBPL
 
 **UHLTraceUtilsBPL** - trace utils
+
+### Settings
+
+#### UHL Settings
+
+- You can set defaults for all [AbilitySystem](#abilitysystemcomponent) and [AbilitySystem Config](#abilitysystem-config) in your project its can be usefull
+if you don't want to copy paste your `AttributeSets`
 
 ### UnrealHelperEditor
 
@@ -652,17 +712,17 @@ Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-dis
 
 #### `Custom class icon`
 
-[//]: # (![image]&#40;https://github.com/user-attachments/assets/c24fd8bb-0ffe-4666-afd5-8800df650c35&#41;)
+**Custom class icon** - to override classes icons on your own, just implement set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
 
-**Custom class icon** - to override classes icons on your own, just implement set settings in `UHESettings`
+![image](https://github.com/user-attachments/assets/da940018-2120-4b81-84da-5237e97e9c86)
 
 [List of default Unreal Engine Editor icons](https://github.com/EpicKiwi/unreal-engine-editor-icons)
-
-⚠️ for now works only with C++, TODO add support for blueprints
 
 Thanks to [this post](https://www.quodsoler.com/blog/customize-your-unreal-class-icons) and [this](https://forums.unrealengine.com/t/how-to-load-a-font-uasset-and-use-it-for-fslatefontinfo/1548466/3?u=ciberus)
 
 ### UHL Utils (Editor Utility Widget)
+
+⚒️ InProgress
 
 ### ConvertToORM
 
