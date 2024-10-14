@@ -366,12 +366,9 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 {
     if (!bUseInputConfig) return;
 
-	// TODO: mb check how Lyra use that tag?
 	if (HasMatchingGameplayTag(UHLGameplayTags::TAG_Gameplay_AbilityInputBlocked))
 	{
-		InputPressedSpecHandles.Reset();
-		InputReleasedSpecHandles.Reset();
-		InputHeldSpecHandles.Reset();
+		ClearAbilityInput();
 		return;
 	}
 
@@ -389,8 +386,7 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 		{
 			if (AbilitySpec->Ability && !AbilitySpec->IsActive())
 			{
-				const UUHLGameplayAbility* AbilityCDO = CastChecked<UUHLGameplayAbility>(AbilitySpec->Ability);
-
+				const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec->Ability);
 				if (AbilityCDO->GetActivationPolicy() == EUHLAbilityActivationPolicy::WhileInputActive)
 				{
 					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
@@ -410,30 +406,24 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 			{
 				AbilitySpec->InputPressed = true;
 
-				// TODO: если абилка активна, нужно пытаться все равно ее активировать, а не просто данные слать
-				// If ability active, we should try to activate it again, instead of sending data
-
-				// if (AbilitySpec->IsActive())
-				// {
-				// 	// Ability is active so pass along the input event.
-				// 	AbilitySpecInputPressed(*AbilitySpec);
-				// }
-				// else
-				// {
-				const UUHLGameplayAbility* AbilityCDO = CastChecked<UUHLGameplayAbility>(AbilitySpec->Ability);
-
-				if (AbilityCDO->GetActivationPolicy() == EUHLAbilityActivationPolicy::OnInputTriggered)
+				const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec->Ability);
+				if (AbilitySpec->IsActive()
+					// If ability active, we should try to activate it again, instead of sending data
+					// so that's why if "OnInputTriggered" choosed - skip
+					&& AbilityCDO
+					&& AbilityCDO->GetActivationPolicy() != EUHLAbilityActivationPolicy::OnInputTriggered)
 				{
-					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
-
-					// TODO: testing
-					// if (AbilitySpec->IsActive())
-					// {
-						// Ability is active so pass along the input event.
-						AbilitySpecInputPressed(*AbilitySpec);
-					// }
+                    // Ability is active so pass along the input event.
+					AbilitySpecInputPressed(*AbilitySpec);
 				}
-				// }
+				else
+				{
+				    // const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec->Ability);
+                    if (AbilityCDO && AbilityCDO->GetActivationPolicy() == EUHLAbilityActivationPolicy::OnInputTriggered)
+                    {
+                        AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
+                    }
+                }
 			}
 		}
 	}
@@ -502,6 +492,19 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 				{
 					// Ability is active so pass along the input event.
 					AbilitySpecInputReleased(*AbilitySpec);
+					
+					// if "WhileInputActive" EndAbility automatically
+					// const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec->Ability);
+					// if (AbilityCDO && AbilityCDO->GetActivationPolicy() == EUHLAbilityActivationPolicy::WhileInputActive)
+					// {
+					// 	const FUHLWhileInputActiveSettings& WhileInputActiveSettings = AbilityCDO->GetWhileInputActiveSettings();
+					// 	if (WhileInputActiveSettings.bCancelAbilityAutomatically)
+					// 	{
+					// 		// "EndAbility" not accessible, so try to cancel if "bCancelAbilityAutomatically"
+					// 		AbilitySpec->Ability->CancelAbility(AbilitySpec->Handle, AbilityActorInfo.Get(), AbilitySpec->ActivationInfo, WhileInputActiveSettings.bReplicateEndAbility);
+					// 		// AbilitySpec->Ability->EndAbility(AbilitySpec->Handle, AbilityActorInfo.Get(), AbilitySpec->ActivationInfo, WhileInputActiveSettings.bReplicateEndAbility, WhileInputActiveSettings.bMarkAsCanceledOnEnd);
+					// 	}
+					// }
 				}
 			}
 		}
@@ -512,4 +515,11 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 	//
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
+}
+
+void UUHLAbilitySystemComponent::ClearAbilityInput()
+{
+	InputPressedSpecHandles.Reset();
+	InputReleasedSpecHandles.Reset();
+	InputHeldSpecHandles.Reset();
 }
