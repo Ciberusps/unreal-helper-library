@@ -408,6 +408,7 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 
 				const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec->Ability);
 				if (AbilitySpec->IsActive()
+					// TODO move this logic to "OnInputTriggeredForceReactivate" ??
 					// If ability active, we should try to activate it again, instead of sending data
 					// so that's why if "OnInputTriggered" choosed - skip
 					&& AbilityCDO
