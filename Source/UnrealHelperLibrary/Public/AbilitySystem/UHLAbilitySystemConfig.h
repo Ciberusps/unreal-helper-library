@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttributeSet.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "UHLAbilitySystemConfig.generated.h"
 
-struct FGameplayAttribute;
 class UGameplayAbility;
 class UUHLAbilitySet;
 class UUHLInputConfig;

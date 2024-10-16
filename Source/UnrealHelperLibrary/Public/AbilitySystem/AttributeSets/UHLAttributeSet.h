@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
+#include "GameplayEffect.h"
 #include "UHLAttributeSet.generated.h"
 
 class UUHLAbilitySystemComponent;
