@@ -17,7 +17,7 @@ class UAbilityInputCachePayload : public UObject
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
     FGameplayTag AbilityGameplayTagToCache;
 };
 
@@ -33,15 +33,15 @@ public:
     UFUNCTION()
     void SetUp(UUHLAbilitySystemComponent* ASC_In);
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     bool AddTagToCache(FGameplayTag AbilityTag_In);
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     bool AddTagsToCache(TArray<FGameplayTag> AbilityTags_In, bool bReverse = false);
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     void CheckCache();
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     void ClearCache();
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     TArray<FGameplayTag> GetAbilityInputCache() const { return AbilityInputCache; };
     // TODO: remove tags from cache explicitly (probably bad practice, dont give option to do so?)
     // UFUNCTION(BlueprintCallable)

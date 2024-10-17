@@ -16,9 +16,9 @@ class UNREALHELPERLIBRARY_API UUHLSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(config, EditAnywhere)
+	UPROPERTY(config, EditAnywhere, Category="Ability System Defaults")
 	FUHLAbilitySystemSettings AbilitySystemConfigDefaults = {};
-	UPROPERTY(config, EditAnywhere)
+	UPROPERTY(config, EditAnywhere, Category="Ability System Defaults")
 	bool bUseAbilitySystemConfigDefaultsInASC = true;
 
 protected:

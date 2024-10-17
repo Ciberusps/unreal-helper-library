@@ -18,12 +18,11 @@ public:
 	UBTD_LoopRandomCount(const FObjectInitializer& ObjectInitializer);
 
 	/** number of executions */
-	UPROPERTY(EditAnywhere, meta=(EditCondition="!bInfiniteLoop", ClampMin="1", ClampMax="255"))
+	UPROPERTY(EditAnywhere, Category="LoopRandomCount", meta=(EditCondition="!bInfiniteLoop", ClampMin="1", ClampMax="255"))
 	FInt32Interval Range = FInt32Interval(2, 4);
-
-	virtual FString GetStaticDescription() const override;
 
 protected:
 	virtual void OnNodeActivation(FBehaviorTreeSearchData& SearchData) override;
+	virtual FString GetStaticDescription() const override;
 
 };

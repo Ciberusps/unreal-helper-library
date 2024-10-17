@@ -42,20 +42,20 @@ class UNREALHELPERLIBRARY_API UBTT_TurnTo : public UBTTask_BlackboardBase
 protected:
     // TODO IMO can't be 0.0f, enemy wont turn such precisely clamp to 0.1f at least?
     /** Success condition precision in degrees */
-    UPROPERTY(config, Category = Node, EditAnywhere, meta = (ClampMin = "0.0", Units="Degrees"))
+    UPROPERTY(config, Category="TurnTo", EditAnywhere, meta = (ClampMin = "0.0", Units="Degrees"))
     float Precision = 1.0f;
 
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, Category="TurnTo")
     bool bUseTurnAnimations = true;
-    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations", EditConditionHides))
+    UPROPERTY(EditAnywhere, Category="TurnTo", meta=(EditCondition="bUseTurnAnimations", EditConditionHides))
     EUHLSettingsSource SettingsSource = EUHLSettingsSource::Actor;
 
-    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides))
+    UPROPERTY(EditAnywhere, Category="TurnTo", meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::Node", EditConditionHides))
     FTurnSettings TurnSettings;
-    UPROPERTY(EditAnywhere, meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::DataAsset", EditConditionHides))
+    UPROPERTY(EditAnywhere, Category="TurnTo", meta=(EditCondition="bUseTurnAnimations && SettingsSource==EUHLSettingsSource::DataAsset", EditConditionHides))
     UTurnSettingsDataAsset* RotateToAnimationsDataAsset;
 
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, Category="TurnTo")
     bool bDebug = false;
 
     // Prefers to rotate 180deg if relative angle >115deg, suits for all medium mobs(human size)

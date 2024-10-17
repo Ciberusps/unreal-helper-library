@@ -20,12 +20,12 @@ class UNREALHELPERLIBRARY_API UUHLDebugWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UHLDebugWidget", meta = (BindWidget))
     UTextBlock* AbilityInputCacheTextBlock;
 
     virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category="UHLDebugWidget")
     void ToggleAbilityInputCache(UUHLAbilitySystemComponent* ASC_In);
 
 private:

@@ -47,7 +47,7 @@ public:
 	// TODO add
 	// - GetHitSourceDirection
 	// - bool bUse8Directions
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	static EUHLDirection GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor);
 /** Gameplay **/
 

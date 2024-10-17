@@ -14,7 +14,7 @@
 	"FabURL": "com.epicgames.launcher://ue/Fab/product/19390f7a-1d31-46ee-a54c-511b7f1a8166",
 	"EnabledByDefault": true,
 	"CanContainContent": true,
-	"Installed": false
+	"Installed": false,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Modules": [
@@ -51,5 +51,5 @@
 				"Editor"
 			]
 		}
-	],
+	]
 }

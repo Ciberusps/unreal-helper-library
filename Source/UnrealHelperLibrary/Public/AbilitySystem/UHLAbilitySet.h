@@ -93,7 +93,6 @@ struct FUHLAbilitySet_GrantedHandles
 	GENERATED_BODY()
 
 public:
-
     FGameplayTagContainer GetAbilitySetTags() const { return AbilitySetTags; }
     void SetAbilitySetTags(const FGameplayTagContainer& AbilitySetTagContainer);
     
@@ -145,7 +144,7 @@ public:
     
 protected:
     // AbilitySetTag to associate with and can be removed "RemoveAbilitySetByTag"
-    UPROPERTY(EditDefaultsOnly, meta=(TitleProperty=Ability))
+    UPROPERTY(EditDefaultsOnly, Category = "AbilitySet Tags", meta=(TitleProperty=Ability))
     FGameplayTagContainer AbilitySetTags;
 
     // Gameplay abilities to grant when this ability set is granted.

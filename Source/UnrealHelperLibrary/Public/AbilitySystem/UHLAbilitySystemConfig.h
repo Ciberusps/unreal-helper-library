@@ -19,45 +19,45 @@ struct FUHLAbilitySystemSettings
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", meta=(InlineEditConditionToggle))
 	bool bInitializeGameplayAttributes = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceInlineRow, EditCondition="bInitializeGameplayAttributes"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", meta=(ForceInlineRow, EditCondition="bInitializeGameplayAttributes"))
 	TMap<FGameplayAttribute, float> InitialAttributes = {};
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", meta=(InlineEditConditionToggle))
 	bool bGiveAbilitiesOnStart = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAbilitiesOnStart"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilitySystemSettings", meta=(EditCondition="bGiveAbilitiesOnStart"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities = {};
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", meta=(InlineEditConditionToggle))
 	bool bGiveAttributesSetsOnStart = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveAttributesSetsOnStart"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilitySystemSettings", meta=(EditCondition="bGiveAttributesSetsOnStart"))
 	TArray<TSubclassOf<UAttributeSet>> AttributeSets = {};
 	
 	// TODO replace by "EUHLAbilityActivationPolicy::OnSpawn"
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", meta=(InlineEditConditionToggle))
 	bool bActivateAbilitiesOnStart = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bActivateAbilitiesOnStart"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilitySystemSettings", meta=(EditCondition="bActivateAbilitiesOnStart"))
 	TArray<FGameplayTagContainer> ActiveAbilitiesOnStart = {};
 	
 	// TODO initial GameplayEffects?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", meta=(InlineEditConditionToggle))
 	bool bGiveInitialGameplayTags = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bGiveInitialGameplayTags"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilitySystemSettings", meta=(EditCondition="bGiveInitialGameplayTags"))
 	FGameplayTagContainer InitialGameplayTags;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemSettings", AdvancedDisplay, meta=(InlineEditConditionToggle))
 	bool bGiveAbilitySetsOnStart = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay, meta=(EditCondition="bGiveAbilitySetsOnStart"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilitySystemSettings", AdvancedDisplay, meta=(EditCondition="bGiveAbilitySetsOnStart"))
 	TArray<UUHLAbilitySet*> AbilitySets = {};
 	
-	UPROPERTY(EditAnywhere, Transient, BlueprintReadWrite, AdvancedDisplay, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, Transient, BlueprintReadWrite, Category="AbilitySystemSettings", AdvancedDisplay, meta=(InlineEditConditionToggle))
 	bool bPreviewAllAbilities = true;
-	UPROPERTY(VisibleDefaultsOnly, Transient, AdvancedDisplay, meta=(EditCondition="bPreviewAllAbilities", MultiLine=true))
+	UPROPERTY(VisibleDefaultsOnly, Transient, Category="AbilitySystemSettings", AdvancedDisplay, meta=(EditCondition="bPreviewAllAbilities", MultiLine=true))
 	TMap<FString, FString> DebugPreviewAbilitiesFromAbilitySets = {};
 	
 	// binding inputs to tags check Readme.MD on how to setup it
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="UHL InputConfig")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig")
 	bool bUseInputConfig = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig"))
 	UUHLInputConfig* InputConfig = nullptr;
@@ -80,6 +80,6 @@ class UNREALHELPERLIBRARY_API UUHLAbilitySystemConfig : public UPrimaryDataAsset
 public:
 	UUHLAbilitySystemConfig();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AbilitySystemConfig", meta=(ShowOnlyInnerProperties))
 	FUHLAbilitySystemSettings Settings;
 };
