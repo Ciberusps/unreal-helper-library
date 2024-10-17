@@ -1,29 +1,38 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.2.1",
+	"Version": 5,
+	"VersionName": "1.3.0",
 	"FriendlyName": "UnrealHelperLibrary",
 	"Description": "Helps working with AI, GAS, customizing editor and so on",
-	"Category": "Other",
+	"Category": "AI",
 	"CreatedBy": "Ciberus",
 	"CreatedByURL": "https://github.com/Ciberusps",
 	"DocsURL": "https://github.com/Ciberusps/unreal-helper-library",
 	"MarketplaceURL": "",
-	"SupportURL": "",
+	"SupportURL": "https://github.com/Ciberusps/unreal-helper-library/issues",
+	"EngineVersion": "5.4.0",
+	"FabURL": "com.epicgames.launcher://ue/Fab/product/19390f7a-1d31-46ee-a54c-511b7f1a8166",
+	"EnabledByDefault": true,
 	"CanContainContent": true,
+	"Installed": false
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
-	"Installed": false,
 	"Modules": [
 		{
 			"Name": "UnrealHelperLibrary",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
 		},
 		{
 			"Name": "UnrealHelperEditor",
 			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit"
+			"LoadingPhase": "PostEngineInit",
+			"PlatformAllowList": [
+				"Win64"
+			]
 		}
 	],
 	"Plugins": [
@@ -37,11 +46,10 @@
 		},
 		{
 			"Name": "TextureGraph",
-			"Enabled": true,
-			"Optional": true,
+			"Enabled": false,
 			"TargetAllowList": [
 				"Editor"
 			]
 		}
-	]
+	],
 }
