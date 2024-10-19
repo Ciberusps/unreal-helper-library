@@ -36,7 +36,7 @@ jobs:
           CLEAN: true
           COOK: true
           STAGE: true
-          PACKAGE: false
+          PACKAGE: true
           PAK: false
           SERVER: false
           ARCHIVE: false
