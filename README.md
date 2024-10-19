@@ -733,3 +733,9 @@ TODO check ref - https://github.com/Atulin/ChannelMerger
 ## Special Thanks
 
 [@Ingarnm](https://github.com/Ingarnm), [@Vamp1rk0](https://github.com/Vamp1rk0) for feedback
+
+## Github Actions
+
+- make your github runner
+- Add `UE_5_4_Blueprint` as safe directory
+`git config --global --add safe.directory D:/_work/unreal-helper-library/unreal-helper-library/UE_5_4_Blueprint`
