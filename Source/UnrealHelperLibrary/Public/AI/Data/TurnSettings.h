@@ -12,17 +12,17 @@ struct FTurnRange
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnRange")
     FString Name;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnRange")
     FFloatRange Range = FFloatRange(-135, -45);
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnRange")
     UAnimMontage* AnimMontage = nullptr;
     // useful in big enemies cases, Dragon shouldn't cancel 180deg rotate animation
     // even if Player somehow teleported
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnRange")
     bool bOverrideStopMontageOnGoalReached = false;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bOverrideStopMontageOnGoalReached", EditConditionHides))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnRange", meta=(EditCondition="bOverrideStopMontageOnGoalReached", EditConditionHides))
     bool bStopMontageOnGoalReached = false;
 };
 
@@ -32,7 +32,7 @@ struct FTurnRanges
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnRanges")
     TArray<FTurnRange> TurnRanges;
 };
 
@@ -51,7 +51,7 @@ struct FTurnSettings
     GENERATED_BODY()
 
 public:
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(EditCondition="true", MultiLine))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="TurnSettings", meta=(EditCondition="true", MultiLine))
     FString Notes = FString(TEXT(
                                  "Use cases:"
                                  "\n\n1) Big enemy (dragon, etc.) - better to use with \"bTurnOnlyWithAnims\", \"bStopMontageOnGoalReached\" and \"Precision = 1°\", BlendOut settings in AnimMontage becomes critcal for smooth visual ~0.5s blendout + inertionalization recommended"
@@ -62,15 +62,15 @@ public:
 
     // if enabled - turn only with animations, if no ranges fits - consider it as success
     // if disabled - turn also with rotating enemy in place
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnSettings")
     bool bTurnOnlyWithAnims = true;
     // stops AnimMontage when reached goal, even if 180deg turn animation on half of playing - stop it
     // BlendOut settings for this option is critical
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnSettings")
     bool bStopMontageOnGoalReached = true;
     // TODO bChooseClosestInRaceCondition? если подходят 2 ренджа, в чью пользу принимать решение, зач если есть order TurnRange'ей
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceInlineRow))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnSettings", meta=(ForceInlineRow))
     TMap<FString, FTurnRanges> TurnRangesGroups;
 
     void Cleanup();
@@ -88,7 +88,7 @@ class UNREALHELPERLIBRARY_API UTurnSettingsDataAsset : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnSettings")
     FTurnSettings TurnSettings;
 
     // Prefers to rotate 180deg if relative angle >115deg, suits for all medium mobs(human size)

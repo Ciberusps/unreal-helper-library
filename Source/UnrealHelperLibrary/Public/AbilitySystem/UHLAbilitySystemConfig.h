@@ -57,15 +57,15 @@ public:
 	TMap<FString, FString> DebugPreviewAbilitiesFromAbilitySets = {};
 	
 	// binding inputs to tags check Readme.MD on how to setup it
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InputConfig")
 	bool bUseInputConfig = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InputConfig", meta=(EditCondition="bUseInputConfig"))
 	UUHLInputConfig* InputConfig = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InputConfig", meta=(EditCondition="bUseInputConfig"))
 	bool bUseAbilityInputCache = false;
 	// if enabled - caching works only in predefined user windows - ANS_AbilityInputCache_CacheWindow
 	// if disabled - works always
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL InputConfig", meta=(EditCondition="bUseInputConfig && bUseAbilityInputCache"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InputConfig", meta=(EditCondition="bUseInputConfig && bUseAbilityInputCache"))
 	bool bUseInputCacheWindows = true;
 };
 

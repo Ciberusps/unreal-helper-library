@@ -54,14 +54,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     FGameplayTagContainer AddingToCacheInputBlockedTags;
 
-    UFUNCTION(BlueprintCallable, Category = Ability)
+    UFUNCTION(BlueprintCallable, Category="UHL GameplayAbility")
     UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
 protected:
     // Defines how this ability is meant to activate.
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UHL GameplayAbility")
     EUHLAbilityActivationPolicy ActivationPolicy = EUHLAbilityActivationPolicy::OnInputTriggered;
 
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
@@ -69,12 +69,12 @@ protected:
 	virtual void OnPawnAvatarSet();
 
 	/** Called when this ability is granted to the ability system component. */
-	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
+	UFUNCTION(BlueprintImplementableEvent, Category="UHL GameplayAbility", DisplayName = "OnAbilityAdded")
 	void K2_OnAbilityAdded();
 	/** Called when this ability is removed from the ability system component. */
-	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
+	UFUNCTION(BlueprintImplementableEvent, Category="UHL GameplayAbility", DisplayName = "OnAbilityRemoved")
 	void K2_OnAbilityRemoved();
 	/** Called when the ability system is initialized with a pawn avatar. */
-	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
+	UFUNCTION(BlueprintImplementableEvent, Category="UHL GameplayAbility", DisplayName = "OnPawnAvatarSet")
 	void K2_OnPawnAvatarSet();
 };

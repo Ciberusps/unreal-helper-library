@@ -19,6 +19,6 @@ class UNREALHELPERLIBRARY_API UUHLAIPerceptionComponent : public UAIPerceptionCo
 public:
     virtual void HandleExpiredStimulus(FAIStimulus& StimulusStore) override;
 
-    UPROPERTY(BlueprintAssignable)
+    UPROPERTY(BlueprintAssignable, Category="UHL AIPerceptionComponent")
     FOnSightStimulusExpired OnSightStimulusExpired;
 };

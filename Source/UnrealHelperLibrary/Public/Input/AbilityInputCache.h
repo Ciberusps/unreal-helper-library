@@ -30,7 +30,7 @@ class UNREALHELPERLIBRARY_API UAbilityInputCache : public UObject
 	GENERATED_BODY()
 
 public:
-    UFUNCTION()
+    UFUNCTION(Category = "AbilityInputCache")
     void SetUp(UUHLAbilitySystemComponent* ASC_In);
 
     UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")

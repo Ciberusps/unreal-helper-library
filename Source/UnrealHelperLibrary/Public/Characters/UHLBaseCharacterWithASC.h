@@ -22,7 +22,7 @@ class UNREALHELPERLIBRARY_API AUHLBaseCharacterWithASC : public AUHLBaseCharacte
 public:
 	AUHLBaseCharacterWithASC(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL BaseCharacter with ASC")
 	bool bInitUHLAbilitySystemOnPosses = true;
 	
 	/** IAbilitySystemInterface **/
@@ -31,7 +31,7 @@ public:
 	
 protected:
 	/** GameplayAbilities */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="UHL BaseCharacter with ASC")
 	UUHLAbilitySystemComponent* AbilitySystemComponent;
 	/** ~GameplayAbilities */
 

@@ -24,11 +24,11 @@ public:
     UFUNCTION(BlueprintCallable, Category="UnrealHelperLibrary", meta=(WorldContext="WorldContext", BlueprintInternalUseOnly="true", Keywords = "UnrealHelperLibrary debug UHL debugCategory debugging"))
     static UAA_WaitDebugCategoryChange* WaitDebugCategoryChange(const UObject* WorldContext, UPARAM(meta=(Categories="UHL.DebugCategory,DebugCategory"))FGameplayTag DebugCategoryTag, bool bCheckOnStart = true);
 
-    UPROPERTY(BlueprintAssignable)
+    UPROPERTY(BlueprintAssignable, Category="WaitDebugCategoryChange")
     FWaitDebugCategoryChanged OnChange;
-    UPROPERTY(BlueprintAssignable)
+    UPROPERTY(BlueprintAssignable, Category="WaitDebugCategoryChange")
     FWaitDebugCategoryChanged OnEnabled;
-    UPROPERTY(BlueprintAssignable)
+    UPROPERTY(BlueprintAssignable, Category="WaitDebugCategoryChange")
     FWaitDebugCategoryChanged OnDisabled;
 
     virtual void Activate() override;

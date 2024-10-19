@@ -88,7 +88,7 @@ public:
 private:
 	UPROPERTY()
 	UEnum* CurrentEnum;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	EBBValueType CurrentBBKeyValueType = EBBValueType::None;
 
     UFUNCTION()

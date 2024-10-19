@@ -24,7 +24,7 @@ class UNREALHELPEREDITOR_API IUHECustomThumbnail
 public:
 
 /** IUHECustomThumbnail **/
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Hittable Interface")
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Custom Thumbnail")
     UTexture2D* GetCustomThumbnailIcon();
 /** ~IUHECustomThumbnail **/
 };

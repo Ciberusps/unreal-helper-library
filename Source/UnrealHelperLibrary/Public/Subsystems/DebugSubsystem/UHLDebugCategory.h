@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 #include "UHLDebugCategory.generated.h"
 
 
@@ -49,8 +50,11 @@ struct FUHLDebugCategory
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", meta=(ForceShowPluginContent))
     TArray<TSubclassOf<UUHLDebugCategoryComponent>> Components = {};
     // for UI, background color and so on
+	// ~"FColor::MakeRandomColor()" will lead to non-critical error
+	// ~unreal don't support random colors from native code.
+	// ~They should be deterministic but there is no option
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", AdvancedDisplay)
-    FLinearColor Color = FLinearColor::MakeRandomColor();
+    FLinearColor Color = FLinearColor::Black;
     UPROPERTY()
     bool bIsDefaultUHLDebugCategory = false;
 

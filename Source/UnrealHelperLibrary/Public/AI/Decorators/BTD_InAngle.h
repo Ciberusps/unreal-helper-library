@@ -10,16 +10,20 @@ struct FBTInAngleMemory
 {
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FAngleRange
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(Category="Decorator", EditAnywhere)
-	FFloatRange Range;
+	FFloatRange Range = FFloatRange();
+
+	// ~"FColor::MakeRandomColor()" will lead to non-critical error
+	// ~unreal don't support random colors from native code.
+	// ~They should be deterministic but there is no option
 	UPROPERTY(Category="Decorator", EditAnywhere)
-	FColor DebugColor = FColor::MakeRandomColor();
+	FColor DebugColor = FColor::Blue;
 };
 
 /**

@@ -34,7 +34,7 @@ public:
 	    const float DistanceToHit = 0.f
 	);
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category="Ability|Tasks")
 	FInterpolateToPositionSimpleDelegate OnTargetLocationReached;
 
 	virtual void InitSimulatedTask(UGameplayTasksComponent& InGameplayTasksComponent) override;

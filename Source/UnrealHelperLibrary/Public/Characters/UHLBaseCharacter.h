@@ -22,7 +22,7 @@ public:
 	// Sets default values for this character's properties
 	AUHLBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnSettings")
 	UTurnSettingsDataAsset* TurnSettingsDataAsset;
 	
 /** IUHLActorSettings */
