@@ -23,7 +23,7 @@ jobs:
       - name: Build project
         uses: OrchidIsle/UE5-Build-Project@latest
         with:
-          RUNUAT_PATH: 'C:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
+          RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
           UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
           BUILD_CONFIG: Development
           PLATFORM: Win64
