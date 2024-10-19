@@ -28,8 +28,8 @@ jobs:
           BUILD_CONFIG: Development
           PLATFORM: Win64
           CLEAN: true
-          COOK: false
-          STAGE: false
+          COOK: true
+          STAGE: true
           PACKAGE: false
           PAK: false
           SERVER: false
