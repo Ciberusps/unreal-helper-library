@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -17,7 +17,7 @@ class UNREALHELPERLIBRARY_API UANS_CheckAbilityInputCache : public UAnimNotifySt
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CheckAbilityInputCache")
     bool bClearCacheOnEnd = true;
 
 #if WITH_EDITOR

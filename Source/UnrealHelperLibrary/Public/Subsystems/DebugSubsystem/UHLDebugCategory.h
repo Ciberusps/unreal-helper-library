@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "Utils/UnrealHelperLibraryBPL.h"
 #include "UHLDebugCategory.generated.h"
 
 
@@ -19,24 +20,24 @@ struct FUHLDebugCategory
     // UPROPERTY(EditAnywhere, BlueprintReadWrite)
     // bool bActive = true;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory")
     FString Name = "";
 
     // if DebugCategory requires PlayerController it can't be enabled before "SetUpCategoriesThatRequiresPlayerController" being called
     // Mostly you want to add "SetUpCategoriesThatRequiresPlayerController" in your "PlayerController.BeginPlay"
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory")
     bool bRequiresPlayerControllerToEnable = true;
 
     // Tags associated with this debug category, like GameplayAbilities category can be activated/deactivated by tag
     // WARNING - for better experience tags are filtered add child to "UHL.DebugCategory" or "DebugCategory"
     // WARNING 2 - NATIVE tags are not supported due to "plugin/module" restrictions, use FGameplayTag::RequestGameplayTag
     // and gameplay tags ini files
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory,DebugCategory"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     FGameplayTagContainer Tags = {};
 
     // What DebugCategories this DebugCategory blocks. On enabling this DebugCategory it will disable other debug categories that match "Blocks" tags
     // WARNING for better experience tags are filtered add child to "UHL.DebugCategory" or "DebugCategory"
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory,DebugCategory"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", meta=(Categories = "UHL.DebugCategory,DebugCategory"))
     FGameplayTagContainer Blocks = {};   // blocks other debug categories activation with specified tags
     // TODO BlockedBy - what categories blocks it
     // UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories = "UHL.DebugCategory"))
@@ -46,17 +47,20 @@ struct FUHLDebugCategory
     Example - I want component that enables AbilitySystem debug, I write DebugCategoryComponent(C++/BP) and add it here,
     so when DebugCategory enables that simple component "activates", when DebugCategory
     disabled component "deactivates", such simple **/
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceShowPluginContent))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", meta=(ForceShowPluginContent))
     TArray<TSubclassOf<UUHLDebugCategoryComponent>> Components = {};
     // for UI, background color and so on
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay)
-    FLinearColor Color = FLinearColor::MakeRandomColor();
+	// ~"FColor::MakeRandomColor()" will lead to non-critical error
+	// ~unreal don't support random colors from native code.
+	// ~They should be deterministic but there is no option
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", AdvancedDisplay)
+    FLinearColor Color = FLinearColor::Black;
     UPROPERTY()
     bool bIsDefaultUHLDebugCategory = false;
 
     // "Editor" will mean that its will be enabled in "EnabledDebugCategories" by default for all devs on EditorStartup
     // Others means that DebugCategory will be enabled on start
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", AdvancedDisplay)
     TArray<EUHLBuildType> ByDefaultEnabledInBuildTypes = {};
 
     bool TryEnable(UObject* ContextObj);

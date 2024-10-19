@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -29,10 +29,10 @@ public:
 
 	// TODO validate that chances count == ChildrenNum
 	// if no chance specified, node without chance will win always
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits="Multiplier"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RandomSelector", meta=(ForceUnits="Multiplier"))
 	TArray<float> ChancesArray = { 0.5f, 0.5f };
 
-    UFUNCTION(BlueprintCallable, CallInEditor)
+    UFUNCTION(BlueprintCallable, CallInEditor, Category="RandomSelector")
     void RemoveUnusedChances();
 
 protected:

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -28,9 +28,9 @@ public:
     UBTD_TimeLimitRandom(const FObjectInitializer& ObjectInitializer);
 
 	/** TimeLimit */
-	UPROPERTY(EditAnywhere, meta=(ClampMin="0"))
+	UPROPERTY(EditAnywhere, Category="TimeLimitRandom", meta=(ClampMin="0"))
 	FFloatInterval TimeLimitRange = FFloatInterval(3.0f, 5.0f);
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="TimeLimitRandom")
 	bool bUseIntegers = true;
 
     virtual FString GetStaticDescription() const override;
@@ -59,6 +59,6 @@ protected:
 
 private:
     /** max allowed time for execution of underlying node */
-    UPROPERTY(Category=Decorator, EditAnywhere)
+    UPROPERTY(EditAnywhere, Category="Decorator")
     float TimeLimit;
 };

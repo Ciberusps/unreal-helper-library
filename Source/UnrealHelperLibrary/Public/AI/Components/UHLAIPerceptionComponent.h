@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -19,6 +19,6 @@ class UNREALHELPERLIBRARY_API UUHLAIPerceptionComponent : public UAIPerceptionCo
 public:
     virtual void HandleExpiredStimulus(FAIStimulus& StimulusStore) override;
 
-    UPROPERTY(BlueprintAssignable)
+    UPROPERTY(BlueprintAssignable, Category="UHL AIPerceptionComponent")
     FOnSightStimulusExpired OnSightStimulusExpired;
 };

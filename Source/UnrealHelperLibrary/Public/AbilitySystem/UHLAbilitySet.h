@@ -31,15 +31,15 @@ struct FUHLAbilitySet_GameplayAbility
 public:
 
 	// Gameplay ability to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="GameplayAbility")
 	TSubclassOf<UGameplayAbility> Ability = nullptr;
 
 	// Level of ability to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="GameplayAbility")
 	int32 AbilityLevel = 1;
 
 	// Tag used to process input for the ability.
-	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
+	UPROPERTY(EditDefaultsOnly, Category="GameplayAbility", Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };
 
@@ -57,11 +57,11 @@ struct FUHLAbilitySet_GameplayEffect
 public:
 
 	// Gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="GameplayEffect")
 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
 
 	// Level of gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="GameplayEffect")
 	float EffectLevel = 1.0f;
 };
 
@@ -77,7 +77,7 @@ struct FUHLAbilitySet_AttributeSet
 
 public:
 	// Gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="AttributeSet")
 	TSubclassOf<UAttributeSet> AttributeSet;
 
 };
@@ -93,7 +93,6 @@ struct FUHLAbilitySet_GrantedHandles
 	GENERATED_BODY()
 
 public:
-
     FGameplayTagContainer GetAbilitySetTags() const { return AbilitySetTags; }
     void SetAbilitySetTags(const FGameplayTagContainer& AbilitySetTagContainer);
     
@@ -145,7 +144,7 @@ public:
     
 protected:
     // AbilitySetTag to associate with and can be removed "RemoveAbilitySetByTag"
-    UPROPERTY(EditDefaultsOnly, meta=(TitleProperty=Ability))
+    UPROPERTY(EditDefaultsOnly, Category = "AbilitySet Tags", meta=(TitleProperty=Ability))
     FGameplayTagContainer AbilitySetTags;
 
     // Gameplay abilities to grant when this ability set is granted.

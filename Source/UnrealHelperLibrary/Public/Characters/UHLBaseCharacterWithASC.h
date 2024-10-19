@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -22,7 +22,7 @@ class UNREALHELPERLIBRARY_API AUHLBaseCharacterWithASC : public AUHLBaseCharacte
 public:
 	AUHLBaseCharacterWithASC(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL BaseCharacter with ASC")
 	bool bInitUHLAbilitySystemOnPosses = true;
 	
 	/** IAbilitySystemInterface **/
@@ -31,7 +31,7 @@ public:
 	
 protected:
 	/** GameplayAbilities */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="UHL BaseCharacter with ASC")
 	UUHLAbilitySystemComponent* AbilitySystemComponent;
 	/** ~GameplayAbilities */
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -22,7 +22,7 @@ public:
 	// Sets default values for this character's properties
 	AUHLBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="TurnSettings")
 	UTurnSettingsDataAsset* TurnSettingsDataAsset;
 	
 /** IUHLActorSettings */

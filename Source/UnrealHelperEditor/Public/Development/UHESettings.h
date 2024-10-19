@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -11,9 +11,9 @@ struct UNREALHELPEREDITOR_API FUHECustomClassIconDescription
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
     TSoftObjectPtr<UTexture2D> Texture2D;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
     TSubclassOf<UObject> Class;
 };
 
@@ -26,6 +26,6 @@ class UNREALHELPEREDITOR_API UUHESettings : public UDeveloperSettingsBackedByCVa
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(config, EditAnywhere, meta=(FullyExpand))
+    UPROPERTY(config, EditAnywhere, Category="Custom Class Icons", meta=(FullyExpand))
     TArray<FUHECustomClassIconDescription> CustomClassIcons;
 };

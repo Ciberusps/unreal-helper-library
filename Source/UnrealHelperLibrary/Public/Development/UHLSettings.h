@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -16,9 +16,9 @@ class UNREALHELPERLIBRARY_API UUHLSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(config, EditAnywhere)
+	UPROPERTY(config, EditAnywhere, Category="Ability System Defaults")
 	FUHLAbilitySystemSettings AbilitySystemConfigDefaults = {};
-	UPROPERTY(config, EditAnywhere)
+	UPROPERTY(config, EditAnywhere, Category="Ability System Defaults")
 	bool bUseAbilitySystemConfigDefaultsInASC = true;
 
 protected:

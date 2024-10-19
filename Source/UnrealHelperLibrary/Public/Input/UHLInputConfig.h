@@ -27,9 +27,9 @@ struct FUHLInputAction
 
 public:
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="InputAction")
 	const UInputAction* InputAction = nullptr;
-	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
+	UPROPERTY(EditDefaultsOnly, Category="InputAction", Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };
 
@@ -44,11 +44,11 @@ struct FUHLInputActionAbilities
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category="InputActionAbilities")
     bool bEnabled = true;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="InputActionAbilities")
 	const UInputAction* InputAction = nullptr;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="InputActionAbilities")
 	TArray<FGameplayTag> AbilitiesToActivate;
 };
 
@@ -82,6 +82,6 @@ public:
     FUHLInputAction NativeInputAction_Interact;
 
 	// List of input actions used by the owner.  These input actions are mapped to a gameplay tag and are automatically bound to abilities with matching input tags.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilityInputActions", Meta = (TitleProperty = "InputAction"))
 	TArray<FUHLInputActionAbilities> AbilityInputActions;
 };

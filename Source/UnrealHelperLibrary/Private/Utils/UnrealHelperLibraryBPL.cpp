@@ -417,7 +417,7 @@ void UUnrealHelperLibraryBPL::GetPointAtRelativeDirection(FVector& Point, FRotat
 
     if (bDebug)
     {
-        const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
+        const UEnum* EnumPtr = FindObject<UEnum>(nullptr, TEXT("EUHLDirection"), true);
         if (EnumPtr)
         {
 	        DrawDebugString(ActorIn->GetWorld(), Point, FString::Printf(TEXT("%s \nDirection %s\nDistance %.2f"), *DebugText.BuildSourceString(), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);
@@ -462,7 +462,7 @@ void UUnrealHelperLibraryBPL::GetPointAtDirectionRelativeToOtherActor(FVector& P
 
     if (bDebug)
     {
-        const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
+        const UEnum* EnumPtr = FindObject<UEnum>(nullptr, TEXT("EUHLDirection"), true);
         if (EnumPtr)
         {
             DrawDebugString(Actor1->GetWorld(), Point, FString::Printf(TEXT("Direction %s\nDistance %.2f"), *EnumPtr->GetNameStringByValue((uint8)Direction), Distance), 0, DebugColor.ToFColor(true), DebugLifetime, true, 1.0f);

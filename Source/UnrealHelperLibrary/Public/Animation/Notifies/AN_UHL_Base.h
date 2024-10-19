@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -17,10 +17,6 @@ class UNREALHELPERLIBRARY_API UAN_UHL_Base : public UAnimNotify
 	GENERATED_BODY()
 
 public:
-    // TODO remove, deprecated use UUnrealHelperLibraryBPL::IsObjectInPreviewWorld
-    UFUNCTION(BlueprintCallable, meta=(DeprecatedFunction, DeprecationMessage="use !UUnrealHelperLibraryBPL::IsObjectInGameWorld"))
-    bool IsPreviewWorld(USkeletalMeshComponent* MeshComp) const;
-
     virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
     FOnNotifySignature OnNotified;
 };

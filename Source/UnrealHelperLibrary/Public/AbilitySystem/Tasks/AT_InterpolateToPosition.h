@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -34,7 +34,7 @@ public:
 	    const float DistanceToHit = 0.f
 	);
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category="Ability|Tasks")
 	FInterpolateToPositionSimpleDelegate OnTargetLocationReached;
 
 	virtual void InitSimulatedTask(UGameplayTasksComponent& InGameplayTasksComponent) override;
