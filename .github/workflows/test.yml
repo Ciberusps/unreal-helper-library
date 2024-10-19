@@ -1,0 +1,128 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+      - "!l10n_main"
+
+# env:
+#   STEAMWORKS_SDK_ARCHIVE_PASSWORD: ${{ secrets.STEAMWORKS_SDK_ARCHIVE_PASSWORD }}
+#   STEAMWORKS_SDK_GOOGLE_DRIVE_LINK: ${{ secrets.STEAMWORKS_SDK_GOOGLE_DRIVE_LINK }}
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          repository: https://github.com/Ciberusps/UE_5_4_Blueprint
+          path: UE_5_4_Blueprint
+      - name: Build project
+        uses: OrchidIsle/UE5-Build-Project@latest
+        with:
+          RUNUAT_PATH: 'C:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
+          UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
+          BUILD_CONFIG: Development
+          PLATFORM: Win64
+          CLEAN: true
+          COOK: false
+          STAGE: false
+          PACKAGE: false
+          PAK: false
+          SERVER: false
+          ARCHIVE: false
+          ARCHIVE_PATH: 'C:/Archives/MyGame'
+          NULLRHI: true
+          EDITOR: true
+          ENCRYPT_INI: true
+          # RELEASE: '1.0.0'
+          # PATCH: '0.9.0'
+          # MAPS: 'Map1,Map2'
+          DELETE_PDB: true
+          # ANTICHEAT_ENABLED: true
+          # ANTICHEAT_PRIVATE_KEY: 'base64encodedprivatekey'
+          # ANTICHEAT_PUBLIC_CERT: 'base64encodedpubliccert'
+
+
+
+
+
+
+
+
+  # lint:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
+
+#   lint-prettier:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Lint Prettier
+#         run: npm run lint:prettier
+
+#   lint-types:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Lint Types
+#         run: npm run lint:types
+
+#   licenses-check:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Test
+#         run: npm run lint:licenses
+
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Test
+#         run: npm run test
