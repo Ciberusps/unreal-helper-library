@@ -20,10 +20,12 @@ jobs:
         with:
           repository: Ciberusps/UE_5_4_Blueprint
           path: UE_5_4_Blueprint
+      
       - name: Check out UnrealHelperLibrary to Plugins folder
         uses: actions/checkout@v3
         with:
           path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
+      
       - name: Build project
         uses: OrchidIsle/UE5-Build-Project@latest
         with:
