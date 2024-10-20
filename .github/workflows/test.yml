@@ -13,7 +13,11 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/epicgames/unreal-engine:dev-5.4
+    
     steps:
       - name: Check out UE5.4 project
         uses: actions/checkout@v3
@@ -21,15 +25,27 @@ jobs:
           repository: Ciberusps/UE_5_4_Blueprint
           path: UE_5_4_Blueprint
       
-      - name: Check out UnrealHelperLibrary to Plugins folder
-        uses: actions/checkout@v3
-        with:
-          path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
-      
+      - name: Check out UE5.4 project
+        run: ls
+      # - name: Check out UnrealHelperLibrary to Plugins folder
+      #   uses: actions/checkout@v3
+      #   with:
+      #     # path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
+      #     path: UnrealHelperLibrary
+	    
+      # - name: Build Plugins (UHL)
+      #   shell: powershell
+      #   run: |
+      #     mkdir "Temp"
+      #     $pluginPath = Resolve-Path -Path "UE_5_4_Blueprint/Plugins/UnrealHelperLibrary/UnrealHelperLibrary.uplugin"
+      #     $tempDirAbsolutePath = Resolve-Path -Path "Temp"
+      #     "S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat BuildPlugin -plugin="$pluginPath" -package="$tempDirAbsolutePath""
+
       - name: Build project
         uses: OrchidIsle/UE5-Build-Project@latest
         with:
-          RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
+          # RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
+          RUNUAT_PATH: 'C:/Epic Games/UE5.4/Engine/Build/BatchFiles/RunUAT.bat'
           UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
           BUILD_CONFIG: Development
           PLATFORM: Win64
@@ -37,7 +53,7 @@ jobs:
           COOK: true
           STAGE: true
           PACKAGE: true
-          PAK: false
+          PAK: true
           SERVER: false
           ARCHIVE: false
           ARCHIVE_PATH: 'C:/Archives/MyGame'
