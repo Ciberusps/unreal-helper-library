@@ -1,0 +1,84 @@
+# name: Build/release
+
+# on:
+#   push:
+#     tags:
+#       - "*"
+
+# jobs:
+#   release:
+#     runs-on: ${{ matrix.os }}
+
+#     defaults:
+#       run:
+#         shell: bash
+
+#     # env:
+#     #   STEAMWORKS_SDK_ARCHIVE_PASSWORD: ${{ secrets.STEAMWORKS_SDK_ARCHIVE_PASSWORD }}
+#     #   STEAMWORKS_SDK_GOOGLE_DRIVE_LINK: ${{ secrets.STEAMWORKS_SDK_GOOGLE_DRIVE_LINK }}
+
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [windows-latest, macos-latest, ubuntu-latest]
+
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+
+#       - name: Install dependencies
+#         run: |
+#           npm install --legacy-peer-deps
+
+#       - name: Build
+#         run: |
+#           npm run postinstall
+#           npm run build
+
+#       - name: Publish to github
+#         env:
+#           # These values are used for auto updates signing
+#           # APPLE_ID: ${{ secrets.APPLE_ID }}
+#           # APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
+#           # CSC_LINK: ${{ secrets.CSC_LINK }}
+#           # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+#           # This is used for uploading release assets to github
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: npm exec electron-builder -- --publish always
+
+#       # - id: setup-steamcmd
+#       #   uses: CyberAndrii/setup-steamcmd@v1.1.1
+
+#       # - name: Create steamworks build script
+#       #   run: node ./scripts/createSteamBuildScript.js
+#       #   env:
+#       #     STEAM_APP_ID: 1904150
+#       #     RELEASE_BRANCH: development
+#       #     DEPOT_WINDOWS_ID: 1904151
+#       #     DEPOT_LINUX_ID: 1904152
+#       #     DEPOT_MACOS_ID: 1904153
+#       #     RUNNER_OS: $RUNNER_OS
+
+#       # - name: Generate steam guard auth code
+#       #   id: generate
+#       #   uses: CyberAndrii/steam-totp@v1.0.2
+#       #   with:
+#       #     shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
+
+#       # - name: Publish to Steam
+#       #   run: |
+#       #     node ./scripts/publishToSteam.js
+#       #   env:
+#       #     STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
+#       #     STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+#       #     STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
+#       #     STEAM_GUARD_CODE: ${{ steps.generate.outputs.code }}
