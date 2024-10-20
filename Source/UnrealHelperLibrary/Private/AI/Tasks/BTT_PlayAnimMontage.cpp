@@ -4,6 +4,10 @@
 #include "AI/Tasks/BTT_PlayAnimMontage.h"
 
 #include "AIController.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_PlayAnimMontage)

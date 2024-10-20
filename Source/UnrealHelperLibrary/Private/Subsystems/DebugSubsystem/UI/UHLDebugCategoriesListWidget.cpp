@@ -3,6 +3,7 @@
 
 #include "Subsystems/DebugSubsystem/UI/UHLDebugCategoriesListWidget.h"
 
+#include "Engine/GameInstance.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
 #include "Components/ButtonSlot.h"

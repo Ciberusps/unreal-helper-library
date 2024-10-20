@@ -8,7 +8,9 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
+#include "Animation/AnimMontage.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_TurnTo)

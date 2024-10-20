@@ -3,7 +3,6 @@
 
 #include "AI/Decorators/BTD_RandomChance.h"
 
-#include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -53,4 +52,4 @@ FName UBTD_RandomChance::GetNodeIconName() const
 	// return FName("CodeView.ClassIcon");
 	return FName("GraphEditor.StructGlyph");
 }
-#endif // WITH_EDITOR
+#endif

@@ -2,6 +2,7 @@
 
 
 #include "Animation/Notifies/AN_UHL_Base.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AN_UHL_Base)
 

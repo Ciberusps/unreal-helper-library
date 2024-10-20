@@ -2,8 +2,10 @@
 
 
 #include "Utils/UHLTraceUtilsBPL.h"
-
-// #include "UnrealHelperLibraryBPLibrary.h"
+#include "Engine/World.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/HitResult.h"
+#include "DrawDebugHelpers.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLTraceUtilsBPL)
 

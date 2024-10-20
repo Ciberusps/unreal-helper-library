@@ -3,6 +3,7 @@
 
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
+#include "GameFramework/Pawn.h"
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"

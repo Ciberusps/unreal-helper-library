@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -10,7 +10,6 @@ UNREALHELPERLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(LogUHLAbilitySystem, Log, Al
 class FUnrealHelperLibraryModule : public IModuleInterface
 {
 public:
-
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;

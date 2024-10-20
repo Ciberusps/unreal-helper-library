@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/EngineTypes.h"
+#include "CollisionQueryParams.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UHLTraceUtilsBPL.generated.h"
 

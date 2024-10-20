@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Pavel Penkov
 
 #include "AbilitySystem/UHLAbilitySet.h"
 
@@ -7,10 +7,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAbilitySet)
 
-void FUHLAbilitySet_GrantedHandles::SetAbilitySetTags(const FGameplayTagContainer& AbilitySetTagContainer)
-{
-    AbilitySetTags = AbilitySetTagContainer;
-}
+void FUHLAbilitySet_GrantedHandles::SetAbilitySetTags(const FGameplayTagContainer& AbilitySetTagContainer) { AbilitySetTags = AbilitySetTagContainer; }
 
 void FUHLAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
 {
@@ -28,10 +25,7 @@ void FUHLAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGamepla
 	}
 }
 
-void FUHLAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)
-{
-	GrantedAttributeSets.Add(Set);
-}
+void FUHLAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set) { GrantedAttributeSets.Add(Set); }
 
 void FUHLAbilitySet_GrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponent* ASC)
 {
@@ -64,16 +58,13 @@ void FUHLAbilitySet_GrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponen
 		ASC->RemoveSpawnedAttribute(Set);
 	}
 
-    AbilitySetTags.Reset();
+	AbilitySetTags.Reset();
 	AbilitySpecHandles.Reset();
 	GameplayEffectHandles.Reset();
 	GrantedAttributeSets.Reset();
 }
 
-UUHLAbilitySet::UUHLAbilitySet(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
+UUHLAbilitySet::UUHLAbilitySet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
 
 void UUHLAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, FUHLAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject) const
 {
@@ -85,33 +76,33 @@ void UUHLAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, FUHLAbili
 		return;
 	}
 
-    // Save AbilitySetTags to handles
-    OutGrantedHandles->SetAbilitySetTags(AbilitySetTags);
+	// Save AbilitySetTags to handles
+	OutGrantedHandles->SetAbilitySetTags(AbilitySetTags);
 
-    // Grant the simple gameplay abilities.
-    for (int32 AbilityIndex = 0; AbilityIndex < GrantedSimpleGameplayAbilities.Num(); ++AbilityIndex)
-    {
-        TSubclassOf<UGameplayAbility> AbilityToGrant = GrantedSimpleGameplayAbilities[AbilityIndex];
+	// Grant the simple gameplay abilities.
+	for (int32 AbilityIndex = 0; AbilityIndex < GrantedSimpleGameplayAbilities.Num(); ++AbilityIndex)
+	{
+		TSubclassOf<UGameplayAbility> AbilityToGrant = GrantedSimpleGameplayAbilities[AbilityIndex];
 
-        if (!IsValid(AbilityToGrant))
-        {
-            UE_LOG(LogUHLAbilitySystem, Error, TEXT("GrantedSimpleGameplayAbilities[%d] on ability set [%s] is not valid."), AbilityIndex, *GetNameSafe(this));
-            continue;
-        }
+		if (!IsValid(AbilityToGrant))
+		{
+			UE_LOG(LogUHLAbilitySystem, Error, TEXT("GrantedSimpleGameplayAbilities[%d] on ability set [%s] is not valid."), AbilityIndex, *GetNameSafe(this));
+			continue;
+		}
 
-        UGameplayAbility* AbilityCDO = AbilityToGrant->GetDefaultObject<UGameplayAbility>();
+		UGameplayAbility* AbilityCDO = AbilityToGrant->GetDefaultObject<UGameplayAbility>();
 
-        FGameplayAbilitySpec AbilitySpec(AbilityCDO, 1);
-        AbilitySpec.SourceObject = SourceObject;
+		FGameplayAbilitySpec AbilitySpec(AbilityCDO, 1);
+		AbilitySpec.SourceObject = SourceObject;
 
-        const FGameplayAbilitySpecHandle AbilitySpecHandle = ASC->GiveAbility(AbilitySpec);
+		const FGameplayAbilitySpecHandle AbilitySpecHandle = ASC->GiveAbility(AbilitySpec);
 
-        if (OutGrantedHandles)
-        {
-            OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
-        }
-    }
-    
+		if (OutGrantedHandles)
+		{
+			OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
+		}
+	}
+
 	// Grant the gameplay abilities.
 	for (int32 AbilityIndex = 0; AbilityIndex < GrantedGameplayAbilities.Num(); ++AbilityIndex)
 	{
@@ -180,11 +171,10 @@ void UUHLAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, FUHLAbili
 
 TArray<TSubclassOf<UGameplayAbility>> UUHLAbilitySet::GetAllAbilitiesList() const
 {
-    TArray<TSubclassOf<UGameplayAbility>> Result = GrantedSimpleGameplayAbilities;
-    for (const FUHLAbilitySet_GameplayAbility& GrantedGameplayAbility : GrantedGameplayAbilities)
-    {
-        Result.Add(GrantedGameplayAbility.Ability);
-    }
-    return Result;
+	TArray<TSubclassOf<UGameplayAbility>> Result = GrantedSimpleGameplayAbilities;
+	for (const FUHLAbilitySet_GameplayAbility& GrantedGameplayAbility : GrantedGameplayAbilities)
+	{
+		Result.Add(GrantedGameplayAbility.Ability);
+	}
+	return Result;
 }
-

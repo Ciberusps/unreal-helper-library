@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "ANS_UHL_Base.h"
+#include "UObject/WeakInterfacePtr.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystemInterface.h"
 #include "ANS_ActivateAbility.generated.h"
-
-class IAbilitySystemInterface;
 
 /**
  *

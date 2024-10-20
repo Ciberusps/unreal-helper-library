@@ -3,6 +3,7 @@
 
 #include "Characters/UHLBaseCharacterWithASC.h"
 
+#include "GameFramework/Controller.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSets/UHLBaseCharacterAttributeSet.h"
 

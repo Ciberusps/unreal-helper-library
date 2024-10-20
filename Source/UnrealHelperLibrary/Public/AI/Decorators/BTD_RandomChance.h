@@ -19,7 +19,7 @@ public:
 
 	// UPROPERTY(Category="Decorator", EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f, EditCondition="!bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
 	UPROPERTY(Category="Decorator", EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f))
-	float Chance;
+	float Chance = 1.0f;
 	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
 	// float ChanceUnclamped;
     // TODO value from blackboard

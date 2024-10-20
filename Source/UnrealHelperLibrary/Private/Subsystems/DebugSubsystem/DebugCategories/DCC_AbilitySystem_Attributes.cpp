@@ -3,6 +3,7 @@
 
 #include "Subsystems/DebugSubsystem/DebugCategories/DCC_AbilitySystem_Attributes.h"
 
+#include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(DCC_AbilitySystem_Attributes)

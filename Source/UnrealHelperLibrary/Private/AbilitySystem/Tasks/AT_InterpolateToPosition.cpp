@@ -4,6 +4,8 @@
 #include "AbilitySystem/Tasks/AT_InterpolateToPosition.h"
 
 #include "Curves/CurveVector.h"
+#include "Curves/CurveFloat.h"
+#include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
