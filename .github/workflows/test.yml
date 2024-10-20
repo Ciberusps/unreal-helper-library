@@ -12,24 +12,26 @@ on:
 #   STEAMWORKS_SDK_GOOGLE_DRIVE_LINK: ${{ secrets.STEAMWORKS_SDK_GOOGLE_DRIVE_LINK }}
 
 jobs:
-  clean-up-space:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Free Disk Space (Ubuntu)
-      uses: jlumbroso/free-disk-space@main
-      with:
-        # this might remove tools that are actually needed,
-        # if set to "true" but frees about 6 GB
-        tool-cache: false
+#   clean-up-space:
+#     runs-on: ubuntu-latest
+#     steps:
+	#  Works better
+    # - name: Free Disk Space (Ubuntu)
+    #   uses: jlumbroso/free-disk-space@main
+    #   with:
+    #     # this might remove tools that are actually needed,
+    #     # if set to "true" but frees about 6 GB
+    #     tool-cache: false
         
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: false
-        swap-storage: true
+    #     # all of these default to true, but feel free to set to
+    #     # "false" if necessary for your workflow
+    #     android: true
+    #     dotnet: true
+    #     haskell: true
+    #     large-packages: true
+    #     docker-images: false
+    #     swap-storage: true
+
     #   # free some space 
     #   - name: Maximize build space
     #     uses: easimon/maximize-build-space@master
@@ -37,16 +39,15 @@ jobs:
     #     #   root-reserve-mb: 512
     #     #   swap-size-mb: 1024
     #       remove-dotnet: 'true'
-
   build:
-    # runs-on: self-hosted
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
-    needs: clean-up-space
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    # container:
+    #   image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+    #   credentials:
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
+    # needs: clean-up-space
 
     steps:
       - name: Check out UE5.4 project
