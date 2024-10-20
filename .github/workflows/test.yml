@@ -26,7 +26,8 @@ jobs:
           path: UE_5_4_Blueprint
       
       - name: Check out UE5.4 project
-        run: ls
+        run: |
+          ls
       # - name: Check out UnrealHelperLibrary to Plugins folder
       #   uses: actions/checkout@v3
       #   with:
