@@ -26,6 +26,7 @@ jobs:
           path: UE_5_4_Blueprint
       
       - name: Check out UE5.4 project
+        shell: bash
         run: |
           ls
       # - name: Check out UnrealHelperLibrary to Plugins folder
@@ -33,7 +34,6 @@ jobs:
       #   with:
       #     # path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
       #     path: UnrealHelperLibrary
-	    
       # - name: Build Plugins (UHL)
       #   shell: powershell
       #   run: |
