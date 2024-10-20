@@ -12,6 +12,17 @@ on:
 #   STEAMWORKS_SDK_GOOGLE_DRIVE_LINK: ${{ secrets.STEAMWORKS_SDK_GOOGLE_DRIVE_LINK }}
 
 jobs:
+  clean-up-space:
+    runs-on: ubuntu-latest
+    steps:
+      # free some space 
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+
   build:
     # runs-on: self-hosted
     runs-on: ubuntu-latest
@@ -20,26 +31,19 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
-    
-    steps:
-      # free some space 
-      # - name: Maximize build space
-      #   uses: easimon/maximize-build-space@master
-      #   with:
-      #     root-reserve-mb: 512
-      #     swap-size-mb: 1024
-      #     remove-dotnet: 'true'
+    needs: clean-up-space
 
+    steps:
       - name: Check out UE5.4 project
         uses: actions/checkout@v3
         with:
           repository: Ciberusps/UE_5_4_Blueprint
           path: UE_5_4_Blueprint
       
-      - name: Check out UE5.4 project
-        shell: bash
-        run: |
-          ls
+    #   - name: Check out UE5.4 project
+    #     shell: bash
+    #     run: |
+    #       ls
       # - name: Check out UnrealHelperLibrary to Plugins folder
       #   uses: actions/checkout@v3
       #   with:
@@ -57,7 +61,8 @@ jobs:
         uses: OrchidIsle/UE5-Build-Project@latest
         with:
           # RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
-          RUNUAT_PATH: 'C:/Epic Games/UE5.4/Engine/Build/BatchFiles/RunUAT.bat'
+          # UE folder in epic provided container - /home/ue4/UnrealEngine/Engine/Binaries
+          RUNUAT_PATH: 'home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT'
           UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
           BUILD_CONFIG: Development
           PLATFORM: Win64
