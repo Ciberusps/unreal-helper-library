@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
 #include "TurnSettings.generated.h"
 
+class UAnimMontage;
 
 USTRUCT(Blueprintable)
 struct FTurnRange

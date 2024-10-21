@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "Misc/App.h"
 #include "Engine/DeveloperSettingsBackedByCVars.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 #include "UHLDebugSubsystemSettings.generated.h"

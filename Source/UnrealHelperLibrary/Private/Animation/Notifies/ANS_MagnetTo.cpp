@@ -5,6 +5,7 @@
 
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_MagnetTo)
 
@@ -15,8 +16,8 @@ void UANS_MagnetTo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceB
     // Speed = Distance / TotalDuration / 60;
     BaseCharacter = Cast<ACharacter>(MeshComp->GetOwner());
 
-    FTimerHandle TimerHandle;
-    MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UANS_MagnetTo::TimerTick, 0.0f, true, -1);
+    // FTimerHandle TimerHandle;
+    // MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UANS_MagnetTo::TimerTick, 0.0f, true, -1);
 
     // GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ABaseDestructibleActor::FinalDestruct, TimeToDisappear);
 }
@@ -37,9 +38,3 @@ void UANS_MagnetTo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 {
     Super::NotifyEnd(MeshComp, Animation, EventReference);
 }
-
-void UANS_MagnetTo::TimerTick()
-{
-    float test = 0.0f;
-}
-

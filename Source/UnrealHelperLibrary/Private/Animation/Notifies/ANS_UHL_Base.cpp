@@ -2,6 +2,10 @@
 
 
 #include "Animation/Notifies/ANS_UHL_Base.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Engine/World.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_UHL_Base)
 

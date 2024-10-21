@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "Engine/EngineTypes.h"
 #include "ANS_EnableRootMotionZAxisMovement.generated.h"
 
-class ABBaseCharacter;
+class ACharacter;
+
 /**
  *
  */
@@ -30,7 +32,7 @@ public:
 
 private:
     TWeakObjectPtr<ACharacter> BaseCharacter;
-    EMovementMode InitialMovementMode;
+    EMovementMode InitialMovementMode = EMovementMode::MOVE_None;
 
     UFUNCTION()
     void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);

@@ -12,6 +12,7 @@
 #include "BTT_TurnTo.generated.h"
 
 class AAIController;
+class ACharacter;
 
 struct FBTTurnToMemory : FBTFocusMemory
 {

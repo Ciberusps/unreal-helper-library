@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask.h"
 #include "AT_InterpolateToPosition.generated.h"
 
+class UCurveVector;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterpolateToPositionSimpleDelegate);
 
 /**
@@ -58,10 +59,10 @@ private:
 	FVector TargetLocation;
 
 	UPROPERTY(Replicated)
-	float DurationOfMovement;
+	float DurationOfMovement = 0.0f;
 
-	float TimeMoveStarted;
-	float TimeMoveWillEnd;
+	float TimeMoveStarted = 0.0f;
+	float TimeMoveWillEnd = 0.0f;
 
 	UPROPERTY(Replicated)
 	TObjectPtr<UCurveFloat> LerpCurve;

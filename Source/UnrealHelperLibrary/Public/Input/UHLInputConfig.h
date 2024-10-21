@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -26,10 +26,9 @@ struct FUHLInputAction
 	GENERATED_BODY()
 
 public:
-
-	UPROPERTY(EditDefaultsOnly, Category="InputAction")
+	UPROPERTY(EditDefaultsOnly, Category = "InputAction")
 	const UInputAction* InputAction = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category="InputAction", Meta = (Categories = "InputTag"))
+	UPROPERTY(EditDefaultsOnly, Category = "InputAction", Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };
 
@@ -44,11 +43,11 @@ struct FUHLInputActionAbilities
 	GENERATED_BODY()
 
 public:
-    UPROPERTY(EditDefaultsOnly, Category="InputActionAbilities")
-    bool bEnabled = true;
-	UPROPERTY(EditDefaultsOnly, Category="InputActionAbilities")
+	UPROPERTY(EditDefaultsOnly, Category = "InputActionAbilities")
+	bool bEnabled = true;
+	UPROPERTY(EditDefaultsOnly, Category = "InputActionAbilities")
 	const UInputAction* InputAction = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category="InputActionAbilities")
+	UPROPERTY(EditDefaultsOnly, Category = "InputActionAbilities")
 	TArray<FGameplayTag> AbilitiesToActivate;
 };
 
@@ -72,16 +71,16 @@ public:
 	// List of input actions used by the owner.  These input actions are mapped to a gameplay tag and must be manually bound.
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
 	// TArray<FGCInputAction> NativeInputActions;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Native Input Actions")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Native Input Actions")
 	FUHLInputAction NativeInputAction_Move;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Native Input Actions")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Native Input Actions")
 	FUHLInputAction NativeInputAction_LookMouse;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Native Input Actions")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Native Input Actions")
 	FUHLInputAction NativeInputAction_LookStick;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Native Input Actions")
-    FUHLInputAction NativeInputAction_Interact;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Native Input Actions")
+	FUHLInputAction NativeInputAction_Interact;
 
 	// List of input actions used by the owner.  These input actions are mapped to a gameplay tag and are automatically bound to abilities with matching input tags.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilityInputActions", Meta = (TitleProperty = "InputAction"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AbilityInputActions", Meta = (TitleProperty = "InputAction"))
 	TArray<FUHLInputActionAbilities> AbilityInputActions;
 };

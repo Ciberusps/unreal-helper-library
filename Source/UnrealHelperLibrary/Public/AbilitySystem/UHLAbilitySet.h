@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Pavel Penkov
 
 #pragma once
 
@@ -17,7 +17,6 @@ class UUHLAbilitySystemComponent;
 class UUHLGameplayAbility;
 class UObject;
 
-
 /**
  * FUHLAbilitySet_GameplayAbility
  *
@@ -29,20 +28,18 @@ struct FUHLAbilitySet_GameplayAbility
 	GENERATED_BODY()
 
 public:
-
 	// Gameplay ability to grant.
-	UPROPERTY(EditDefaultsOnly, Category="GameplayAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbility")
 	TSubclassOf<UGameplayAbility> Ability = nullptr;
 
 	// Level of ability to grant.
-	UPROPERTY(EditDefaultsOnly, Category="GameplayAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbility")
 	int32 AbilityLevel = 1;
 
 	// Tag used to process input for the ability.
-	UPROPERTY(EditDefaultsOnly, Category="GameplayAbility", Meta = (Categories = "InputTag"))
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbility", Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };
-
 
 /**
  * FUHLAbilitySet_GameplayEffect
@@ -55,13 +52,12 @@ struct FUHLAbilitySet_GameplayEffect
 	GENERATED_BODY()
 
 public:
-
 	// Gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly, Category="GameplayEffect")
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
 
 	// Level of gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly, Category="GameplayEffect")
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
 	float EffectLevel = 1.0f;
 };
 
@@ -77,9 +73,8 @@ struct FUHLAbilitySet_AttributeSet
 
 public:
 	// Gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly, Category="AttributeSet")
+	UPROPERTY(EditDefaultsOnly, Category = "AttributeSet")
 	TSubclassOf<UAttributeSet> AttributeSet;
-
 };
 
 /**
@@ -93,9 +88,9 @@ struct FUHLAbilitySet_GrantedHandles
 	GENERATED_BODY()
 
 public:
-    FGameplayTagContainer GetAbilitySetTags() const { return AbilitySetTags; }
-    void SetAbilitySetTags(const FGameplayTagContainer& AbilitySetTagContainer);
-    
+	FGameplayTagContainer GetAbilitySetTags() const { return AbilitySetTags; }
+	void SetAbilitySetTags(const FGameplayTagContainer& AbilitySetTagContainer);
+
 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 	void AddAttributeSet(UAttributeSet* Set);
@@ -103,9 +98,9 @@ public:
 	void TakeFromAbilitySystem(UAbilitySystemComponent* ASC);
 
 protected:
-    UPROPERTY()
-    FGameplayTagContainer AbilitySetTags;
-    
+	UPROPERTY()
+	FGameplayTagContainer AbilitySetTags;
+
 	// Handles to the granted abilities.
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
@@ -118,7 +113,6 @@ protected:
 	UPROPERTY()
 	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
 };
-
 
 /**
  * UUHLAbilitySet
@@ -133,33 +127,32 @@ class UUHLAbilitySet : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-
 	UUHLAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	// Grants the ability set to the specified ability system component.
 	// The returned handles can be used later to take away anything that was granted.
 	void GiveToAbilitySystem(UAbilitySystemComponent* ASC, FUHLAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
 
-    TArray<TSubclassOf<UGameplayAbility>> GetAllAbilitiesList() const;
-    
-protected:
-    // AbilitySetTag to associate with and can be removed "RemoveAbilitySetByTag"
-    UPROPERTY(EditDefaultsOnly, Category = "AbilitySet Tags", meta=(TitleProperty=Ability))
-    FGameplayTagContainer AbilitySetTags;
+	TArray<TSubclassOf<UGameplayAbility>> GetAllAbilitiesList() const;
 
-    // Gameplay abilities to grant when this ability set is granted.
-    UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
-    TArray<TSubclassOf<UGameplayAbility>> GrantedSimpleGameplayAbilities;
-    
+protected:
+	// AbilitySetTag to associate with and can be removed "RemoveAbilitySetByTag"
+	UPROPERTY(EditDefaultsOnly, Category = "AbilitySet Tags", meta = (TitleProperty = Ability))
+	FGameplayTagContainer AbilitySetTags;
+
 	// Gameplay abilities to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta = (TitleProperty = Ability))
+	TArray<TSubclassOf<UGameplayAbility>> GrantedSimpleGameplayAbilities;
+
+	// Gameplay abilities to grant when this ability set is granted.
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta = (TitleProperty = Ability))
 	TArray<FUHLAbilitySet_GameplayAbility> GrantedGameplayAbilities;
 
 	// Gameplay effects to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta = (TitleProperty = GameplayEffect))
 	TArray<FUHLAbilitySet_GameplayEffect> GrantedGameplayEffects;
 
 	// Attribute sets to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
+	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta = (TitleProperty = AttributeSet))
 	TArray<FUHLAbilitySet_AttributeSet> GrantedAttributes;
 };

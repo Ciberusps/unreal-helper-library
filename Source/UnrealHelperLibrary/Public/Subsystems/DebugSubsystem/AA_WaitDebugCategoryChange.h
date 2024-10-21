@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "AA_WaitDebugCategoryChange.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitDebugCategoryChanged, bool, bEnabled);

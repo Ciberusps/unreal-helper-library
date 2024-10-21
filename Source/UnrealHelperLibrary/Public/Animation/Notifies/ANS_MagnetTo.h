@@ -7,6 +7,8 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "ANS_MagnetTo.generated.h"
 
+class ACharacter;
+
 /**
  *
  */
@@ -45,12 +47,9 @@ public:
 
 private:
     TWeakObjectPtr<ACharacter> BaseCharacter;
-    EMovementMode InitialMovementMode;
+    // EMovementMode InitialMovementMode;
     float Speed = 0.0f;
     float Alpha = 0.0f;
-
-    UFUNCTION()
-    void TimerTick();
 
     // UFUNCTION()
     // void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);

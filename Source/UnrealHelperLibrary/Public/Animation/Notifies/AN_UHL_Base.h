@@ -6,9 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "AN_UHL_Base.generated.h"
 
-/**
- *
- */
+class USkeletalMeshComponent;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnNotifySignature, USkeletalMeshComponent*)
 
 UCLASS()
