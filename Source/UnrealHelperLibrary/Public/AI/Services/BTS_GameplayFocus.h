@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Misc/EngineVersionComparison.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "BehaviorTree/Services/BTService_DefaultFocus.h"
 #include "BTS_GameplayFocus.generated.h"
+
+class UBehaviorTreeComponent;
 
 /**
  * Prevents rotation jittering while moving to enemy
