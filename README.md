@@ -81,8 +81,8 @@ UHL consists of 3 modules:
 >   - AnimNotifyState (ANS)
 >     - [ANS_UHL_Base](#ans_uhl_base)
 >     - [ANS_ActivateAbility](#ans_activateability)
-<!-- >     - ANS_CatchToInputCache -->
-<!-- >     - ANS_CheckInputCache -->
+>    <!--  - ANS_CatchToInputCache -->
+>    <!--  - ANS_CheckInputCache -->
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -141,7 +141,7 @@ UHL consists of 3 modules:
 > - [TraceUtilsBPL](#traceutilsbpl)
 >   - SweepCapsuleSingleByChannel
 > - [Settings](#settings)
->   - [UHL Settings](#)
+>   - [UHL Settings](#uhl-settings)
 
 **UnrealHelperEditor**
 
