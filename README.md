@@ -34,6 +34,22 @@ Support: tested `UE5.4 - UE5.5-preview`
             PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
         }
     }
+
+    // .uproject  add for production builds to work
+    "Plugins": [
+        {
+            "Name": "UnrealHelperLibrary",
+            "Enabled": true
+        },
+        {
+            "Name": "GameplayAbilities",
+            "Enabled": true
+        },
+        {
+            "Name": "DataRegistry",
+            "Enabled": true
+        }
+    ]
 ```
 
 > [!NOTE]
