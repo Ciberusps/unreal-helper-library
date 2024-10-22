@@ -4,6 +4,9 @@
 #include "AI/Composite/BTC_RandomSelector.h"
 
 #include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/BTCompositeNode.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Misc/EngineVersionComparison.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTC_RandomSelector)
