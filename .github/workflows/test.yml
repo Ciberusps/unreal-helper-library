@@ -47,12 +47,11 @@ jobs:
         run: |
           echo "Running Script"
           mkdir -p "Result"
-          mkdir -p "/work/Result"
           test -e "./Engine/Build/BatchFiles/RunUAT.sh" && echo file exists || echo file not found
           test -e "/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" && echo file exists || echo file not found
           test -e "/work/Result" && echo file exists || echo file not found
           test -e "Result" && echo file exists || echo file not found
-          "./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="/work/Result""
+          "./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="./Result""
 # - name: Build Plugins (UHL)
 #   shell: sh
 #   run: |
