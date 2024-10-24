@@ -24,9 +24,9 @@ jobs:
         # all of these default to true, but feel free to set to
         # "false" if necessary for your workflow
         android: true
-        # dotnet: true
+        dotnet: false
         haskell: true
-        large-packages: true
+        large-packages: false
         docker-images: false
         swap-storage: true
     - name: Check out UnrealHelperLibrary to Plugins folder
@@ -35,6 +35,7 @@ jobs:
         path: UnrealHelperLibrary
     - name:
       run: |
+        lsof | grep deleted
         echo ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker pull ghcr.io/epicgames/unreal-engine:dev-slim-5.4
     - uses: addnab/docker-run-action@v3
