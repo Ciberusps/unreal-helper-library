@@ -41,6 +41,17 @@
 			"Enabled": true
 		},
 		{
+			"Name": "DataRegistry",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayTagsEditor",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		},
+		{
 			"Name": "EnhancedInput",
 			"Enabled": true
 		},

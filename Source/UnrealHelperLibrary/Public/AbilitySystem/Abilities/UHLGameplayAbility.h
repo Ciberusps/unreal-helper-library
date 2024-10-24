@@ -50,7 +50,7 @@ class UNREALHELPERLIBRARY_API UUHLGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "UHL GameplayAbility")
     EUHLAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 
 	// UFUNCTION(BlueprintCallable)

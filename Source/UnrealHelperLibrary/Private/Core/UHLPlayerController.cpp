@@ -4,6 +4,8 @@
 #include "Core/UHLPlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "Engine/GameInstance.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLPlayerController)

@@ -5,6 +5,7 @@
 
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Core/UHLGameplayTags.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_CatchToAbilityInputCache)

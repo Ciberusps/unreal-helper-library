@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTCompositeNode.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "Misc/EngineVersionComparison.h"
 #include "BTC_RandomSelector.generated.h"
+
+class UBehaviorTreeComponent;
 
 struct FBTRandomSelectorMemory
 {

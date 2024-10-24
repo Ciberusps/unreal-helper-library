@@ -3,8 +3,11 @@
 
 #include "Animation/Notifies/ANS_ActivateAbility.h"
 
+#include "Engine/World.h"
+#include "Animation/AnimMontage.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_ActivateAbility)

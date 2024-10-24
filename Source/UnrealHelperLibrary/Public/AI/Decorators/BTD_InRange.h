@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "BTD_Base.h"
 #include "BehaviorTree/BTCompositeNode.h"
-#include "BehaviorTree/BTDecorator.h"
 #include "BTD_InRange.generated.h"
 
 struct FBTInRangeMemory

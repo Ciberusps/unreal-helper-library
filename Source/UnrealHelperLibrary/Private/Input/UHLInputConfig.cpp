@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Pavel Penkov
 
 #include "Input/UHLInputConfig.h"
 // #include "LyraLogChannels.h"
@@ -8,9 +8,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLInputConfig)
 
-UUHLInputConfig::UUHLInputConfig(const FObjectInitializer& ObjectInitializer)
-{
-}
+UUHLInputConfig::UUHLInputConfig(const FObjectInitializer& ObjectInitializer) {}
 
 // const UInputAction* UGCInputConfig::FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound) const
 // {

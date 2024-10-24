@@ -6,6 +6,8 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "ANS_UHL_Base.generated.h"
 
+class UAnimMontage;
+
 /**
  * with events like OnMontageBlendOut, OnMontageInterrupted...
  * you can disable subscribing OnMontageBlendOut, by "bUseOnMontageBlendingOut=false" in constructor
@@ -14,8 +16,6 @@ UCLASS(Blueprintable, Category="UnrealHelperLibrary")
 class UNREALHELPERLIBRARY_API UANS_UHL_Base : public UAnimNotifyState
 {
 	GENERATED_BODY()
-
-public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ANS_UHL_Base")

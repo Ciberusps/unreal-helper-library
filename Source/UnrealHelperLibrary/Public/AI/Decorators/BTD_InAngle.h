@@ -6,6 +6,8 @@
 #include "AI/Decorators/BTD_Base.h"
 #include "BTD_InAngle.generated.h"
 
+class ACharacter;
+
 struct FBTInAngleMemory
 {
 };

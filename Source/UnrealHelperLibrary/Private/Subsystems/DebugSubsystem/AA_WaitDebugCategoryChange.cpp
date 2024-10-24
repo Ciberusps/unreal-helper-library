@@ -3,6 +3,10 @@
 
 #include "Subsystems/DebugSubsystem/AA_WaitDebugCategoryChange.h"
 
+#include "UnrealEngine.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "Engine/GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 
