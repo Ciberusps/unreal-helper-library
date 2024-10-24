@@ -9,11 +9,17 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: Check out Git repository
+      - name: Check out UE5.4 project
         uses: actions/checkout@v3
         with:
           repository: Ciberusps/UE_5_4_Blueprint
           path: UE_5_4_Blueprint
+      
+      - name: Check out UnrealHelperLibrary to Plugins folder
+        uses: actions/checkout@v3
+        with:
+          path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
+      
       - name: Build project
         uses: OrchidIsle/UE5-Build-Project@latest
         with:
@@ -24,7 +30,7 @@ jobs:
           CLEAN: true
           COOK: true
           STAGE: true
-          PACKAGE: false
+          PACKAGE: true
           PAK: false
           SERVER: false
           ARCHIVE: false
