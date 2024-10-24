@@ -48,9 +48,9 @@ jobs:
           echo "Running Script"
           mkdir "Result"
           test -e "./Engine/Build/BatchFiles/RunUAT.sh" && echo file exists || echo file not found
-          test -e "${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" && echo file exists || echo file not found
-          test -e "${{ github.workspace }}/UnrealHelperLibrary.uplugin" && echo file exists || echo file not found
-          "./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/UnrealHelperLibrary/Result""
+          test -e "/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" && echo file exists || echo file not found
+          test -e "/work/UnrealHelperLibrary.uplugin" && echo file exists || echo file not found
+          "./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="/work/Result""
 # - name: Build Plugins (UHL)
 #   shell: sh
 #   run: |
