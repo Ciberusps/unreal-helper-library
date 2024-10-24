@@ -42,7 +42,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
         registry: ghcr.io
-        image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+        image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4.0
         options: -v ${{ github.workspace }}:/work -e ABC=123
         run: |
           echo "Running Script"
@@ -52,11 +52,6 @@ jobs:
           test -e "/work/Result" && echo file exists || echo file not found
           test -e "Result" && echo file exists || echo file not found
           ./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="./Result"
-
-
-
-
-
 # - name: Build Plugins (UHL)
 #   shell: sh
 #   run: |
