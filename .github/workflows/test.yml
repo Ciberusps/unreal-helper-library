@@ -12,47 +12,42 @@ on:
 #   STEAMWORKS_SDK_GOOGLE_DRIVE_LINK: ${{ secrets.STEAMWORKS_SDK_GOOGLE_DRIVE_LINK }}
 
 jobs:
-    build-plugins:
-      runs-on: ubuntu-latest
-      # container:
-      #   image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
-      #   credentials:
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
-      steps:
-        - name: Free Disk Space (Ubuntu)
-          uses: jlumbroso/free-disk-space@main
-          with:
-            # this might remove tools that are actually needed,
-            # if set to "true" but frees about 6 GB
-            tool-cache: false
-            # all of these default to true, but feel free to set to
-            # "false" if necessary for your workflow
-            android: true
-            dotnet: true
-            haskell: true
-            large-packages: true
-            docker-images: false
-            swap-storage: true
-        - name: Check out UnrealHelperLibrary to Plugins folder
-          uses: actions/checkout@v3
-          with:
-            path: UnrealHelperLibrary
-        - uses: addnab/docker-run-action@v3
-          with:
-            username: ${{ github.actor }}
-            password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
-            registry: ghcr.io
-            image: epicgames/unreal-engine:dev-slim-5.4
-            options: -v ${{ github.workspace }}:/work -e ABC=123
-            run: |
-              echo "Running Script"
-              ls
-              "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
-        # - name: Build Plugins (UHL)
-        #   shell: sh
-        #   run: |
-        #     "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+  build-plugins:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: false
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: false
+        swap-storage: true
+    - name: Check out UnrealHelperLibrary to Plugins folder
+      uses: actions/checkout@v3
+      with:
+        path: UnrealHelperLibrary
+    - uses: addnab/docker-run-action@v3
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
+        registry: ghcr.io
+        image: epicgames/unreal-engine:dev-slim-5.4
+        options: -v ${{ github.workspace }}:/work -e ABC=123
+        run: |
+          echo "Running Script"
+          ls
+          "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+  # - name: Build Plugins (UHL)
+	#   shell: sh
+	#   run: |
+	#     "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
 #   clean-up-space:
 #     runs-on: ubuntu-latest
 #     steps:
