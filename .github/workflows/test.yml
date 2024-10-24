@@ -13,7 +13,7 @@ on:
 
 jobs:
     build-plugins:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       container:
         image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
         credentials:
