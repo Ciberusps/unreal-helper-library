@@ -42,64 +42,75 @@ jobs:
   build:
     runs-on: self-hosted
     # runs-on: ubuntu-latest
-    # container:
-    #   image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
-    #   credentials:
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
+    container:
+      image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
     # needs: clean-up-space
 
     steps:
-      - name: Check out UE5.4 project
-        uses: actions/checkout@v3
-        with:
-          repository: Ciberusps/UE_5_4_Blueprint
-          path: UE_5_4_Blueprint
+    #   - name: Check out UE5.4 project
+    #     uses: actions/checkout@v3
+    #     with:
+    #       repository: Ciberusps/UE_5_4_Blueprint
+    #       path: UE_5_4_Blueprint
       
     #   - name: Check out UE5.4 project
     #     shell: bash
     #     run: |
     #       ls
-      # - name: Check out UnrealHelperLibrary to Plugins folder
-      #   uses: actions/checkout@v3
-      #   with:
-      #     # path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
-      #     path: UnrealHelperLibrary
-      # - name: Build Plugins (UHL)
-      #   shell: powershell
-      #   run: |
-      #     mkdir "Temp"
-      #     $pluginPath = Resolve-Path -Path "UE_5_4_Blueprint/Plugins/UnrealHelperLibrary/UnrealHelperLibrary.uplugin"
-      #     $tempDirAbsolutePath = Resolve-Path -Path "Temp"
-      #     "S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat BuildPlugin -plugin="$pluginPath" -package="$tempDirAbsolutePath""
+    
+    - name: Check out UnrealHelperLibrary to Plugins folder
+      uses: actions/checkout@v3
+      with:
+        path: UnrealHelperLibrary
 
-      - name: Build project
-        uses: OrchidIsle/UE5-Build-Project@latest
-        with:
-          # RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
-          # UE folder in epic provided container - /home/ue4/UnrealEngine/Engine/Binaries
-          RUNUAT_PATH: 'home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT'
-          UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
-          BUILD_CONFIG: Development
-          PLATFORM: Win64
-          CLEAN: true
-          COOK: true
-          STAGE: true
-          PACKAGE: true
-          PAK: true
-          SERVER: false
-          ARCHIVE: false
-          ARCHIVE_PATH: 'C:/Archives/MyGame'
-          NULLRHI: true
-          EDITOR: true
-          ENCRYPT_INI: true
-          # RELEASE: '1.0.0'
-          # PATCH: '0.9.0'
-          # MAPS: 'Map1,Map2'
-          DELETE_PDB: true
-          # ANTICHEAT_ENABLED: true
-          # ANTICHEAT_PRIVATE_KEY: 'base64encodedprivatekey'
-          # ANTICHEAT_PUBLIC_CERT: 'base64encodedpubliccert'
+    - name: Build Plugins (UHL)
+      shell: sh
+      run: |
+        "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+
+    # - name: Check out UnrealHelperLibrary to Plugins folder
+	#   uses: actions/checkout@v3
+	#   with:
+	#     # path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
+	#     path: UnrealHelperLibrary
+	# - name: Build Plugins (UHL)
+	#   shell: powershell
+	#   run: |
+	#     mkdir "Temp"
+	#     $pluginPath = Resolve-Path -Path "UE_5_4_Blueprint/Plugins/UnrealHelperLibrary/UnrealHelperLibrary.uplugin"
+	#     $tempDirAbsolutePath = Resolve-Path -Path "Temp"
+	#     "S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat BuildPlugin -plugin="$pluginPath" -package="$tempDirAbsolutePath""
+
+    #   - name: Build project
+    #     uses: OrchidIsle/UE5-Build-Project@latest
+    #     with:
+    #       # RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
+    #       # UE folder in epic provided container - /home/ue4/UnrealEngine/Engine/Binaries
+    #       RUNUAT_PATH: 'home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT'
+    #       UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
+    #       BUILD_CONFIG: Development
+    #       PLATFORM: Win64
+    #       CLEAN: true
+    #       COOK: true
+    #       STAGE: true
+    #       PACKAGE: true
+    #       PAK: true
+    #       SERVER: false
+    #       ARCHIVE: false
+    #       ARCHIVE_PATH: 'C:/Archives/MyGame'
+    #       NULLRHI: true
+    #       EDITOR: true
+    #       ENCRYPT_INI: true
+    #       # RELEASE: '1.0.0'
+    #       # PATCH: '0.9.0'
+    #       # MAPS: 'Map1,Map2'
+    #       DELETE_PDB: true
+    #       # ANTICHEAT_ENABLED: true
+    #       # ANTICHEAT_PRIVATE_KEY: 'base64encodedprivatekey'
+    #       # ANTICHEAT_PUBLIC_CERT: 'base64encodedpubliccert'
 
 
 
