@@ -6,7 +6,12 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BehaviorTree/BTCompositeNode.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Misc/EngineVersionComparison.h"
+#include "GameFramework/Actor.h"
+#include "VisualLogger/VisualLogger.h"
+#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/BTAuxiliaryNode.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTC_RandomSelector)
@@ -87,21 +92,16 @@ FName UBTC_RandomSelector::GetNodeIconName() const
 #endif
 
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
-uint16 UBTC_RandomSelector::GetInstanceMemorySize() const
-{
-    return sizeof(FBTRandomSelectorMemory);
-}
-
 void UBTC_RandomSelector::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
                                                    EBTMemoryInit::Type InitType) const
 {
-    InitializeNodeMemory<FBTRandomSelectorMemory>(NodeMemory, InitType);
+    InitializeNodeMemory<FBTCompositeMemory>(NodeMemory, InitType);
 }
 
 void UBTC_RandomSelector::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     EBTMemoryClear::Type CleanupType) const
 {
-    CleanupNodeMemory<FBTRandomSelectorMemory>(NodeMemory, CleanupType);
+    CleanupNodeMemory<FBTCompositeMemory>(NodeMemory, CleanupType);
 }
 #endif
 
