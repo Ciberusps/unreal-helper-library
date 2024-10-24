@@ -39,7 +39,8 @@ jobs:
     #     #   root-reserve-mb: 512
     #     #   swap-size-mb: 1024
     #       remove-dotnet: 'true'
-  build:
+
+  build-plugins:
     runs-on: self-hosted
     # runs-on: ubuntu-latest
     container:
@@ -47,9 +48,28 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
-    # needs: clean-up-space
-
     steps:
+      - name: Check out UnrealHelperLibrary to Plugins folder
+        uses: actions/checkout@v3
+        with:
+          path: UnrealHelperLibrary
+
+      - name: Build Plugins (UHL)
+        shell: sh
+        run: |
+          "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+
+#   build:
+#     runs-on: self-hosted
+#     # runs-on: ubuntu-latest
+#     container:
+#       image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
+#     # needs: clean-up-space
+
+#     steps:
     #   - name: Check out UE5.4 project
     #     uses: actions/checkout@v3
     #     with:
@@ -60,16 +80,6 @@ jobs:
     #     shell: bash
     #     run: |
     #       ls
-    
-    - name: Check out UnrealHelperLibrary to Plugins folder
-      uses: actions/checkout@v3
-      with:
-        path: UnrealHelperLibrary
-
-    - name: Build Plugins (UHL)
-      shell: sh
-      run: |
-        "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
 
     # - name: Check out UnrealHelperLibrary to Plugins folder
 	#   uses: actions/checkout@v3
