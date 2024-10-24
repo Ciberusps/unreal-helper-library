@@ -35,7 +35,6 @@ jobs:
         path: UnrealHelperLibrary
     - name:
       run: |
-        lsof | grep deleted
         echo ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker pull ghcr.io/epicgames/unreal-engine:dev-slim-5.4
     - uses: addnab/docker-run-action@v3
