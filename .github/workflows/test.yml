@@ -46,8 +46,7 @@ jobs:
         options: -v ${{ github.workspace }}:/work -e ABC=123
         run: |
           echo "Running Script"
-          ls -R
-          "./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+          "./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
 # - name: Build Plugins (UHL)
 #   shell: sh
 #   run: |
