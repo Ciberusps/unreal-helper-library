@@ -44,10 +44,10 @@ jobs:
           echo "Running Script"
           ls
           "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
-  # - name: Build Plugins (UHL)
-	#   shell: sh
-	#   run: |
-	#     "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+# - name: Build Plugins (UHL)
+#   shell: sh
+#   run: |
+#     "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
 #   clean-up-space:
 #     runs-on: ubuntu-latest
 #     steps:
