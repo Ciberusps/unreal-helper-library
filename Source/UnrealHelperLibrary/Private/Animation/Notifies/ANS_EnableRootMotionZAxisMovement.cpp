@@ -20,26 +20,15 @@ void UANS_EnableRootMotionZAxisMovement::NotifyBegin(USkeletalMeshComponent* Mes
     UCharacterMovementComponent* MovementComponent = BaseCharacter->GetCharacterMovement();
     InitialMovementMode = MovementComponent->MovementMode;
     MovementComponent->SetMovementMode(MOVE_Flying);
-
-    BaseCharacter->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(this, &UANS_EnableRootMotionZAxisMovement::OnMontageBlendingOut);
 }
 
-void UANS_EnableRootMotionZAxisMovement::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+void UANS_EnableRootMotionZAxisMovement::NotifyEndOrBlendOut(USkeletalMeshComponent* MeshComp)
 {
-    Super::NotifyEnd(MeshComp, Animation, EventReference);
+	Super::NotifyEndOrBlendOut(MeshComp);
 
-    if (!BaseCharacter.IsValid()) return;
-
-    BaseCharacter->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.RemoveDynamic(this, &UANS_EnableRootMotionZAxisMovement::OnMontageBlendingOut);
-}
-
-void UANS_EnableRootMotionZAxisMovement::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
-{
-    if (!BaseCharacter.IsValid()) return;
-
-    UCharacterMovementComponent* MovementComponent = BaseCharacter->GetCharacterMovement();
-    if (MovementComponent->MovementMode == MOVE_Flying)
-    {
-        MovementComponent->SetMovementMode(MOVE_Falling);
-    }
+	UCharacterMovementComponent* MovementComponent = BaseCharacter->GetCharacterMovement();
+	if (MovementComponent->MovementMode == MOVE_Flying)
+	{
+		MovementComponent->SetMovementMode(MOVE_Falling);
+	}
 }

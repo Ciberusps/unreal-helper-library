@@ -13,6 +13,11 @@ void UANS_UHL_Base::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
+	if (ShouldUseExperimentalUHLFeatures())
+	{
+		MeshCompRef = MeshComp;
+	}
+
 	CurrentAnimMontage = EventReference.GetNotify()->GetLinkedMontage();
 
 	if (CurrentAnimMontage.IsValid())
@@ -28,11 +33,23 @@ void UANS_UHL_Base::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
+	if (ShouldUseExperimentalUHLFeatures())
+	{
+		NotifyEndOrBlendOut(MeshCompRef.Get());
+	}
+
 	if (bUseOnMontageBlendingOut)
 	{
 		MeshComp->AnimScriptInstance->OnMontageBlendingOut.RemoveDynamic(this, &UANS_UHL_Base::OnMontageBlendingOut);
 	}
 }
+
+/** Experimental **/ 
+void UANS_UHL_Base::NotifyEndOrBlendOut(USkeletalMeshComponent* MeshComp)
+{
+	if (!ShouldUseExperimentalUHLFeatures()) return;
+}
+/** ~Experimental **/ 
 
 void UANS_UHL_Base::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
@@ -40,5 +57,10 @@ void UANS_UHL_Base::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupte
 		|| Montage != CurrentAnimMontage)
 	{
 		return;
+	}
+
+	if (ShouldUseExperimentalUHLFeatures())
+	{
+		NotifyEndOrBlendOut(MeshCompRef.Get());
 	}
 }
