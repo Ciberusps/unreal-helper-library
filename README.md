@@ -416,6 +416,9 @@ inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOn
 
 ### AI
 
+UHL provides most needed AI nodes toolset for developing at least 3d-action AI - GameplayFocus, Random choices using RandomChance and RandomSelector, PlayAnimMontage to play attacks animations, InRange and InAngle to check distance to enemy and required angle
+![AI_nodes](https://github.com/user-attachments/assets/1a00afdf-ab36-4e1c-9bd1-1b29c46cd8ac)
+
 #### `BTC_RandomSelector`
 
 Select random child node using weights
