@@ -11,7 +11,10 @@
 class ACharacter;
 
 /**
+ * Usefull for root motion jumps (characters/enemies)
  *
+ * Enables MOVE_Flying mode during ANS,
+ * on end if movement mode is still MOVE_Flying - changes it on MOVE_Falling
  */
 UCLASS()
 class UNREALHELPERLIBRARY_API UANS_EnableRootMotionZAxisMovement : public UANS_UHL_Base
@@ -19,7 +22,18 @@ class UNREALHELPERLIBRARY_API UANS_EnableRootMotionZAxisMovement : public UANS_U
 	GENERATED_BODY()
 
 public:
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
+	bool bMakeLandCheckOnEnd = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
+	float LandCheckDistance = 50.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
+	bool bStopMontageIfLandCheckFails = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
+	TEnumAsByte<ECollisionChannel> CollisionChannel = ECC_Pawn;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, Category="EnableRootMotionZAxisMovement")
+	bool bDebug = false;
+	
 #if WITH_EDITOR
     /** Override this to prevent firing this notify state type in animation editors */
     virtual bool ShouldFireInEditor() { return false; }
@@ -36,4 +50,7 @@ public:
 private:
     TWeakObjectPtr<ACharacter> BaseCharacter = nullptr;
     EMovementMode InitialMovementMode = EMovementMode::MOVE_None;
+
+	UFUNCTION()
+	void OnLanded(const FHitResult& HitResult);
 };
