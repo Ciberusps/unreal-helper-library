@@ -22,14 +22,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ANS_UHL_Base")
 	bool bUseOnMontageBlendingOut = true;
 
-
-    TWeakObjectPtr<const UAnimMontage> CurrentAnimMontage;
-
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
-/** Experimental **/ 
-	TWeakObjectPtr<USkeletalMeshComponent> MeshCompRef;
+/** Experimental **/
 	// Should use experimental features like "NotifyEndOrBlendOut"
 	virtual bool ShouldUseExperimentalUHLFeatures() const { return false; };
 	// experimental works only with "ShouldUseExperimentalUHLFeatures" enabled

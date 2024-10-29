@@ -15,6 +15,8 @@ class ACharacter;
  *
  * Enables MOVE_Flying mode during ANS,
  * on end if movement mode is still MOVE_Flying - changes it on MOVE_Falling
+ *
+ * if "bStopMontageIfLandCheckFails" - stops montage if land check failed on NotifyEnd
  */
 UCLASS()
 class UNREALHELPERLIBRARY_API UANS_EnableRootMotionZAxisMovement : public UANS_UHL_Base
@@ -22,14 +24,16 @@ class UNREALHELPERLIBRARY_API UANS_EnableRootMotionZAxisMovement : public UANS_U
 	GENERATED_BODY()
 
 public:
+	UANS_EnableRootMotionZAxisMovement(const FObjectInitializer& ObjectInitializer);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
-	bool bMakeLandCheckOnEnd = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
+	bool bStopMontageIfLandCheckFails = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement", meta=(EditCondition = "bStopMontageIfLandCheckFails", EditConditionHides))
 	float LandCheckDistance = 50.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
-	bool bStopMontageIfLandCheckFails = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement", meta=(EditCondition = "bStopMontageIfLandCheckFails", EditConditionHides))
 	TEnumAsByte<ECollisionChannel> CollisionChannel = ECC_Pawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EnableRootMotionZAxisMovement", meta=(EditCondition = "bStopMontageIfLandCheckFails", EditConditionHides))
+	FMontageBlendSettings LandCheckBlendOutSettings;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, Category="EnableRootMotionZAxisMovement")
 	bool bDebug = false;
@@ -48,9 +52,5 @@ public:
 	virtual void NotifyEndOrBlendOut(USkeletalMeshComponent* MeshComp) override;
 	
 private:
-    TWeakObjectPtr<ACharacter> BaseCharacter = nullptr;
     EMovementMode InitialMovementMode = EMovementMode::MOVE_None;
-
-	UFUNCTION()
-	void OnLanded(const FHitResult& HitResult);
 };

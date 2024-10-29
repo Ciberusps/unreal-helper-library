@@ -13,14 +13,9 @@ void UANS_UHL_Base::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (ShouldUseExperimentalUHLFeatures())
-	{
-		MeshCompRef = MeshComp;
-	}
+	const UAnimMontage* CurrentAnimMontage = EventReference.GetNotify()->GetLinkedMontage();
 
-	CurrentAnimMontage = EventReference.GetNotify()->GetLinkedMontage();
-
-	if (CurrentAnimMontage.IsValid())
+	if (CurrentAnimMontage)
 	{
 		if (bUseOnMontageBlendingOut)
 		{
@@ -35,7 +30,7 @@ void UANS_UHL_Base::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 
 	if (ShouldUseExperimentalUHLFeatures())
 	{
-		NotifyEndOrBlendOut(MeshCompRef.Get());
+		NotifyEndOrBlendOut(MeshComp);
 	}
 
 	if (bUseOnMontageBlendingOut)
@@ -53,14 +48,18 @@ void UANS_UHL_Base::NotifyEndOrBlendOut(USkeletalMeshComponent* MeshComp)
 
 void UANS_UHL_Base::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (!CurrentAnimMontage.IsValid()
-		|| Montage != CurrentAnimMontage)
+	if (!Montage)
 	{
 		return;
 	}
 
 	if (ShouldUseExperimentalUHLFeatures())
 	{
-		NotifyEndOrBlendOut(MeshCompRef.Get());
+		UObject* Outer = Montage->GetController()._getUObject();
+		USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Outer);
+		if (SkeletalMeshComponent)
+		{
+			NotifyEndOrBlendOut(SkeletalMeshComponent);
+		}
 	}
 }
