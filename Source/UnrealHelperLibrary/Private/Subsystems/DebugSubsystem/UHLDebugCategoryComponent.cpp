@@ -1,4 +1,7 @@
-﻿#include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
+﻿// Copyright (c) 2024 Pavel Penkov
+
+
+#include "Subsystems/DebugSubsystem/UHLDebugCategoryComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugCategoryComponent)
 

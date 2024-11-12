@@ -12,6 +12,8 @@ and replaced by something custom that fits your project needs
 
 Support: tested `UE5.4 - UE5.5-preview`
 
+![AiModule](https://github.com/user-attachments/assets/4becb592-c02e-423a-bf80-fcfc629ce518)
+
 ## Install
 
 #### From source (recommended):
@@ -81,8 +83,6 @@ UHL consists of 3 modules:
 >   - AnimNotifyState (ANS)
 >     - [ANS_UHL_Base](#ans_uhl_base)
 >     - [ANS_ActivateAbility](#ans_activateability)
->    <!--  - ANS_CatchToInputCache -->
->    <!--  - ANS_CheckInputCache -->
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -417,6 +417,9 @@ inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOn
 ---
 
 ### AI
+
+UHL provides most needed AI nodes toolset for developing at least 3d-action AI - GameplayFocus, Random choices using RandomChance and RandomSelector, PlayAnimMontage to play attacks animations, InRange and InAngle to check distance to enemy and required angle
+![AI_nodes](https://github.com/user-attachments/assets/1a00afdf-ab36-4e1c-9bd1-1b29c46cd8ac)
 
 #### `BTC_RandomSelector`
 
