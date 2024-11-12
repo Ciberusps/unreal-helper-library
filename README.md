@@ -12,6 +12,8 @@ and replaced by something custom that fits your project needs
 
 Support: tested `UE5.4 - UE5.5-preview`
 
+![AiModule](https://github.com/user-attachments/assets/4becb592-c02e-423a-bf80-fcfc629ce518)
+
 ## Install
 
 #### From source (recommended):
