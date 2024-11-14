@@ -684,6 +684,9 @@ if you don't want to copy paste your `AttributeSets`
 
 **Custom thumnails** - to override thumbnail by your own, just implement `IUHECustomThumbnail` interface and define your own icon using `GetCustomThumbnailIcon()`
 
+> [!WARNING]
+> ⚠️ NOT sure that blueprints supported for now
+
 ```C++
 // UInventoryItem.h
 #if WITH_EDITOR
@@ -700,8 +703,7 @@ class GAMECODE_API UInventoryItem : public UObject,
 {
 /** IUHECustomThumbnail **/
 #if WITH_EDITOR
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    UTexture2D* GetCustomThumbnailIcon();
+    virtual UTexture2D* GetCustomThumbnailIcon_Implementation() const override;
 #endif
 /** ~IUHECustomThumbnail **/
 }
@@ -716,8 +718,6 @@ UTexture2D* UInventoryItem::GetCustomThumbnailIcon_Implementation()
 }
 #endif
 ```
-
-⚠️ for now works only with C++, TODO add support for blueprints
 
 Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-display-asset-is-never-loaded/143155/2?u=ciberus) and [this](https://forums.unrealengine.com/t/custom-thumbnail-on-blueprint/337532/3?u=ciberus)
 
