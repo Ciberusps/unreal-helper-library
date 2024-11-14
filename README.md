@@ -698,15 +698,15 @@ class IUHECustomThumbnail {};
 class GAMECODE_API UInventoryItem : public UObject,
     public IUHECustomThumbnail
 {
-//  ...
-
- /** IUHECustomThumbnail **/
+/** IUHECustomThumbnail **/
 #if WITH_EDITOR
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
     UTexture2D* GetCustomThumbnailIcon();
 #endif
 /** ~IUHECustomThumbnail **/
+}
 
+------------------------------------------------------------------
 
 // UInventoryItem.cpp
 #if WITH_EDITOR
@@ -715,7 +715,6 @@ UTexture2D* UInventoryItem::GetCustomThumbnailIcon_Implementation()
     return Description.Icon;
 }
 #endif
-// ...
 ```
 
 ⚠️ for now works only with C++, TODO add support for blueprints
