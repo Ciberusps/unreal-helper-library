@@ -26,9 +26,12 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
+#include "GameFramework/HUD.h"
 #include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
+#include "UI/UHLHUD.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
 
@@ -315,6 +318,93 @@ EUHLDirection UUnrealHelperLibraryBPL::GetHitReactDirection(const FVector& Sourc
 		return EUHLDirection::Right;
 	}
 	return EUHLDirection::Left;
+}
+
+FVector2D UUnrealHelperLibraryBPL::GetViewportSizeUnscaled(UObject* WorldContextObject)
+{
+	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
+	float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
+	FVector2D ViewportSizeUnscaled = ViewportSize / ViewportScale;
+	return ViewportSizeUnscaled;
+}
+
+AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector WorldLocation, FVector2D& ScreenPosition, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
+{
+	bool bRelativeToViewportCenter = false;
+	AActor* Result = nullptr;
+	FVector2D ResultScreenPosition = FVector2D(133700.322, 133700.322);
+	float ResultDistance = FVector2D::Distance(ResultScreenPosition, FVector2D::ZeroVector);
+	float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
+	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
+	FVector2D ViewportSizeUnscaled = GetViewportSizeUnscaled(WorldContextObject);
+
+	for (AActor* Actor : Actors)
+	{
+		FVector2D CurrentActorScreenPosition;
+		UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(PlayerController, Actor->GetActorLocation(), CurrentActorScreenPosition, true);
+		float CurrentDistance = FVector2D::Distance(CurrentActorScreenPosition, ViewportSizeUnscaled / 2);
+
+		if (CurrentDistance < ResultDistance)
+		{
+			ResultDistance = CurrentDistance;
+			Result = Actor;
+		}
+
+		FLineInfo LineInfo = {
+			"TestLine" + Actor->GetName(),
+			ViewportSize / 2,
+			CurrentActorScreenPosition * ViewportScale,
+			FColor::MakeRandomColor(),
+			5,
+			"" + Actor->GetName() + " " + FString::SanitizeFloat(CurrentDistance),
+			FColor::Blue,
+			bRelativeToViewportCenter,
+			true,
+		};
+		DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
+	}
+
+	ScreenPosition = ResultScreenPosition;
+	return Result;
+}
+
+void UUnrealHelperLibraryBPL::DrawDebugLineOnCanvas(UObject* WorldContextObject, const FLineInfo& LineInfo, const bool bRelativeToViewportCenter)
+{
+	const UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+	const APlayerController* PlayerController = GameInstance->GetFirstLocalPlayerController(WorldContextObject->GetWorld());
+	AUHLHUD* HUD = PlayerController->GetHUD<AUHLHUD>();
+	if (!IsValid(HUD)) return;
+
+	HUD->AddOrUpdateLineInfoToDrawNextTick(LineInfo);
+}
+
+void UUnrealHelperLibraryBPL::DrawDebugCrossHair(
+	UObject* WorldContextObject,
+	const float CrossHairLineLength,
+	const float LineThickness,
+	const float AngleToRotate,
+	const FVector2f& CrossHairCenterScreenSpace,
+	const FLinearColor& LineColor,
+	const bool bRelativeToViewportCenter
+	)
+{
+	const UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+	const APlayerController* PlayerController = GameInstance->GetFirstLocalPlayerController(WorldContextObject->GetWorld());
+	AUHLHUD* HUD = PlayerController->GetHUD<AUHLHUD>();
+	if (!IsValid(HUD)) return;
+
+	FLineInfo LineInfo = {
+		"TestLine",
+		FVector2D(0, 0),
+		FVector2D(200, 500),
+		FColor::Red,
+		2,
+		"Test123",
+		FColor::Blue,
+		bRelativeToViewportCenter,
+		true,
+	};
+	DrawDebugLineOnCanvas(WorldContextObject, LineInfo, bRelativeToViewportCenter);
 }
 
 UActorComponent* UUnrealHelperLibraryBPL::GetActorComponentByName(AActor* Actor, FString Name)
