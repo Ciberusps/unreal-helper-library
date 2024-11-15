@@ -350,18 +350,21 @@ AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldC
 			Result = Actor;
 		}
 
-		FLineInfo LineInfo = {
-			"TestLine" + Actor->GetName(),
-			ViewportSize / 2,
-			CurrentActorScreenPosition * ViewportScale,
-			FColor::MakeRandomColor(),
-			5,
-			"" + Actor->GetName() + " " + FString::SanitizeFloat(CurrentDistance),
-			FColor::Blue,
-			bRelativeToViewportCenter,
-			true,
-		};
-		DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
+		if (bDebug)
+		{
+			FLineInfo LineInfo = {
+				"TestLine" + Actor->GetName(),
+				ViewportSize / 2,
+				CurrentActorScreenPosition * ViewportScale,
+				FColor::MakeRandomColor(),
+				5,
+				"" + Actor->GetName() + " " + FString::SanitizeFloat(CurrentDistance),
+				FColor::Blue,
+				bRelativeToViewportCenter,
+				true,
+			};
+			DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
+		}
 	}
 
 	ScreenPosition = ResultScreenPosition;
