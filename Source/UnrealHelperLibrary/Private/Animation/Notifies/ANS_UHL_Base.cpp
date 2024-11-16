@@ -2,8 +2,8 @@
 
 
 #include "Animation/Notifies/ANS_UHL_Base.h"
-#include "Animation/AnimInstance.h"
-#include "Animation/AnimMontage.h"
+// #include "Animation/AnimInstance.h"
+#include "Runtime/Engine/Classes/Animation/AnimMontage.h"
 #include "Engine/World.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -55,7 +55,7 @@ void UANS_UHL_Base::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupte
 
 	if (ShouldUseExperimentalUHLFeatures())
 	{
-		UObject* Outer = Montage->GetController()._getUObject();
+		UObject* Outer = Montage->GetOuter();
 		USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Outer);
 		if (SkeletalMeshComponent)
 		{

@@ -6,7 +6,6 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "ANS_UHL_Base.generated.h"
 
-class UAnimMontage;
 class USkeletalMeshComponent;
 
 /**
