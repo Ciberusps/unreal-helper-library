@@ -44,6 +44,39 @@ bool UUHLTraceUtilsBPL::SweepCapsuleSingleByChannel(const UWorld* World, FHitRes
 	return bResult;
 }
 
+bool UUHLTraceUtilsBPL::SweepCapsuleMultiByChannel(const UWorld* World, TArray<FHitResult>& OutHits, const FVector& Start, const FVector& End, float Radius, float HalfHeight, const FQuat& Rot,
+	ECollisionChannel TraceChannel, const FCollisionQueryParams& Params, const FCollisionResponseParams& ResponseParam, bool bDrawDebug, float DrawTime, FColor TraceColor, FColor HitColor, float FailDrawTime)
+{
+	bool bResult = false;
+
+	FailDrawTime = FailDrawTime == -1.0f ? DrawTime : FailDrawTime;
+
+	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(Radius, HalfHeight);
+	bResult = World->SweepMultiByChannel(OutHits, Start, End, Rot, TraceChannel, CollisionShape, Params, ResponseParam);
+
+#if ENABLE_DRAW_DEBUG
+	if (bDrawDebug)
+	{
+		DrawDebugCapsule(World, Start, HalfHeight, Radius, Rot, TraceColor, false, bResult ? DrawTime : FailDrawTime);
+		DrawDebugCapsule(World, End, HalfHeight, Radius, Rot, TraceColor, false, bResult ? DrawTime : FailDrawTime);
+		DrawDebugLine(World, Start, End, TraceColor, false, bResult ? DrawTime : FailDrawTime);
+
+		if (bResult)
+		{
+			float Thickness = FMath::Clamp(HalfHeight / 100, 1.25, 5);
+			for (const FHitResult& OutHit : OutHits)
+			{
+				// UUnrealHelperLibraryBPLibrary::DebugPrintStrings(FString::Printf(TEXT("%f"), Thickness));
+				DrawDebugPoint(World, OutHit.ImpactPoint, 10.0f, HitColor, false, DrawTime, 0);
+				DrawDebugCapsule(World, OutHit.Location, HalfHeight, Radius, Rot, TraceColor, false, DrawTime, 0, Thickness);	
+			}
+		}
+	}
+#endif
+
+	return bResult;
+}
+
 bool UUHLTraceUtilsBPL::SweepCapsuleMultiByProfile(const UWorld* World, TArray<FHitResult>& OutHits, const FVector& Start,
                                                const FVector& End, float Radius, float HalfHeight,
                                                const FQuat& Rot, FName ProfileName,
