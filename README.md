@@ -647,6 +647,18 @@ void AUHLPlayerController::BeginPlay()
 How to add DebugCategory:
 1)
 
+How to subscribe on debug category change in C++
+```c++
+	UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
+		Actor->GetWorld(),
+		YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
+	);
+	WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
+	// on activation "OnDebugCategoryChanged" will be fired
+	WaitDebugCategoryChangeTask->Activate();
+);
+```
+
 ### LoadingUtilLibrary
 
 **UHLLoadingUtilLibrary** - loading utils from Lyra
