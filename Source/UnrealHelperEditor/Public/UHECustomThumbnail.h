@@ -25,6 +25,7 @@ public:
 
 /** IUHECustomThumbnail **/
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Custom Thumbnail")
-    UTexture2D* GetCustomThumbnailIcon();
+    UTexture2D* GetCustomThumbnailIcon() const;
+	virtual UTexture2D* GetCustomThumbnailIcon_Implementation() const;
 /** ~IUHECustomThumbnail **/
 };

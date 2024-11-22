@@ -2,8 +2,8 @@
 
 
 #include "Animation/Notifies/ANS_UHL_Base.h"
-#include "Animation/AnimInstance.h"
-#include "Animation/AnimMontage.h"
+// #include "Animation/AnimInstance.h"
+#include "Runtime/Engine/Classes/Animation/AnimMontage.h"
 #include "Engine/World.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -13,9 +13,9 @@ void UANS_UHL_Base::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	CurrentAnimMontage = EventReference.GetNotify()->GetLinkedMontage();
+	const UAnimMontage* CurrentAnimMontage = EventReference.GetNotify()->GetLinkedMontage();
 
-	if (CurrentAnimMontage.IsValid())
+	if (CurrentAnimMontage)
 	{
 		if (bUseOnMontageBlendingOut)
 		{
@@ -28,17 +28,38 @@ void UANS_UHL_Base::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
+	if (ShouldUseExperimentalUHLFeatures())
+	{
+		NotifyEndOrBlendOut(MeshComp);
+	}
+
 	if (bUseOnMontageBlendingOut)
 	{
 		MeshComp->AnimScriptInstance->OnMontageBlendingOut.RemoveDynamic(this, &UANS_UHL_Base::OnMontageBlendingOut);
 	}
 }
 
+/** Experimental **/ 
+void UANS_UHL_Base::NotifyEndOrBlendOut(USkeletalMeshComponent* MeshComp)
+{
+	if (!ShouldUseExperimentalUHLFeatures()) return;
+}
+/** ~Experimental **/ 
+
 void UANS_UHL_Base::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (!CurrentAnimMontage.IsValid()
-		|| Montage != CurrentAnimMontage)
+	if (!Montage)
 	{
 		return;
+	}
+
+	if (ShouldUseExperimentalUHLFeatures())
+	{
+		UObject* Outer = Montage->GetOuter();
+		USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Outer);
+		if (SkeletalMeshComponent)
+		{
+			NotifyEndOrBlendOut(SkeletalMeshComponent);
+		}
 	}
 }

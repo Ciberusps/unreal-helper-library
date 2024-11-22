@@ -42,6 +42,7 @@ protected:
 	virtual void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) override;
 
 private:
+	// TODO check ANS's should be stateless!?
 	TWeakInterfacePtr<IAbilitySystemInterface> ActorWithASC;
 
 	UFUNCTION()
