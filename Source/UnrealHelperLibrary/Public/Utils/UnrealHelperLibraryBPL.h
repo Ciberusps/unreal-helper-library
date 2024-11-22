@@ -58,6 +58,8 @@ public:
 	// static bool ProjectWorldLocationToWidgetPositionWithScales(APlayerController* PlayerController, FVector WorldLocation, FVector2D& ViewportPosition, bool bPlayerViewportRelative);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
 	static AActor* GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector WorldLocation, FVector2D& ScreenPosition, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+	static AActor* GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug = false, const float DebugLifetime = -1);
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	static void DrawDebugLineOnCanvas(

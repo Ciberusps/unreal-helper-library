@@ -371,6 +371,37 @@ AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldC
 	return Result;
 }
 
+AActor* UUnrealHelperLibraryBPL::GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug, const float DebugLifetime)
+{
+	AActor* Result = nullptr;
+	float GreatestDistance = -9999999;
+	TMap<AActor*, float> ActorsAndDistances = {};
+	
+	for (AActor* Actor : Actors)
+	{
+		float Distance = FVector::Distance(Actor->GetActorLocation(), Location);
+		ActorsAndDistances.Add(Actor, Distance);
+		if (Distance > GreatestDistance)
+		{
+			GreatestDistance = Distance;
+			Result = Actor;
+			MaxDistance_Out = Distance;
+		}
+	}
+	
+	if (bDebug)
+	{
+		for (const TTuple<AActor*, float>& ActorWithDist : ActorsAndDistances)
+		{
+			bool bMostDistant = Result == ActorWithDist.Key;
+			DrawDebugLine(ActorWithDist.Key->GetWorld(), ActorWithDist.Key->GetActorLocation(), Location, bMostDistant ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
+			DrawDebugString(ActorWithDist.Key->GetWorld(), FVector::ZeroVector, FString::Printf(TEXT("Distance: %.2f"), ActorWithDist.Value), ActorWithDist.Key, bMostDistant ? FColor::Green : FColor::Red, 0, true, 1);
+		}
+	}
+
+	return Result;
+}
+
 void UUnrealHelperLibraryBPL::DrawDebugLineOnCanvas(UObject* WorldContextObject, const FLineInfo& LineInfo, const bool bRelativeToViewportCenter)
 {
 	const UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
