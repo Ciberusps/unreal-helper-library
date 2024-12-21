@@ -46,7 +46,7 @@ Support: tested `UE5.4 - UE5.5-preview`
 
 #### From marketplace:
 
-yearly 2025 on **FAB**
+early 2025 on **FAB**
 
 ## Update
 
