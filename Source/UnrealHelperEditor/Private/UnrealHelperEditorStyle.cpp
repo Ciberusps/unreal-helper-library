@@ -53,16 +53,25 @@ TSharedRef< FSlateStyleSet > FUnrealHelperEditorStyle::Create()
         FString Path = CustomClassIcon.Texture2D.GetLongPackageName();
         UObject* IconImageObject = LoadObject<UObject>(nullptr, *Path);
 
-        if (IsValid(IconImageObject) && IsValid(CustomClassIcon.Class))
+        if (IsValid(IconImageObject))
         {
             UTexture2D* IconImage = Cast<UTexture2D>(IconImageObject);
             // FSlateDynamicImageBrush* DynamicImageBrush = new FSlateDynamicImageBrush(IconImage, Icon20x20, FName("CapsuleHitRegistrator"));
             FSlateImageBrush* ImageBrush = new FSlateImageBrush(IconImage, Icon20x20);
 
-            FString ClassName = CustomClassIcon.Class->GetName();
-            // Modify the class icons to use our new awesome icons
-            FString IconStyleName = FString::Printf(TEXT("ClassIcon.%s"), *ClassName);
-            Style->Set(FName(IconStyleName), ImageBrush);
+        	TArray<TSubclassOf<UObject>> AllClasses = CustomClassIcon.Classes;
+        	// support deprecated value
+        	if (IsValid(CustomClassIcon.Class))
+        	{
+        		AllClasses.Add(CustomClassIcon.Class);
+        	}
+        	for (const TSubclassOf<UObject> Class : AllClasses)
+        	{
+        		FString ClassName = Class->GetName();
+        		// Modify the class icons to use our new awesome icons
+        		FString IconStyleName = FString::Printf(TEXT("ClassIcon.%s"), *ClassName);
+        		Style->Set(FName(IconStyleName), ImageBrush);
+        	}
         }
     }
 

@@ -53,8 +53,8 @@ struct FUHLDebugCategory
 	// ~"FColor::MakeRandomColor()" will lead to non-critical error
 	// ~unreal don't support random colors from native code.
 	// ~They should be deterministic but there is no option
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", AdvancedDisplay)
-    FLinearColor Color = FLinearColor::Black;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", AdvancedDisplay, meta = (IgnoreForMemberInitializationTest))
+	FLinearColor Color = FColor::MakeRandomColor();
     UPROPERTY()
     bool bIsDefaultUHLDebugCategory = false;
 
