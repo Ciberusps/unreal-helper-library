@@ -715,7 +715,7 @@ Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-dis
 
 #### `Custom class icon`
 
-**Custom class icon** - to override classes icons on your own, just implement set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
+**Custom class icon** - to override classes icons on your own, just set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
 
 ![image](https://github.com/user-attachments/assets/da940018-2120-4b81-84da-5237e97e9c86)
 
