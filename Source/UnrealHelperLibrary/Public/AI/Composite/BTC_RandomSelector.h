@@ -3,13 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/ObjectMacros.h"
 #include "BehaviorTree/BTCompositeNode.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "Misc/EngineVersionComparison.h"
 #include "BTC_RandomSelector.generated.h"
 
-struct FBTRandomSelectorMemory
-{
-};
+class UBehaviorTreeComponent;
+
+// Should nest from "FBTCompositeMemory" or build error fail on FAB servers
+// struct FBTRandomSelectorMemory : public FBTCompositeMemory
+// {
+// };
 
 /**
  * RandomSelector composite node.
@@ -25,7 +30,7 @@ class UNREALHELPERLIBRARY_API UBTC_RandomSelector : public UBTCompositeNode
 	GENERATED_BODY()
 
 public:
-	explicit UBTC_RandomSelector(const FObjectInitializer& ObjectInitializer);
+	UBTC_RandomSelector(const FObjectInitializer& ObjectInitializer);
 
 	// TODO validate that chances count == ChildrenNum
 	// if no chance specified, node without chance will win always
@@ -45,7 +50,6 @@ protected:
 
 #if UE_VERSION_NEWER_THAN(5, 4, 0)
     // 5.4.0 and up only code
-    virtual uint16 GetInstanceMemorySize() const override;
     virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
     virtual void CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const override;
 #endif

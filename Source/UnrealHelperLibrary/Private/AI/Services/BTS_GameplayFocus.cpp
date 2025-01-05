@@ -3,6 +3,11 @@
 
 #include "AI/Services/BTS_GameplayFocus.h"
 
+#include "GameFramework/Actor.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
+#include "BehaviorTree/Services/BTService_DefaultFocus.h"
 #include "AIController.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTS_GameplayFocus)

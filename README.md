@@ -12,6 +12,8 @@ and replaced by something custom that fits your project needs
 
 Support: tested `UE5.4 - UE5.5-preview`
 
+![AiModule](https://github.com/user-attachments/assets/4becb592-c02e-423a-bf80-fcfc629ce518)
+
 ## Install
 
 #### From source (recommended):
@@ -60,7 +62,7 @@ Support: tested `UE5.4 - UE5.5-preview`
 
 #### From marketplace:
 
-later this year on **FAB**
+early 2025 on **FAB**
 
 ## Update
 
@@ -97,8 +99,6 @@ UHL consists of 3 modules:
 >   - AnimNotifyState (ANS)
 >     - [ANS_UHL_Base](#ans_uhl_base)
 >     - [ANS_ActivateAbility](#ans_activateability)
->    <!--  - ANS_CatchToInputCache -->
->    <!--  - ANS_CheckInputCache -->
 > - [AI](#ai)
 >   - Components
 >     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -122,7 +122,11 @@ UHL consists of 3 modules:
 >     - [TurnTo](#turnto)
 > - [Subsystems](#subsystems)
 >   - [DebugSubsystem](#debugsubsystem)
+>   - [UHLHUD](#uhlhud)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
+>   - Gameplay
+>     - GetActorClosestToCenterOfScreen
+>     - GetMostDistantActor
 >   - GAS
 >     - TryActivateAbilityWithTag
 >     - TryCancelAbilityWithTag
@@ -138,6 +142,8 @@ UHL consists of 3 modules:
 >     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
 >     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
+>   - UI/Screen
+>     - GetViewportSizeUnscaled
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
@@ -145,6 +151,8 @@ UHL consists of 3 modules:
 >     - GetBuildType
 >    <!--  - GetActorComponentByName -->
 >    <!--  - GetSceneComponentByName -->
+>   - Debug
+>     - DrawDebugLineOnCanvas
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
 > - [LoadingUtilLibrary](#loadingutillibrary)
@@ -434,6 +442,9 @@ inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOn
 
 ### AI
 
+UHL provides most needed AI nodes toolset for developing at least 3d-action AI - GameplayFocus, Random choices using RandomChance and RandomSelector, PlayAnimMontage to play attacks animations, InRange and InAngle to check distance to enemy and required angle
+![AI_nodes](https://github.com/user-attachments/assets/1a00afdf-ab36-4e1c-9bd1-1b29c46cd8ac)
+
 #### `BTC_RandomSelector`
 
 Select random child node using weights
@@ -660,6 +671,22 @@ void AUHLPlayerController::BeginPlay()
 How to add DebugCategory:
 1)
 
+How to subscribe on debug category change in C++
+
+```c++
+    UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
+        Actor->GetWorld(),
+        YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
+    );
+    WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
+    // on activation "OnDebugCategoryChanged" will be fired
+    WaitDebugCategoryChangeTask->Activate();
+```
+
+#### UHLHUD
+
+HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden attributes)
+
 ### LoadingUtilLibrary
 
 **UHLLoadingUtilLibrary** - loading utils from Lyra
@@ -697,7 +724,11 @@ if you don't want to copy paste your `AttributeSets`
 
 **Custom thumnails** - to override thumbnail by your own, just implement `IUHECustomThumbnail` interface and define your own icon using `GetCustomThumbnailIcon()`
 
+> [!WARNING]
+> ⚠️ NOT sure that blueprints supported for now
+
 ```C++
+// UInventoryItem.h
 #if WITH_EDITOR
 #include "UHECustomThumbnail.h"
 #endif
@@ -710,25 +741,29 @@ class IUHECustomThumbnail {};
 class GAMECODE_API UInventoryItem : public UObject,
     public IUHECustomThumbnail
 {
-//  ...
-
- /** IUHECustomThumbnail **/
+/** IUHECustomThumbnail **/
 #if WITH_EDITOR
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    UTexture2D* GetCustomThumbnailIcon() { return Description.Icon; };
+    virtual UTexture2D* GetCustomThumbnailIcon_Implementation() const override;
 #endif
 /** ~IUHECustomThumbnail **/
+}
 
-// ...
+------------------------------------------------------------------
+
+// UInventoryItem.cpp
+#if WITH_EDITOR
+UTexture2D* UInventoryItem::GetCustomThumbnailIcon_Implementation()
+{
+    return Description.Icon;
+}
+#endif
 ```
-
-⚠️ for now works only with C++, TODO add support for blueprints
 
 Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-display-asset-is-never-loaded/143155/2?u=ciberus) and [this](https://forums.unrealengine.com/t/custom-thumbnail-on-blueprint/337532/3?u=ciberus)
 
 #### `Custom class icon`
 
-**Custom class icon** - to override classes icons on your own, just implement set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
+**Custom class icon** - to override classes icons on your own, just set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
 
 ![image](https://github.com/user-attachments/assets/da940018-2120-4b81-84da-5237e97e9c86)
 

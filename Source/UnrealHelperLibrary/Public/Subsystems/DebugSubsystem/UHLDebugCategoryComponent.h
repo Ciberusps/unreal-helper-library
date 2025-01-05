@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright (c) 2024 Pavel Penkov
+
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UHLDebugCategoryComponent.generated.h"

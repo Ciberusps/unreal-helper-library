@@ -23,6 +23,13 @@ public:
                                  const FCollisionResponseParams& ResponseParam, bool bDrawDebug = false,
                                  float DrawTime = -1.0f, FColor TraceColor = FColor::Black,
                                  FColor HitColor = FColor::Red, float FailDrawTime = -1.0f);
+	static bool SweepCapsuleMultiByChannel(const UWorld* World, TArray<FHitResult>& OutHits, const FVector& Start,
+								const FVector& End, float Radius, float HalfHeight, const FQuat& Rot,
+								ECollisionChannel TraceChannel, const FCollisionQueryParams& Params,
+								const FCollisionResponseParams& ResponseParam, bool bDrawDebug = false,
+								float DrawTime = -1.0f, FColor TraceColor = FColor::Black,
+								FColor HitColor = FColor::Red, float FailDrawTime = -1.0f);
+	
     static bool SweepSphereSingleByChannel(const UWorld* World, struct FHitResult& OutHit, const FVector& Start,
                                      const FVector& End, float Radius,
                                      ECollisionChannel TraceChannel, const FCollisionQueryParams& Params,
