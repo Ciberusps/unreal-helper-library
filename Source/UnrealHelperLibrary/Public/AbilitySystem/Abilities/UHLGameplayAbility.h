@@ -50,8 +50,6 @@ class UNREALHELPERLIBRARY_API UUHLGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-	UUHLGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
     UFUNCTION(BlueprintCallable, Category = "UHL GameplayAbility")
     EUHLAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 

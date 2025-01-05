@@ -8,15 +8,6 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLGameplayAbility)
 
-UUHLGameplayAbility::UUHLGameplayAbility(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateNo;
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
-	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ClientOrServer;
-}
-
 UUHLAbilitySystemComponent* UUHLGameplayAbility::GetUHLAbilitySystemComponentFromActorInfo() const
 {
     if (!ensure(CurrentActorInfo))
