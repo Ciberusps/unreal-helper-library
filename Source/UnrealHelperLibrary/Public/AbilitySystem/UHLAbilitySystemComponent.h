@@ -105,6 +105,8 @@ public:
 
 /** Input Config **/
     void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
+	void ClearAbilityInput();
+	
 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilityInputTagPressed(const FGameplayTag InputTag);

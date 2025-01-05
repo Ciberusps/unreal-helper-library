@@ -7,6 +7,7 @@
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/UHLHUD.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
 struct FBlackboardKeySelector;
@@ -50,6 +51,31 @@ public:
 	// - bool bUse8Directions
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	static EUHLDirection GetHitReactDirection(const FVector& SourceActorLocation, const AActor* TargetActor);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary ui widget editor viewport"))
+	static FVector2D GetViewportSizeUnscaled(UObject* WorldContextObject);
+	// UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+	// static bool ProjectWorldLocationToWidgetPositionWithScales(APlayerController* PlayerController, FVector WorldLocation, FVector2D& ViewportPosition, bool bPlayerViewportRelative);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
+	static AActor* GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector WorldLocation, FVector2D& ScreenPosition, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+	static AActor* GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug = false, const float DebugLifetime = -1);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+	static void DrawDebugLineOnCanvas(
+		UObject* WorldContextObject,
+		const FLineInfo& LineInfo,
+		const bool bRelativeToViewportCenter = false
+	);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
+	static void DrawDebugCrossHair(
+		UObject* WorldContextObject,
+		const float CrossHairLineLength, const float LineThickness,
+		const float AngleToRotate,
+		const FVector2f& CrossHairCenterScreenSpace,
+		const FLinearColor& LineColor,
+		const bool bRelativeToViewportCenter = false
+	);
 	/** Gameplay **/
 
 	/** Debug **/

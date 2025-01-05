@@ -49,9 +49,7 @@ void UANS_ActivateAbility::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 
 void UANS_ActivateAbility::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (!bDeactivateOnMontageBlendingOut
-		|| !CurrentAnimMontage.IsValid()
-		|| Montage != CurrentAnimMontage)
+	if (!bDeactivateOnMontageBlendingOut || !Montage)
 	{
 		return;
 	}

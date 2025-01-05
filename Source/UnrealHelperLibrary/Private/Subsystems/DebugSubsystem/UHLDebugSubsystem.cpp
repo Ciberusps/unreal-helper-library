@@ -128,6 +128,7 @@ void UUHLDebugSubsystem::EnableDebugCategory(const FGameplayTag DebugCategoryTag
         for (const FUHLDebugCategory& DebugCategory : DebugCategories)
         {
             if (DebugCategory != *UHLDebugCategory
+            	&& !UHLDebugCategory->Blocks.IsEmpty()
                 && DebugCategory.Tags.HasAny(UHLDebugCategory->Blocks))
             {
                 EnableDebugCategory(DebugCategory.Tags.First(), false);

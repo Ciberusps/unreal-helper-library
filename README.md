@@ -106,7 +106,11 @@ UHL consists of 3 modules:
 >     - [TurnTo](#turnto)
 > - [Subsystems](#subsystems)
 >   - [DebugSubsystem](#debugsubsystem)
+>   - [UHLHUD](#uhlhud)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
+>   - Gameplay
+>     - GetActorClosestToCenterOfScreen
+>     - GetMostDistantActor
 >   - GAS
 >     - TryActivateAbilityWithTag
 >     - TryCancelAbilityWithTag
@@ -122,6 +126,8 @@ UHL consists of 3 modules:
 >     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
 >     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
+>   - UI/Screen
+>     - GetViewportSizeUnscaled
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
@@ -129,6 +135,8 @@ UHL consists of 3 modules:
 >     - GetBuildType
 >    <!--  - GetActorComponentByName -->
 >    <!--  - GetSceneComponentByName -->
+>   - Debug
+>     - DrawDebugLineOnCanvas
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
 > - [LoadingUtilLibrary](#loadingutillibrary)
@@ -141,7 +149,7 @@ UHL consists of 3 modules:
 > - [TraceUtilsBPL](#traceutilsbpl)
 >   - SweepCapsuleSingleByChannel
 > - [Settings](#settings)
->   - [UHL Settings](#)
+>   - [UHL Settings](#uhl-settings)
 
 **UnrealHelperEditor**
 
@@ -647,6 +655,22 @@ void AUHLPlayerController::BeginPlay()
 How to add DebugCategory:
 1)
 
+How to subscribe on debug category change in C++
+
+```c++
+    UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
+        Actor->GetWorld(),
+        YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
+    );
+    WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
+    // on activation "OnDebugCategoryChanged" will be fired
+    WaitDebugCategoryChangeTask->Activate();
+```
+
+#### UHLHUD
+
+HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden attributes)
+
 ### LoadingUtilLibrary
 
 **UHLLoadingUtilLibrary** - loading utils from Lyra
@@ -684,7 +708,11 @@ if you don't want to copy paste your `AttributeSets`
 
 **Custom thumnails** - to override thumbnail by your own, just implement `IUHECustomThumbnail` interface and define your own icon using `GetCustomThumbnailIcon()`
 
+> [!WARNING]
+> ⚠️ NOT sure that blueprints supported for now
+
 ```C++
+// UInventoryItem.h
 #if WITH_EDITOR
 #include "UHECustomThumbnail.h"
 #endif
@@ -697,19 +725,23 @@ class IUHECustomThumbnail {};
 class GAMECODE_API UInventoryItem : public UObject,
     public IUHECustomThumbnail
 {
-//  ...
-
- /** IUHECustomThumbnail **/
+/** IUHECustomThumbnail **/
 #if WITH_EDITOR
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    UTexture2D* GetCustomThumbnailIcon() { return Description.Icon; };
+    virtual UTexture2D* GetCustomThumbnailIcon_Implementation() const override;
 #endif
 /** ~IUHECustomThumbnail **/
+}
 
-// ...
+------------------------------------------------------------------
+
+// UInventoryItem.cpp
+#if WITH_EDITOR
+UTexture2D* UInventoryItem::GetCustomThumbnailIcon_Implementation()
+{
+    return Description.Icon;
+}
+#endif
 ```
-
-⚠️ for now works only with C++, TODO add support for blueprints
 
 Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-display-asset-is-never-loaded/143155/2?u=ciberus) and [this](https://forums.unrealengine.com/t/custom-thumbnail-on-blueprint/337532/3?u=ciberus)
 

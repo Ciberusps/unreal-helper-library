@@ -13,8 +13,11 @@ struct UNREALHELPEREDITOR_API FUHECustomClassIconDescription
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
     TSoftObjectPtr<UTexture2D> Texture2D;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
+	// deprecated, TODO: remove
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription", meta=(DeprecatedProperty, DeprecationMessage="Deprecated use Classes"))
     TSubclassOf<UObject> Class;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
+	TArray<TSubclassOf<UObject>> Classes;
 };
 
 /**
