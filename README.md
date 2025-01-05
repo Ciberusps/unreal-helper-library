@@ -108,6 +108,9 @@ UHL consists of 3 modules:
 >   - [DebugSubsystem](#debugsubsystem)
 >   - [UHLHUD](#uhlhud)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
+>   - Gameplay
+>     - GetActorClosestToCenterOfScreen
+>     - GetMostDistantActor
 >   - GAS
 >     - TryActivateAbilityWithTag
 >     - TryCancelAbilityWithTag
@@ -123,6 +126,8 @@ UHL consists of 3 modules:
 >     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
 >     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
+>   - UI/Screen
+>     - GetViewportSizeUnscaled
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
@@ -130,6 +135,8 @@ UHL consists of 3 modules:
 >     - GetBuildType
 >    <!--  - GetActorComponentByName -->
 >    <!--  - GetSceneComponentByName -->
+>   - Debug
+>     - DrawDebugLineOnCanvas
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
 > - [LoadingUtilLibrary](#loadingutillibrary)
