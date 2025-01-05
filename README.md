@@ -46,7 +46,7 @@ Support: tested `UE5.4 - UE5.5-preview`
 
 #### From marketplace:
 
-later this year on **FAB**
+early 2025 on **FAB**
 
 ## Update
 
@@ -106,7 +106,11 @@ UHL consists of 3 modules:
 >     - [TurnTo](#turnto)
 > - [Subsystems](#subsystems)
 >   - [DebugSubsystem](#debugsubsystem)
+>   - [UHLHUD](#uhlhud)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
+>   - Gameplay
+>     - GetActorClosestToCenterOfScreen
+>     - GetMostDistantActor
 >   - GAS
 >     - TryActivateAbilityWithTag
 >     - TryCancelAbilityWithTag
@@ -122,6 +126,8 @@ UHL consists of 3 modules:
 >     - [GetPointAtAngleRelativeToOtherActor](#getpointatanglerelativetootheractor)
 >     - [GetPointAtDirectionRelativeToOtherActor](#getpointatdirectionrelativetootheractor)
 >     - [DirectionToAngle](#directiontoangle)
+>   - UI/Screen
+>     - GetViewportSizeUnscaled
 >   - Misc
 >     - [GetProjectVersion](#getprojectversion)
 >     - [GetNamesOfComponentsOnObject](#getnamesofcomponentsonobject)
@@ -129,6 +135,8 @@ UHL consists of 3 modules:
 >     - GetBuildType
 >    <!--  - GetActorComponentByName -->
 >    <!--  - GetSceneComponentByName -->
+>   - Debug
+>     - DrawDebugLineOnCanvas
 >   - Other
 >     - [GetHighestPoint](#gethighestpoint)
 > - [LoadingUtilLibrary](#loadingutillibrary)
@@ -648,16 +656,20 @@ How to add DebugCategory:
 1)
 
 How to subscribe on debug category change in C++
+
 ```c++
-	UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
-		Actor->GetWorld(),
-		YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
-	);
-	WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
-	// on activation "OnDebugCategoryChanged" will be fired
-	WaitDebugCategoryChangeTask->Activate();
-);
+    UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
+        Actor->GetWorld(),
+        YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
+    );
+    WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
+    // on activation "OnDebugCategoryChanged" will be fired
+    WaitDebugCategoryChangeTask->Activate();
 ```
+
+#### UHLHUD
+
+HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden attributes)
 
 ### LoadingUtilLibrary
 
@@ -735,7 +747,7 @@ Thanks to [this post](https://forums.unrealengine.com/t/custom-thumbnail-not-dis
 
 #### `Custom class icon`
 
-**Custom class icon** - to override classes icons on your own, just implement set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
+**Custom class icon** - to override classes icons on your own, just set settings in `Project Settings -> Editor -> UnrealHelperEditor Settings`
 
 ![image](https://github.com/user-attachments/assets/da940018-2120-4b81-84da-5237e97e9c86)
 
