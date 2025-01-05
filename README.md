@@ -106,6 +106,7 @@ UHL consists of 3 modules:
 >     - [TurnTo](#turnto)
 > - [Subsystems](#subsystems)
 >   - [DebugSubsystem](#debugsubsystem)
+>   - [UHLHUD](#uhlhud)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - GAS
 >     - TryActivateAbilityWithTag
@@ -648,16 +649,20 @@ How to add DebugCategory:
 1)
 
 How to subscribe on debug category change in C++
+
 ```c++
-	UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
-		Actor->GetWorld(),
-		YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
-	);
-	WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
-	// on activation "OnDebugCategoryChanged" will be fired
-	WaitDebugCategoryChangeTask->Activate();
-);
+    UAA_WaitDebugCategoryChange* WaitDebugCategoryChangeTask = UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
+        Actor->GetWorld(),
+        YourGameplayTags::TAG_DebugCategory_Combat // same as FGameplayTag("DebugCategory.Something")
+    );
+    WaitDebugCategoryChangeTask->OnChange.AddUniqueDynamic(this, &UCombatSubsystem::OnDebugCategoryChanged);
+    // on activation "OnDebugCategoryChanged" will be fired
+    WaitDebugCategoryChangeTask->Activate();
 ```
+
+#### UHLHUD
+
+HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden attributes)
 
 ### LoadingUtilLibrary
 
