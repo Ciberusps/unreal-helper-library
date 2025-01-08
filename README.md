@@ -10,7 +10,7 @@ much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/do
 All GAS features designed in mind that they or their part can be added or dropped by you in development in any time
 and replaced by something custom that fits your project needs
 
-Support: tested `UE5.4 - UE5.5-preview`
+Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 
 ![AiModule](https://github.com/user-attachments/assets/4becb592-c02e-423a-bf80-fcfc629ce518)
 
@@ -18,31 +18,47 @@ Support: tested `UE5.4 - UE5.5-preview`
 
 #### From source (recommended):
 
-- `git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary` - add git submodule to your plugins folder
-- to use C++ things add code to file `<ProjectName>.Build.cs`
+- add git submodule to your plugins folder
 
-```C#
-    // <ProjectName>.Build.cs
-    public GameName(ReadOnlyTargetRules Target) : base(Target)
-    {
-        PublicDependencyModuleNames.AddRange(new string[] {
-            // add "UnrealHelperLibrary" to use it in C++
-            "UnrealHelperLibrary",
-        });
+    ```bash
+    git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
+    ```
 
-        // OPTIONALLY add "UnrealHelperEditor" module to use custom unreal engine editor features
-        if (Target.bBuildEditor)
-        {
-            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
-        }
-    }
-```
+- <details>
+  <summary>C++ setup, old engine versions</summary>
+  
+  - to use specific engine version specify branch e.g. `-b UE5.4`
 
-> [!NOTE]
-> Don't forget to update your `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update submodules/plugin(s) - `git submodule update --remote`
+    ```bash
+    git submodule add -b UE5.4 https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
+    ```
 
-> [!NOTE]
-> Add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
+  - to use C++ things add code to file `<ProjectName>.Build.cs`
+
+  ```C#
+      // <ProjectName>.Build.cs
+      public GameName(ReadOnlyTargetRules Target) : base(Target)
+      {
+          PublicDependencyModuleNames.AddRange(new string[] {
+              // add "UnrealHelperLibrary" to use it in C++
+              "UnrealHelperLibrary",
+          });
+
+          // OPTIONALLY add "UnrealHelperEditor" module to use custom unreal engine editor features
+          if (Target.bBuildEditor)
+          {
+              PrivateDependencyModuleNames.AddRange(new string[] { "UnrealHelperEditor" });
+          }
+      }
+  ```
+
+  > [!NOTE]
+  > Don't forget to update your `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update submodules/plugin(s) - `git submodule update --remote`
+
+  > [!NOTE]
+  > Add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
+  
+</details>
 
 #### From marketplace:
 
