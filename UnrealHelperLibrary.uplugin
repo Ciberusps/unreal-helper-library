@@ -10,7 +10,7 @@
 	"DocsURL": "https://github.com/Ciberusps/unreal-helper-library",
 	"MarketplaceURL": "",
 	"SupportURL": "https://github.com/Ciberusps/unreal-helper-library/issues",
-	"EngineVersion": "5.4.0",
+	"EngineVersion": "5.5.0",
 	"FabURL": "com.epicgames.launcher://ue/Fab/product/19390f7a-1d31-46ee-a54c-511b7f1a8166",
 	"EnabledByDefault": true,
 	"CanContainContent": true,
