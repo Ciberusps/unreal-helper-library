@@ -36,10 +36,10 @@ class UNREALHELPERLIBRARY_API AUHLHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL HUD")
 	bool bEnabledDrawDebug = true;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="UHL HUD")
 	void AddOrUpdateLineInfoToDrawNextTick(FLineInfo LineInfo_In);
 
 protected:

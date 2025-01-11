@@ -10,6 +10,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Utils/UHLTraceUtilsBPL.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
+#include "DrawDebugHelpers.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ANS_EnableRootMotionZAxisMovement)
 

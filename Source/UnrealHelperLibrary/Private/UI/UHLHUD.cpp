@@ -3,8 +3,8 @@
 
 #include "UI/UHLHUD.h"
 
+#include "Engine/World.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "Utils/UnrealHelperLibraryBPL.h"
 
 void AUHLHUD::DrawHUD()
 {
