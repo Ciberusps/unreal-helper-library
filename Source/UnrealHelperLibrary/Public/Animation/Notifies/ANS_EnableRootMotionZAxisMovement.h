@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ANS_UHL_Base.h"
+#include "Animation/AnimMontage.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Engine/EngineTypes.h"
 #include "ANS_EnableRootMotionZAxisMovement.generated.h"
