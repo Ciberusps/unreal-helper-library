@@ -182,6 +182,11 @@ public:
 	static FVector GetRandomPointInBox(const USceneComponent* Component, bool bOnGround, bool bDrawDebug = false, float DebugDrawTime = 5.0f);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
 	static FVector GetHighestPointInBox(const USceneComponent* Component);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
+	static FVector GetCenterPointInBox(const USceneComponent* Component);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
+	static FBox GetComponentBox(const USceneComponent* Component);
+	
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay = "bDebug,DebugLifetime,DebugColor"))
 	static void GetPointAtRelativeAngle(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug = false,
 		const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);

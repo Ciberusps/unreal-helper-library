@@ -503,6 +503,40 @@ FVector UUnrealHelperLibraryBPL::GetHighestPointInBox(const USceneComponent* Com
 	return FBox(BoxMin, BoxMax).Max;
 }
 
+FVector UUnrealHelperLibraryBPL::GetCenterPointInBox(const USceneComponent* Component)
+{
+	if (!IsValid(Component))
+	{
+		return VECTOR_ERROR;
+	}
+
+	FVector Origin;
+	FVector BoxExtent;
+	float SphereRadius = 0.0f;
+	UKismetSystemLibrary::GetComponentBounds(Component, Origin, BoxExtent, SphereRadius);
+
+	const FVector BoxMin = Origin - BoxExtent;
+	const FVector BoxMax = Origin + BoxExtent;
+	return FBox(BoxMin, BoxMax).GetCenter();
+}
+
+FBox UUnrealHelperLibraryBPL::GetComponentBox(const USceneComponent* Component)
+{
+	if (!IsValid(Component))
+	{
+		return FBox();
+	}
+
+	FVector Origin;
+	FVector BoxExtent;
+	float SphereRadius = 0.0f;
+	UKismetSystemLibrary::GetComponentBounds(Component, Origin, BoxExtent, SphereRadius);
+
+	const FVector BoxMin = Origin - BoxExtent;
+	const FVector BoxMax = Origin + BoxExtent;
+	return FBox(BoxMin, BoxMax);
+}
+
 void UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(
 	FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
