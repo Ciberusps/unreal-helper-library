@@ -54,13 +54,6 @@
 		{
 			"Name": "EnhancedInput",
 			"Enabled": true
-		},
-		{
-			"Name": "TextureGraph",
-			"Enabled": false,
-			"TargetAllowList": [
-				"Editor"
-			]
 		}
 	]
 }
