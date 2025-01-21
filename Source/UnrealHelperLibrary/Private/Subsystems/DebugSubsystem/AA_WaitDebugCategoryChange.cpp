@@ -17,7 +17,7 @@ UAA_WaitDebugCategoryChange* UAA_WaitDebugCategoryChange::WaitDebugCategoryChang
     // We must have a valid contextual world for this action, so we don't even make it
     // unless we can resolve the UWorld from WorldContext.
     UWorld* ContextWorld = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::ReturnNull);
-    if(!ensureAlwaysMsgf(IsValid(WorldContext), TEXT("World Context was not valid.")))
+    if(!IsValid(ContextWorld) || !ensureAlwaysMsgf(IsValid(WorldContext), TEXT("World Context was not valid.")))
     {
         return nullptr;
     }
