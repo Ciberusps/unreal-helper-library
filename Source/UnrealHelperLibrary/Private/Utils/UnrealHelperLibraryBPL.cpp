@@ -328,42 +328,52 @@ FVector2D UUnrealHelperLibraryBPL::GetViewportSizeUnscaled(UObject* WorldContext
 	return ViewportSizeUnscaled;
 }
 
-AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector WorldLocation, FVector2D& ScreenPosition, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
+float UUnrealHelperLibraryBPL::GetActorDistanceToCenterOfScreen(UObject* WorldContextObject, const AActor* Actor, APlayerController* PlayerController, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
 {
-	bool bRelativeToViewportCenter = false;
+	float Result = 9999999.0f;
+	FVector2D ViewportSizeUnscaled = GetViewportSizeUnscaled(WorldContextObject);
+	
+	FVector2D CurrentActorScreenPosition;
+	UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(PlayerController, Actor->GetActorLocation(), CurrentActorScreenPosition, true);
+	Result = FVector2D::Distance(CurrentActorScreenPosition, ViewportSizeUnscaled / 2);
+
+	// same as in "GetActorClosestToCenterOfScreen"
+	if (bDebug)
+	{
+		bool bRelativeToViewportCenter = false;
+		float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
+		FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
+		FLineInfo LineInfo = {
+			"TestLine" + Actor->GetName(),
+			ViewportSize / 2,
+			CurrentActorScreenPosition * ViewportScale,
+			FColor::MakeRandomColor(),
+			5,
+			"" + Actor->GetName() + " " + FString::SanitizeFloat(Result),
+			FColor::Blue,
+			bRelativeToViewportCenter,
+			true,
+		};
+		DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
+	}
+	
+	return Result;
+}
+
+AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector2D& ScreenPosition, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
+{
 	AActor* Result = nullptr;
 	FVector2D ResultScreenPosition = FVector2D(133700.322, 133700.322);
 	float ResultDistance = FVector2D::Distance(ResultScreenPosition, FVector2D::ZeroVector);
-	float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
-	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
-	FVector2D ViewportSizeUnscaled = GetViewportSizeUnscaled(WorldContextObject);
 
 	for (AActor* Actor : Actors)
 	{
-		FVector2D CurrentActorScreenPosition;
-		UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(PlayerController, Actor->GetActorLocation(), CurrentActorScreenPosition, true);
-		float CurrentDistance = FVector2D::Distance(CurrentActorScreenPosition, ViewportSizeUnscaled / 2);
+		float CurrentDistance = GetActorDistanceToCenterOfScreen(Actor, Actor, PlayerController, true, bDebug, DebugLifetime);
 
 		if (CurrentDistance < ResultDistance)
 		{
 			ResultDistance = CurrentDistance;
 			Result = Actor;
-		}
-
-		if (bDebug)
-		{
-			FLineInfo LineInfo = {
-				"TestLine" + Actor->GetName(),
-				ViewportSize / 2,
-				CurrentActorScreenPosition * ViewportScale,
-				FColor::MakeRandomColor(),
-				5,
-				"" + Actor->GetName() + " " + FString::SanitizeFloat(CurrentDistance),
-				FColor::Blue,
-				bRelativeToViewportCenter,
-				true,
-			};
-			DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
 		}
 	}
 
