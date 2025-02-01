@@ -6,6 +6,7 @@
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Components/Widget.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/UHLHUD.h"
 #include "UnrealHelperLibraryBPL.generated.h"
@@ -54,6 +55,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary ui widget editor viewport"))
 	static FVector2D GetViewportSizeUnscaled(UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary ui widget editor viewport"))
+	static FVector2D GetWidgetCenterPosition(UObject* WorldContextObject, UWidget* Widget);
 	// UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	// static bool ProjectWorldLocationToWidgetPositionWithScales(APlayerController* PlayerController, FVector WorldLocation, FVector2D& ViewportPosition, bool bPlayerViewportRelative);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))

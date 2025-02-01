@@ -26,6 +26,7 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
@@ -326,6 +327,22 @@ FVector2D UUnrealHelperLibraryBPL::GetViewportSizeUnscaled(UObject* WorldContext
 	float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
 	FVector2D ViewportSizeUnscaled = ViewportSize / ViewportScale;
 	return ViewportSizeUnscaled;
+}
+
+FVector2D UUnrealHelperLibraryBPL::GetWidgetCenterPosition(UObject* WorldContextObject, UWidget* Widget)
+{
+	FVector2D Result;
+	
+	FGeometry WidgetGeometry = Widget->GetCachedGeometry();
+	FVector2D WidgetCenterAbsolutePosition = WidgetGeometry.GetAbsolutePositionAtCoordinates(FVector2f(0.5, 0.5));
+	
+	FVector2D PixelPos;
+	FVector2D ViewportPos;
+	USlateBlueprintLibrary::AbsoluteToViewport(WorldContextObject, WidgetCenterAbsolutePosition, PixelPos, ViewportPos);
+
+	Result = PixelPos;
+	
+	return Result;
 }
 
 float UUnrealHelperLibraryBPL::GetActorDistanceToCenterOfScreen(UObject* WorldContextObject, const AActor* Actor, APlayerController* PlayerController, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
