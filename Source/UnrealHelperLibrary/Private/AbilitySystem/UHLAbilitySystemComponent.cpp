@@ -283,19 +283,7 @@ bool UUHLAbilitySystemComponent::CanAddAbilityToCache(UUHLGameplayAbility* Gamep
 
 bool UUHLAbilitySystemComponent::IsAbilityActive(FGameplayTag GameplayTag) const
 {
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
-	GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToActivate, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToActivate)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			bResult |= Ability->IsActive();
-		}
-	}
-	return bResult;
+	return UUnrealHelperLibraryBPL::IsAbilityActiveByTag(this, GameplayTag);
 }
 
 void UUHLAbilitySystemComponent::RemoveLooseGameplayTagCompletly(const FGameplayTag& GameplayTag)

@@ -118,10 +118,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
+
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
+	static bool IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static bool TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static bool TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
+	static bool ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static TArray<bool> TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability event fire"))

@@ -136,10 +136,28 @@ void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* A
 	}
 }
 
+bool UUnrealHelperLibraryBPL::IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
+{
+	if (!IsValid(ASC)) return false;
+
+	bool bResult = false;
+	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
+	ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToActivate, false);
+
+	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToActivate)
+	{
+		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
+		for (UGameplayAbility* Ability : AbilityInstances)
+		{
+			bResult |= Ability->IsActive();
+		}
+	}
+	return bResult;
+}
+
 bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {
-	if (!IsValid(ASC))
-		return false;
+	if (!IsValid(ASC)) return false;
 	return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
 }
 
@@ -164,6 +182,24 @@ bool UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(UAbilitySystemComponent* A
 			}
 		}
 	}
+	return bResult;
+}
+
+bool UUnrealHelperLibraryBPL::ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
+{
+	if (!IsValid(ASC)) return false; 
+
+	bool bResult = false;
+	
+	if (IsAbilityActiveByTag(ASC, GameplayTag))
+	{
+		bResult = TryCancelAbilityWithTag(ASC, GameplayTag);
+	}
+	else
+	{
+		bResult = TryActivateAbilityWithTag(ASC, GameplayTag, bAllowRemoteActivation);
+	}
+
 	return bResult;
 }
 
