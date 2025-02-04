@@ -15,7 +15,10 @@ UBTT_InvokeGameplayAbility::UBTT_InvokeGameplayAbility(const FObjectInitializer&
 {
     NodeName = "InvokeGameplayAbility";
     // TODO probably instancing required or won't work with multiple InvokeGameplayAbilities/multiple enemies
-    // as in PlayAnimMontage
+    // as in PlayAnimMontage - yep its required
+    // TODO try to remove instancing, to reproduce issue with stucking on "InvokeGameplayAbility"
+    // create room with enemy only attacking infinitely
+    bCreateNodeInstance = true;
 }
 
 EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

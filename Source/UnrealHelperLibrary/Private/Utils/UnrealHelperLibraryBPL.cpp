@@ -26,6 +26,7 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
@@ -135,10 +136,28 @@ void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* A
 	}
 }
 
+bool UUnrealHelperLibraryBPL::IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
+{
+	if (!IsValid(ASC)) return false;
+
+	bool bResult = false;
+	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
+	ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToActivate, false);
+
+	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToActivate)
+	{
+		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
+		for (UGameplayAbility* Ability : AbilityInstances)
+		{
+			bResult |= Ability->IsActive();
+		}
+	}
+	return bResult;
+}
+
 bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
 {
-	if (!IsValid(ASC))
-		return false;
+	if (!IsValid(ASC)) return false;
 	return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
 }
 
@@ -163,6 +182,24 @@ bool UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(UAbilitySystemComponent* A
 			}
 		}
 	}
+	return bResult;
+}
+
+bool UUnrealHelperLibraryBPL::ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
+{
+	if (!IsValid(ASC)) return false; 
+
+	bool bResult = false;
+	
+	if (IsAbilityActiveByTag(ASC, GameplayTag))
+	{
+		bResult = TryCancelAbilityWithTag(ASC, GameplayTag);
+	}
+	else
+	{
+		bResult = TryActivateAbilityWithTag(ASC, GameplayTag, bAllowRemoteActivation);
+	}
+
 	return bResult;
 }
 
@@ -328,42 +365,68 @@ FVector2D UUnrealHelperLibraryBPL::GetViewportSizeUnscaled(UObject* WorldContext
 	return ViewportSizeUnscaled;
 }
 
-AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector WorldLocation, FVector2D& ScreenPosition, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
+FVector2D UUnrealHelperLibraryBPL::GetWidgetCenterPosition(UObject* WorldContextObject, UWidget* Widget)
 {
-	bool bRelativeToViewportCenter = false;
+	FVector2D Result;
+	
+	FGeometry WidgetGeometry = Widget->GetCachedGeometry();
+	FVector2D WidgetCenterAbsolutePosition = WidgetGeometry.GetAbsolutePositionAtCoordinates(FVector2f(0.5, 0.5));
+	
+	FVector2D PixelPos;
+	FVector2D ViewportPos;
+	USlateBlueprintLibrary::AbsoluteToViewport(WorldContextObject, WidgetCenterAbsolutePosition, PixelPos, ViewportPos);
+
+	Result = PixelPos;
+	
+	return Result;
+}
+
+float UUnrealHelperLibraryBPL::GetActorDistanceToCenterOfScreen(UObject* WorldContextObject, const AActor* Actor, APlayerController* PlayerController, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
+{
+	float Result = 9999999.0f;
+	FVector2D ViewportSizeUnscaled = GetViewportSizeUnscaled(WorldContextObject);
+	
+	FVector2D CurrentActorScreenPosition;
+	UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(PlayerController, Actor->GetActorLocation(), CurrentActorScreenPosition, true);
+	Result = FVector2D::Distance(CurrentActorScreenPosition, ViewportSizeUnscaled / 2);
+
+	// same as in "GetActorClosestToCenterOfScreen"
+	if (bDebug)
+	{
+		bool bRelativeToViewportCenter = false;
+		float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
+		FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
+		FLineInfo LineInfo = {
+			"TestLine" + Actor->GetName(),
+			ViewportSize / 2,
+			CurrentActorScreenPosition * ViewportScale,
+			FColor::MakeRandomColor(),
+			5,
+			"" + Actor->GetName() + " " + FString::SanitizeFloat(Result),
+			FColor::Blue,
+			bRelativeToViewportCenter,
+			true,
+		};
+		DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
+	}
+	
+	return Result;
+}
+
+AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector2D& ScreenPosition, bool bPlayerViewportRelative, const bool bDebug, const float DebugLifetime)
+{
 	AActor* Result = nullptr;
 	FVector2D ResultScreenPosition = FVector2D(133700.322, 133700.322);
 	float ResultDistance = FVector2D::Distance(ResultScreenPosition, FVector2D::ZeroVector);
-	float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
-	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
-	FVector2D ViewportSizeUnscaled = GetViewportSizeUnscaled(WorldContextObject);
 
 	for (AActor* Actor : Actors)
 	{
-		FVector2D CurrentActorScreenPosition;
-		UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(PlayerController, Actor->GetActorLocation(), CurrentActorScreenPosition, true);
-		float CurrentDistance = FVector2D::Distance(CurrentActorScreenPosition, ViewportSizeUnscaled / 2);
+		float CurrentDistance = GetActorDistanceToCenterOfScreen(Actor, Actor, PlayerController, true, bDebug, DebugLifetime);
 
 		if (CurrentDistance < ResultDistance)
 		{
 			ResultDistance = CurrentDistance;
 			Result = Actor;
-		}
-
-		if (bDebug)
-		{
-			FLineInfo LineInfo = {
-				"TestLine" + Actor->GetName(),
-				ViewportSize / 2,
-				CurrentActorScreenPosition * ViewportScale,
-				FColor::MakeRandomColor(),
-				5,
-				"" + Actor->GetName() + " " + FString::SanitizeFloat(CurrentDistance),
-				FColor::Blue,
-				bRelativeToViewportCenter,
-				true,
-			};
-			DrawDebugLineOnCanvas(Actor->GetWorld(), LineInfo, bRelativeToViewportCenter);
 		}
 	}
 
@@ -501,6 +564,40 @@ FVector UUnrealHelperLibraryBPL::GetHighestPointInBox(const USceneComponent* Com
 	const FVector BoxMin = Origin - BoxExtent;
 	const FVector BoxMax = Origin + BoxExtent;
 	return FBox(BoxMin, BoxMax).Max;
+}
+
+FVector UUnrealHelperLibraryBPL::GetCenterPointInBox(const USceneComponent* Component)
+{
+	if (!IsValid(Component))
+	{
+		return VECTOR_ERROR;
+	}
+
+	FVector Origin;
+	FVector BoxExtent;
+	float SphereRadius = 0.0f;
+	UKismetSystemLibrary::GetComponentBounds(Component, Origin, BoxExtent, SphereRadius);
+
+	const FVector BoxMin = Origin - BoxExtent;
+	const FVector BoxMax = Origin + BoxExtent;
+	return FBox(BoxMin, BoxMax).GetCenter();
+}
+
+FBox UUnrealHelperLibraryBPL::GetComponentBox(const USceneComponent* Component)
+{
+	if (!IsValid(Component))
+	{
+		return FBox();
+	}
+
+	FVector Origin;
+	FVector BoxExtent;
+	float SphereRadius = 0.0f;
+	UKismetSystemLibrary::GetComponentBounds(Component, Origin, BoxExtent, SphereRadius);
+
+	const FVector BoxMin = Origin - BoxExtent;
+	const FVector BoxMax = Origin + BoxExtent;
+	return FBox(BoxMin, BoxMax);
 }
 
 void UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(

@@ -3,6 +3,7 @@
 #include "AbilitySystem/UHLAbilitySet.h"
 
 #include "AbilitySystemComponent.h"
+#include "GameplayAbilitySpec.h"
 #include "UnrealHelperLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAbilitySet)
