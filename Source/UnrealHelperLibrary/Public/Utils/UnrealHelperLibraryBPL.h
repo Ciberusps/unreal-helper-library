@@ -6,11 +6,11 @@
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "Components/Widget.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/UHLHUD.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
+class UWidget;
 struct FBlackboardKeySelector;
 
 const float RELATIVE_POINT_ARROW_SIZE = 200.0f;
