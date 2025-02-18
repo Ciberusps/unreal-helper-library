@@ -28,6 +28,7 @@
 #include "DrawDebugHelpers.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/Widget.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/HUD.h"
@@ -731,6 +732,8 @@ bool UUnrealHelperLibraryBPL::IsObjectInPreviewWorld(UObject* Object) { return O
 bool UUnrealHelperLibraryBPL::IsObjectInEditorWorld(UObject* Object) { return Object->GetWorld()->IsEditorWorld(); }
 
 bool UUnrealHelperLibraryBPL::IsObjectInGameWorld(UObject* Object) { return Object->GetWorld()->IsGameWorld(); }
+
+bool UUnrealHelperLibraryBPL::IsWorldTearingDown(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->bIsTearingDown; }
 
 bool UUnrealHelperLibraryBPL::IsOtherActorInAngle(AActor* Actor, AActor* OtherActor, TArray<FFloatRange> Ranges)
 {

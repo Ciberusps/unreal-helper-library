@@ -218,9 +218,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
 	static bool IsPreviewWorld(UObject* WorldContextObject);
-	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary"))
 	static bool IsGameWorld(UObject* WorldContextObject);
-	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary editor"))
 	static bool IsEditorWorld(UObject* WorldContextObject);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary preview editor"))
 	static bool IsObjectInPreviewWorld(UObject* Object);
@@ -228,6 +228,8 @@ public:
 	static bool IsObjectInEditorWorld(UObject* Object);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary game preview editor"))
 	static bool IsObjectInGameWorld(UObject* Object);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary"))
+	static bool IsWorldTearingDown(UObject* WorldContextObject);
 	// TODO: ???
 	// UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	// static EUHLDirection AngleToDirection(const float AngleIn);
