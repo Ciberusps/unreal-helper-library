@@ -10,6 +10,7 @@
 #include "UI/UHLHUD.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
+class UUHLAbilitySystemComponent;
 class UWidget;
 struct FBlackboardKeySelector;
 
@@ -42,6 +43,10 @@ class UNREALHELPERLIBRARY_API UUnrealHelperLibraryBPL : public UBlueprintFunctio
 	GENERATED_BODY()
 
 public:
+	/** Tries to find an ability system component on the actor, will use AbilitySystemInterface or fall back to a component search */
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", Meta=(DefaultToSelf = "Actor"))
+	static UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent(AActor* Actor);
+	
 	// UFUNCTION(BlueprintCallable, meta = (Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 

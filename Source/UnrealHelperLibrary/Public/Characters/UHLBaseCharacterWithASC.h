@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Characters/UHLBaseCharacter.h"
+#include "Core/UHLAbilitySystemInterface.h"
 #include "UHLBaseCharacterWithASC.generated.h"
 
 class UAbilitySystemComponent;
@@ -15,7 +16,8 @@ class UAbilitySystemComponent;
  */
 UCLASS()
 class UNREALHELPERLIBRARY_API AUHLBaseCharacterWithASC : public AUHLBaseCharacter,
-	public IAbilitySystemInterface
+                                                         public IAbilitySystemInterface,
+                                                         public IUHLAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -28,6 +30,13 @@ public:
 	/** IAbilitySystemInterface **/
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
 	/** ~IAbilitySystemInterface **/
+
+	/** IUHLAbilitySystemInterface */
+	virtual UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent() const override
+	{
+		return AbilitySystemComponent;
+	};
+	/** ~IUHLAbilitySystemInterface */
 	
 protected:
 	/** GameplayAbilities */

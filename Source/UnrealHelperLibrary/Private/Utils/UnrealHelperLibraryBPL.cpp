@@ -3,6 +3,7 @@
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
 #include "GameplayTagsManager.h"
 #include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
@@ -26,9 +27,11 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
+#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Widget.h"
+#include "Core/UHLAbilitySystemInterface.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/HUD.h"
@@ -38,6 +41,22 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
 
 static const int32 DEPTH_PRIORITY = -1;
+
+UUHLAbilitySystemComponent* UUnrealHelperLibraryBPL::GetUHLAbilitySystemComponent(AActor* Actor)
+{
+	if (Actor == nullptr)
+	{
+		return nullptr;
+	}
+
+	const IUHLAbilitySystemInterface* ASI = Cast<IUHLAbilitySystemInterface>(Actor);
+	if (ASI)
+	{
+		return ASI->GetUHLAbilitySystemComponent();
+	}
+
+	return Actor->FindComponentByClass<UUHLAbilitySystemComponent>();
+}
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {
