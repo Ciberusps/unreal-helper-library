@@ -23,6 +23,8 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputHeldSpecHandles.Reset();
 
 	AbilitySetGrantedHandles.Reset();
+
+	// AbilityActivatedCallbacks.AddUObject(this, )
 }
 
 UUHLAbilitySystemComponent::UUHLAbilitySystemComponent()

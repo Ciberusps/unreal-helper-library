@@ -32,7 +32,7 @@ public:
 	/** ~IAbilitySystemInterface **/
 
 	/** IUHLAbilitySystemInterface */
-	virtual UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent() const override
+	virtual UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent_Implementation() const override
 	{
 		return AbilitySystemComponent;
 	};

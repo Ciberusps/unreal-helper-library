@@ -3,14 +3,15 @@
 #pragma once
 
 #include "GameplayEffect.h"
+#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/UHLHUD.h"
+#include "Core/UHLAbilitySystemInterface.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
-class UUHLAbilitySystemComponent;
 class UWidget;
 struct FBlackboardKeySelector;
 

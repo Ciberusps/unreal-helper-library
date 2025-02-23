@@ -93,6 +93,9 @@ UHL consists of 3 modules:
 >     - [AbilitySystem Config](#abilitysystem-config)
 >   - Tasks
 >     - [InterpolateToPosition](#interpolatetoposition)
+>     - AbilityAsync tasks (AbilityAsync versions of GAS UAbilityTask's that available in blueprints)
+>       - AA_WaitAbilityActivate
+>       - 
 >   - BaseCharacters
 >     - [BaseCharacter](#basecharacter)
 >     - [BaseCharacterWithASC (recommended for start)](#basecharacterwithasc)

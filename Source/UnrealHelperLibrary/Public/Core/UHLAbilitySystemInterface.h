@@ -8,7 +8,7 @@
 #include "UHLAbilitySystemInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(Blueprintable, MinimalAPI)
 class UUHLAbilitySystemInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -23,5 +23,6 @@ class UNREALHELPERLIBRARY_API IUHLAbilitySystemInterface
 
 public:
 	/** Returns the ability system component to use for this actor. It may live on another actor, such as a Pawn using the PlayerState's component */
-	virtual UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent() const;
+	UFUNCTION(Category="UHLAbilitySystemInterface", BlueprintNativeEvent, BlueprintCallable)
+	UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent() const;
 };
