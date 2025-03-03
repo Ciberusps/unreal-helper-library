@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: clean up trash
-        run:
+        run: |
           rm -rf .gitignore
           rm -rf .markdownlint.json
           rm -rf LICENSE
