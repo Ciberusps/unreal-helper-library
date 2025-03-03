@@ -2,12 +2,12 @@ name: package
 on: [workflow_dispatch]
 jobs:
   package:
-    name: Formatting Check
+    name: Package plugin
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: clean up trash
-        runs: 
+        run:
           rm -rf .gitignore
           rm -rf .markdownlint.json
           rm -rf LICENSE
