@@ -23,6 +23,8 @@ void UUHLAbilitySystemComponent::BeginPlay()
 	InputHeldSpecHandles.Reset();
 
 	AbilitySetGrantedHandles.Reset();
+
+	// AbilityActivatedCallbacks.AddUObject(this, )
 }
 
 UUHLAbilitySystemComponent::UUHLAbilitySystemComponent()
@@ -283,19 +285,7 @@ bool UUHLAbilitySystemComponent::CanAddAbilityToCache(UUHLGameplayAbility* Gamep
 
 bool UUHLAbilitySystemComponent::IsAbilityActive(FGameplayTag GameplayTag) const
 {
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
-	GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToActivate, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToActivate)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			bResult |= Ability->IsActive();
-		}
-	}
-	return bResult;
+	return UUnrealHelperLibraryBPL::IsAbilityActiveByTag(this, GameplayTag);
 }
 
 void UUHLAbilitySystemComponent::RemoveLooseGameplayTagCompletly(const FGameplayTag& GameplayTag)
@@ -345,8 +335,8 @@ void UUHLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag Input
 	{
 		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 		{
-			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->AbilityTags
-			if (AbilitySpec.Ability && (AbilitySpec.Ability->AbilityTags.HasTagExact(InputTag)))
+			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->GetAssetTags()
+			if (AbilitySpec.Ability && (AbilitySpec.Ability->GetAssetTags().HasTagExact(InputTag)))
 			{
 				InputPressedSpecHandles.AddUnique(AbilitySpec.Handle);
 				InputHeldSpecHandles.AddUnique(AbilitySpec.Handle);
@@ -362,7 +352,7 @@ void UUHLAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag Inpu
 		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 		{
 			// Replaced AbilitySpec.DynamicAbilityTags on AbilitySpec.Ability->AbilityTags
-			if (AbilitySpec.Ability && (AbilitySpec.Ability->AbilityTags.HasTagExact(InputTag)))
+			if (AbilitySpec.Ability && (AbilitySpec.Ability->GetAssetTags().HasTagExact(InputTag)))
 			{
 				InputReleasedSpecHandles.AddUnique(AbilitySpec.Handle);
 				InputHeldSpecHandles.Remove(AbilitySpec.Handle);
@@ -469,14 +459,14 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 					{
 						if (CanAddAbilityToCache(GameplayAbility))
 						{
-							AbilityTagsRequiredToBeCached.Add(GameplayAbility->AbilityTags.First());
+							AbilityTagsRequiredToBeCached.Add(GameplayAbility->GetAssetTags().First());
 						}
 					}
 
 					if (GameplayAbility->bCacheInput && bActivated)
 					{
 						bAtLeastOneCachedAbilityActivated = true;
-						UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("At least one activated %s"), *GameplayAbility->AbilityTags.First().ToString()));
+						UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("At least one activated %s"), *GameplayAbility->GetAssetTags().First().ToString()));
 					}
 				}
 			}

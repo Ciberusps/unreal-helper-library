@@ -9,6 +9,11 @@
 
 class IAbilitySystemInterface;
 
+struct FInvokeGameplayAbilityMemory
+{
+	FDelegateHandle AbilityEndHandle;
+};
+
 /**
  * TODO Invoke by Class option?
  * 1) tbh its bad practice to have hard refs on classes,
@@ -27,30 +32,32 @@ public:
 
     UPROPERTY(Category="Blackboard", EditAnywhere)
     FGameplayTag GameplayTag;
-    UPROPERTY(Category="Blackboard", EditAnywhere)
+
+	UPROPERTY(Category="Blackboard", EditAnywhere)
     bool bActivate = true;
-    UPROPERTY(Category="Blackboard", EditAnywhere)
+
+	UPROPERTY(Category="Blackboard", EditAnywhere)
     bool bWaitForFinishing = true;
-    UPROPERTY(Category="Blackboard", EditAnywhere)
+
+	UPROPERTY(Category="Blackboard", EditAnywhere)
     bool bDebugMessages = false;
+
+	/** Cancelled ability should be handled as success. */
+	UPROPERTY(EditAnywhere, Category = "Gameplay Ability Activation")
+	bool bTreatCancelledAbilityAsSuccess = false;
 
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
     virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult) override;
 
+	virtual void InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const override;
+	virtual uint16 GetInstanceMemorySize() const override { return sizeof(FInvokeGameplayAbilityMemory); };
+	
     virtual FString GetStaticDescription() const override;
 
 private:
     bool bIsAborting = false;
-    // TODO move to Memory
-    FGameplayAbilitySpec* AbilitySpec = nullptr;
-    // TODO move to Memory
-    FGameplayAbilitySpecHandle* GameplayAbilitiesSpecHandle = nullptr;
-    // TODO move to Memory
-    TWeakObjectPtr<UAbilitySystemComponent> ASC;
-    /** Cached AIController owner of BehaviorTreeComponent. */
-
-    TWeakObjectPtr<UBehaviorTreeComponent> OwnerComponent;
 
     UFUNCTION()
-    void OnAbilityEnded(const FAbilityEndedData& AbilityEndedData);
+    void OnAbilityEnded(const FAbilityEndedData& AbilityEndedData, UBehaviorTreeComponent* OwnerComp);
 };

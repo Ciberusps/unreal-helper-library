@@ -3,13 +3,16 @@
 #pragma once
 
 #include "GameplayEffect.h"
+#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/UHLHUD.h"
+#include "Core/UHLAbilitySystemInterface.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
+class UWidget;
 struct FBlackboardKeySelector;
 
 const float RELATIVE_POINT_ARROW_SIZE = 200.0f;
@@ -41,6 +44,10 @@ class UNREALHELPERLIBRARY_API UUnrealHelperLibraryBPL : public UBlueprintFunctio
 	GENERATED_BODY()
 
 public:
+	/** Tries to find an ability system component on the actor, will use AbilitySystemInterface or fall back to a component search */
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", Meta=(DefaultToSelf = "Actor"))
+	static UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent(AActor* Actor);
+	
 	// UFUNCTION(BlueprintCallable, meta = (Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
@@ -54,10 +61,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary ui widget editor viewport"))
 	static FVector2D GetViewportSizeUnscaled(UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary ui widget editor viewport"))
+	static FVector2D GetWidgetCenterPosition(UObject* WorldContextObject, UWidget* Widget);
 	// UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	// static bool ProjectWorldLocationToWidgetPositionWithScales(APlayerController* PlayerController, FVector WorldLocation, FVector2D& ViewportPosition, bool bPlayerViewportRelative);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
-	static AActor* GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector WorldLocation, FVector2D& ScreenPosition, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
+	static float GetActorDistanceToCenterOfScreen(UObject* WorldContextObject, const AActor* Actor, APlayerController* PlayerController, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
+	static AActor* GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector2D& ScreenPosition, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	static AActor* GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug = false, const float DebugLifetime = -1);
 
@@ -112,10 +124,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
+
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
+	static bool IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static bool TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static bool TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
+	static bool ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static TArray<bool> TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags);
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability event fire"))
@@ -182,6 +199,11 @@ public:
 	static FVector GetRandomPointInBox(const USceneComponent* Component, bool bOnGround, bool bDrawDebug = false, float DebugDrawTime = 5.0f);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
 	static FVector GetHighestPointInBox(const USceneComponent* Component);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
+	static FVector GetCenterPointInBox(const USceneComponent* Component);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
+	static FBox GetComponentBox(const USceneComponent* Component);
+	
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay = "bDebug,DebugLifetime,DebugColor"))
 	static void GetPointAtRelativeAngle(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug = false,
 		const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
@@ -202,9 +224,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
 	static bool IsPreviewWorld(UObject* WorldContextObject);
-	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary"))
 	static bool IsGameWorld(UObject* WorldContextObject);
-	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary editor"))
 	static bool IsEditorWorld(UObject* WorldContextObject);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary preview editor"))
 	static bool IsObjectInPreviewWorld(UObject* Object);
@@ -212,6 +234,8 @@ public:
 	static bool IsObjectInEditorWorld(UObject* Object);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary game preview editor"))
 	static bool IsObjectInGameWorld(UObject* Object);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary"))
+	static bool IsWorldTearingDown(UObject* WorldContextObject);
 	// TODO: ???
 	// UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	// static EUHLDirection AngleToDirection(const float AngleIn);

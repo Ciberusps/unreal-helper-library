@@ -11,6 +11,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "Animation/AnimMontage.h"
+#include "DrawDebugHelpers.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_TurnTo)
@@ -55,7 +56,7 @@ UBTT_TurnTo::UBTT_TurnTo(const FObjectInitializer& ObjectInitializer)
 	// accept only actors and vectors
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_TurnTo, BlackboardKey), AActor::StaticClass());
     // TODO add support for Vectors/Rotators
-	// BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_TurnTo, BlackboardKey));
+	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_TurnTo, BlackboardKey));
 	// BlackboardKey.AddRotatorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_TurnTo, BlackboardKey));
 }
 
@@ -131,27 +132,32 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		}
 	}
     // TODO add support for Vectors/Rotators
-	// else if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-	// {
-	// 	const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
-	//
-	// 	if (FAISystem::IsValidLocation(KeyValue))
-	// 	{
-	// 		const FVector::FReal AngleDifference = CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
-	// 			, (KeyValue - PawnLocation));
-	//
-	// 		if (AngleDifference >= PrecisionDot)
-	// 		{
-	// 			Result = EBTNodeResult::Succeeded;
-	// 		}
-	// 		else
-	// 		{
-	// 			AIController->SetFocalPoint(KeyValue, EAIFocusPriority::Gameplay);
-	// 			MyMemory->FocusLocationSet = KeyValue;
-	// 			Result = EBTNodeResult::InProgress;
-	// 		}
-	// 	}
-	// }
+	else if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+	{
+		const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
+	
+		if (FAISystem::IsValidLocation(KeyValue))
+		{
+			const FVector::FReal AngleDifference = CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
+				, (KeyValue - PawnLocation));
+	
+			if (AngleDifference >= PrecisionDot)
+			{
+				Result = EBTNodeResult::Succeeded;
+			}
+			else
+			{
+				AIController->SetFocalPoint(KeyValue, EAIFocusPriority::Gameplay);
+				MyMemory->FocusLocationSet = KeyValue;
+				MyMemory->bActorSet = false;
+				if (Pawn->GetClass()->ImplementsInterface(UUHLActorSettings::StaticClass()))
+				{
+					MyMemory->TurnSettings = GetTurnSettings(Pawn, MyMemory->bCurrentTurnSettingsSet);
+				}
+				Result = EBTNodeResult::InProgress;
+			}
+		}
+	}
 	// else if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
 	// {
 	// 	const FRotator KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Rotator>(BlackboardKey.GetSelectedKeyID());
@@ -200,8 +206,19 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		{
 		    float DeltaAngleRad = CalculateAngleDifferenceDot(PawnDirection, FocalPoint - AIController->GetPawn()->GetActorLocation());
 		    // float DeltaAngle = FMath::RadiansToDegrees(FMath::Acos(DeltaAngleRad));
-		    float DeltaAngle = UUnrealHelperLibraryBPL::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet);
+		    float DeltaAngle = MyMemory->bActorSet
+				? UUnrealHelperLibraryBPL::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet)
+				: UUnrealHelperLibraryBPL::RelativeAngleToVector(AICharacter, MyMemory->FocusLocationSet);
 		    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle), "", "", "", "", "", "", "", "", "", -1, FName("Test"));
+
+			if (bDebug)
+			{
+				FVector CurrentLocation = MyMemory->bActorSet
+					? MyMemory->FocusActorSet->GetActorLocation()
+					: MyMemory->FocusLocationSet;
+				DrawDebugSphere(AIController->GetWorld(), CurrentLocation,
+					50.0f, 12, FColor::Blue, false, -1);	
+			}
 
 			if (DeltaAngleRad >= PrecisionDot)
 			{
