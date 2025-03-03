@@ -1,5 +1,5 @@
 name: Package plugin
-on: [push, workflow_dispatch]
+on: workflow_dispatch
 jobs:
   package:
     name: Package plugin
