@@ -1,0 +1,17 @@
+name: package
+on: [workflow_dispatch]
+jobs:
+  package:
+    name: Formatting Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: clean up trash
+        runs: 
+          rm -rf .gitignore
+          rm -rf .markdownlint.json
+          rm -rf LICENSE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unreal-helper-library
+          path: .
