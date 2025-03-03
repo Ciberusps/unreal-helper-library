@@ -1,17 +1,17 @@
 name: package
-on: [workflow_dispatch]
+on: workflow_dispatch
 jobs:
   package:
     name: Package plugin
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: clean up trash
-        run: |
-          rm -rf .gitignore
-          rm -rf .markdownlint.json
-          rm -rf LICENSE
-      - uses: actions/upload-artifact@v4
-        with:
-          name: unreal-helper-library
-          path: .
+    - uses: actions/checkout@v4
+    - name: clean up trash
+      run: |
+        rm -rf .gitignore
+        rm -rf .markdownlint.json
+        rm -rf LICENSE
+    - uses: actions/upload-artifact@v4
+      with:
+        name: unreal-helper-library
+        path: .
