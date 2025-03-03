@@ -3,6 +3,8 @@
 
 #include "Animation/Notifies/ANS_GlobalTimeDilation.h"
 
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 

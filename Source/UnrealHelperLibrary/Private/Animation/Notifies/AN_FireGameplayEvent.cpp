@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Abilities/GameplayAbilityTypes.h"
 
 #if WITH_EDITOR
