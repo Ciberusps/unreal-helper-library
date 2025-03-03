@@ -7,28 +7,28 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Archive files
-      run: |
-        sudo apt-get update
-        sudo apt-get install zip
-        zip -r archive.zip *
+    # - name: Archive files
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install zip
+    #     zip -r archive.zip *
 
-    - name: Upload to gdrive
-      uses: adityak74/google-drive-upload-git-action@main
-      with:
-        credentials: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
-        filename: "archive.zip"
-        folderId: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
-        name: "UHL_${{ github.run_id }}.zip" # optional string
-        overwrite: "true" # optional boolean
+    # - name: Upload to gdrive
+    #   uses: adityak74/google-drive-upload-git-action@main
+    #   with:
+    #     credentials: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+    #     filename: "archive.zip"
+    #     folderId: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+    #     name: "UHL_${{ github.run_id }}.zip" # optional string
+    #     overwrite: "true" # optional boolean
 
     # artifacts
-    # - name: clean up trash
-    #   run: |
-    #     rm -rf .gitignore
-    #     rm -rf .markdownlint.json
-    #     rm -rf LICENSE
-    # - uses: actions/upload-artifact@v4
-    #   with:
-    #     name: unreal-helper-library
-    #     path: .
+    - name: clean up trash
+      run: |
+        rm -rf .gitignore
+        rm -rf .markdownlint.json
+        rm -rf LICENSE
+    - uses: actions/upload-artifact@v4
+      with:
+        name: unreal-helper-library
+        path: .
