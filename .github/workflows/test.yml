@@ -1,0 +1,221 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - "**"
+      # - "!main"
+      # - "!l10n_main"
+
+# env:
+#   STEAMWORKS_SDK_ARCHIVE_PASSWORD: ${{ secrets.STEAMWORKS_SDK_ARCHIVE_PASSWORD }}
+#   STEAMWORKS_SDK_GOOGLE_DRIVE_LINK: ${{ secrets.STEAMWORKS_SDK_GOOGLE_DRIVE_LINK }}
+
+jobs:
+  build-plugins:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: true
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: false
+        swap-storage: true
+    - name: Check out UnrealHelperLibrary to Plugins folder
+      uses: actions/checkout@v3
+      with:
+        path: UnrealHelperLibrary
+    - name:
+      run: |
+        echo ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker pull ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+    - uses: addnab/docker-run-action@v3
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
+        registry: ghcr.io
+        image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+        options: -v ${{ github.workspace }}:/work -e ABC=123
+        run: |
+          echo "Running Script"
+          mkdir -p "Result"
+          test -e "./Engine/Build/BatchFiles/RunUAT.sh" && echo file exists || echo file not found
+          test -e "/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" && echo file exists || echo file not found
+          test -e "/work/Result" && echo file exists || echo file not found
+          test -e "Result" && echo file exists || echo file not found
+          ./Engine/Build/BatchFiles/RunUAT.sh BuildPlugin -plugin="/work/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="./Result" -platform=Win64
+# - name: Build Plugins (UHL)
+#   shell: sh
+#   run: |
+#     "home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT.sh BuildPlugin -plugin="${{ github.workspace }}/UnrealHelperLibrary/UnrealHelperLibrary.uplugin" -package="${{ github.workspace }}/Result""
+#   clean-up-space:
+#     runs-on: ubuntu-latest
+#     steps:
+#  Works better
+# - name: Free Disk Space (Ubuntu)
+#   uses: jlumbroso/free-disk-space@main
+#   with:
+#     # this might remove tools that are actually needed,
+#     # if set to "true" but frees about 6 GB
+#     tool-cache: false
+#     # all of these default to true, but feel free to set to
+#     # "false" if necessary for your workflow
+#     android: true
+#     dotnet: true
+#     haskell: true
+#     large-packages: true
+#     docker-images: false
+#     swap-storage: true
+#   # free some space 
+#   - name: Maximize build space
+#     uses: easimon/maximize-build-space@master
+#     with:
+#     #   root-reserve-mb: 512
+#     #   swap-size-mb: 1024
+#       remove-dotnet: 'true'
+#   build:
+#     runs-on: self-hosted
+#     # runs-on: ubuntu-latest
+#     container:
+#       image: ghcr.io/epicgames/unreal-engine:dev-slim-5.4
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.UNREAL_ENGINE_PERSONAL_TOKEN }}
+#     # needs: clean-up-space
+#     steps:
+#   - name: Check out UE5.4 project
+#     uses: actions/checkout@v3
+#     with:
+#       repository: Ciberusps/UE_5_4_Blueprint
+#       path: UE_5_4_Blueprint
+#   - name: Check out UE5.4 project
+#     shell: bash
+#     run: |
+#       ls
+# - name: Check out UnrealHelperLibrary to Plugins folder
+#   uses: actions/checkout@v3
+#   with:
+#     # path: UE_5_4_Blueprint/Plugins/UnrealHelperLibrary
+#     path: UnrealHelperLibrary
+# - name: Build Plugins (UHL)
+#   shell: powershell
+#   run: |
+#     mkdir "Temp"
+#     $pluginPath = Resolve-Path -Path "UE_5_4_Blueprint/Plugins/UnrealHelperLibrary/UnrealHelperLibrary.uplugin"
+#     $tempDirAbsolutePath = Resolve-Path -Path "Temp"
+#     "S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat BuildPlugin -plugin="$pluginPath" -package="$tempDirAbsolutePath""
+#   - name: Build project
+#     uses: OrchidIsle/UE5-Build-Project@latest
+#     with:
+#       # RUNUAT_PATH: 'S:/Epic Games/UE_5.4/Engine/Build/BatchFiles/RunUAT.bat'
+#       # UE folder in epic provided container - /home/ue4/UnrealEngine/Engine/Binaries
+#       RUNUAT_PATH: 'home/ue4/UnrealEngine/Engine/BatchFiles/RunUAT'
+#       UPROJECT_PATH: ${{ github.workspace }}/UE_5_4_Blueprint/UE_5_4_Blueprint.uproject
+#       BUILD_CONFIG: Development
+#       PLATFORM: Win64
+#       CLEAN: true
+#       COOK: true
+#       STAGE: true
+#       PACKAGE: true
+#       PAK: true
+#       SERVER: false
+#       ARCHIVE: false
+#       ARCHIVE_PATH: 'C:/Archives/MyGame'
+#       NULLRHI: true
+#       EDITOR: true
+#       ENCRYPT_INI: true
+#       # RELEASE: '1.0.0'
+#       # PATCH: '0.9.0'
+#       # MAPS: 'Map1,Map2'
+#       DELETE_PDB: true
+#       # ANTICHEAT_ENABLED: true
+#       # ANTICHEAT_PRIVATE_KEY: 'base64encodedprivatekey'
+#       # ANTICHEAT_PUBLIC_CERT: 'base64encodedpubliccert'
+
+
+
+
+
+
+
+# lint:
+#   runs-on: self-hosted
+#   steps:
+#     - name: Check out Git repository
+#       uses: actions/checkout@v3
+
+#   lint-prettier:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Lint Prettier
+#         run: npm run lint:prettier
+
+#   lint-types:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Lint Types
+#         run: npm run lint:types
+
+#   licenses-check:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Test
+#         run: npm run lint:licenses
+
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "16"
+#           cache: "npm"
+#       - name: TEMPORARY - Install gdown for fetchSteamworksSdk.js
+#         run: pip3 install gdown
+#       - name: Install dependencies
+#         run: npm install --legacy-peer-deps
+#       - name: Test
+#         run: npm run test
