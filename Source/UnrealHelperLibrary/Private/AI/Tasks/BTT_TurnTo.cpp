@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Pavel Penkov
+// Pavel Penkov 2025 All Rights Reserved.
 
 
 #include "AI/Tasks/BTT_TurnTo.h"
