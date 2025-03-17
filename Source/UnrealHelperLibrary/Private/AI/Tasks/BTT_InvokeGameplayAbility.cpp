@@ -51,7 +51,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     for (FGameplayAbilitySpecHandle GameplayAbilitiesSpecSearch : GameplayAbilitiesSpecs)
     {
         FGameplayAbilitySpec* AbilitySpecSearch = ASC->FindAbilitySpecFromHandle(GameplayAbilitiesSpecSearch);
-        if (AbilitySpecSearch->Ability->AbilityTags.HasAny(GameplayTag.GetSingleTagContainer()))
+        if (AbilitySpecSearch->Ability->AbilityTags.HasAny(GameplayTag.GetValue(OwnerComp).GetSingleTagContainer()))
         {
             AbilitySpec = AbilitySpecSearch;
             GameplayAbilitiesSpecHandle = &GameplayAbilitiesSpecSearch;
@@ -79,14 +79,14 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
 
 	        if (bDebugMessages)
 	        {
-	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
+	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.GetValue(OwnerComp).ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
 	        }
 	    }
 	    else
 	    {
 	        if (bDebugMessages)
 	        {
-	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.ToString()));
+	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.GetValue(OwnerComp).ToString()));
 	        }
 	    }
     }
@@ -113,7 +113,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::AbortTask(UBehaviorTreeComponent
 		
 		if (ASC)
 		{
-			const FGameplayTagContainer TagsContainer = FGameplayTagContainer(GameplayTag);
+			const FGameplayTagContainer TagsContainer = FGameplayTagContainer(GameplayTag.GetValue(OwnerComp));
 			ASC->CancelAbilities(&TagsContainer);
 			if (bWaitForFinishing)
 			{
@@ -162,14 +162,14 @@ void UBTT_InvokeGameplayAbility::InitializeMemory(
 
 FString UBTT_InvokeGameplayAbility::GetStaticDescription() const
 {
-    return FString::Printf(TEXT("%s: \n%s"), *Super::GetStaticDescription(), GameplayTag.IsValid() ? *GameplayTag.ToString() : TEXT(""));
+    return FString::Printf(TEXT("%s: \n%s"), *Super::GetStaticDescription(), !GameplayTag.ToString().IsEmpty() ? *GameplayTag.ToString() : TEXT(""));
 }
 
 void UBTT_InvokeGameplayAbility::OnAbilityEnded(
 	const FAbilityEndedData& AbilityEndedData, UBehaviorTreeComponent* OwnerComp)
 {
     // if not works check "AbilitySystemComponentTests.IsSameAbility"
-    if (!AbilityEndedData.AbilityThatEnded->AbilityTags.HasAllExact(FGameplayTagContainer(GameplayTag))) return;
+    if (!AbilityEndedData.AbilityThatEnded->AbilityTags.HasAllExact(FGameplayTagContainer(GameplayTag.GetValue(OwnerComp)))) return;
 
     const EBTNodeResult::Type NodeResult(EBTNodeResult::Succeeded);
 

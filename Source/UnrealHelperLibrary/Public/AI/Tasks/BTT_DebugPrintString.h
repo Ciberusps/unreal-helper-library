@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/ValueOrBBKey.h"
 #include "BTT_DebugPrintString.generated.h"
 
 /**
@@ -17,14 +18,18 @@ class UNREALHELPERLIBRARY_API UBTT_DebugPrintString : public UBTTaskNode
 public:
     UBTT_DebugPrintString(const FObjectInitializer& ObjectInitializer);
 
-    UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditFixedSize, MultiLine))
-    TArray<FString> PrintStrings = { "", "", "" };
+    UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditFixedSize, MultiLine, FullyExpand=true))
+    TArray<FValueOrBBKey_String> PrintStrings = {
+    	FValueOrBBKey_String(""),
+    	FValueOrBBKey_String(""),
+    	FValueOrBBKey_String("")
+    };
     UPROPERTY(Category="Decorator", EditAnywhere)
-    float Duration = 3.5f;
+    FValueOrBBKey_Float Duration = 3.5f;
     UPROPERTY(Category="Decorator", EditAnywhere)
     FLinearColor Color = FLinearColor(0, 0.66, 1);
     UPROPERTY(Category="Decorator", EditAnywhere)
-    FName Key = NAME_None;
+    FValueOrBBKey_Name Key = FValueOrBBKey_Name();
 
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
     virtual FString GetStaticDescription() const override;

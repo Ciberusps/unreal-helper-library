@@ -26,8 +26,12 @@ public class UnrealHelperEditor : ModuleRules
 			new string[]
 			{
 				"Core",
+				"CoreUObject",
+				"Engine",
+				"PropertyEditor",
 				"Blutility",
-				"UMG",
+				"UMG", 
+				"BehaviorTreeEditor",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -41,11 +45,14 @@ public class UnrealHelperEditor : ModuleRules
 				"EditorFramework",
 				"UnrealEd",
 				"ToolMenus",
-				"CoreUObject",
-				"Engine",
 				"Slate",
 				"SlateCore",
-				"DeveloperSettings",
+				"UnrealEd",
+				"DeveloperSettings", 
+				"UnrealHelperLibrary", 
+				"EditorWidgets",
+				"GameplayTags",
+				"GameplayTagsEditor",
 				// ... add private dependencies that you statically link with here ...
 			}
 			);

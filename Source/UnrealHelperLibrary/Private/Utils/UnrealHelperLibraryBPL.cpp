@@ -52,7 +52,7 @@ UUHLAbilitySystemComponent* UUnrealHelperLibraryBPL::GetUHLAbilitySystemComponen
 	const IUHLAbilitySystemInterface* ASI = Cast<IUHLAbilitySystemInterface>(Actor);
 	if (ASI)
 	{
-		return ASI->GetUHLAbilitySystemComponent();
+		return IUHLAbilitySystemInterface::Execute_GetUHLAbilitySystemComponent(Actor);
 	}
 
 	return Actor->FindComponentByClass<UUHLAbilitySystemComponent>();
