@@ -34,17 +34,17 @@ public:
     UPROPERTY(Category="Blackboard", EditAnywhere)
     FValueOrBBKey_GameplayTag GameplayTag;
 
-	UPROPERTY(Category="Blackboard", EditAnywhere)
+	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "Activate")
     FValueOrBBKey_Bool bActivate = true;
 
-	UPROPERTY(Category="Blackboard", EditAnywhere)
+	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "WaitForFinishing")
     FValueOrBBKey_Bool bWaitForFinishing = true;
 
-	UPROPERTY(Category="Blackboard", EditAnywhere)
+	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "DebugMessages")
     FValueOrBBKey_Bool bDebugMessages = false;
 
 	/** Cancelled ability should be handled as success. */
-	UPROPERTY(EditAnywhere, Category = "Gameplay Ability Activation")
+	UPROPERTY(EditAnywhere, Category = "Gameplay Ability Activation", DisplayName = "TreatCancelledAbilityAsSuccess")
 	FValueOrBBKey_Bool bTreatCancelledAbilityAsSuccess = false;
 
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
