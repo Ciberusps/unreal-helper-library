@@ -70,8 +70,25 @@ public:
 	static float GetActorDistanceToCenterOfScreen(UObject* WorldContextObject, const AActor* Actor, APlayerController* PlayerController, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
 	static AActor* GetActorClosestToCenterOfScreen(UObject* WorldContextObject, const TArray<AActor*>& Actors, APlayerController* PlayerController, FVector2D& ScreenPosition, bool bPlayerViewportRelative = true, const bool bDebug = false, const float DebugLifetime = -1);
+
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	static AActor* GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug = false, const float DebugLifetime = -1);
+
+	// TODO GetDistanceOperation - MostDistant/LeastDistant/Average/Medium/...
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
+	static FVector GetMostDistantVector(const UObject* WorldContextObject,
+		const TArray<FVector> Vectors, FVector Location, 
+		float& MaxDistance_Out, int32& Index_Out,
+		bool bUseNavigation = false,
+		const bool bDebug = false, const float DebugLifetime = -1);
+	
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (WorldContext = "WorldContextObject"))
+	static FVector GetMostDistantActorComponent(const UObject* WorldContextObject,
+		const TArray<USceneComponent*> SceneComponents, FVector Location, 
+		float& MaxDistance_Out, int32& Index_Out,
+		bool bUseNavigation = false,
+		const bool bDebug = false, const float DebugLifetime = -1);
+
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary")
 	static void DrawDebugLineOnCanvas(
@@ -203,6 +220,10 @@ public:
 	static FVector GetCenterPointInBox(const USceneComponent* Component);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary bounds box extent"))
 	static FBox GetComponentBox(const USceneComponent* Component);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary vector center"))
+	static FVector GetCenterPointBetweenVectors(const UObject* WorldContextObject, const FVector& PointA, const FVector& PointB,
+		const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
 	
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (DefaultToSelf = "ActorIn", AdvancedDisplay = "bDebug,DebugLifetime,DebugColor"))
 	static void GetPointAtRelativeAngle(FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug = false,

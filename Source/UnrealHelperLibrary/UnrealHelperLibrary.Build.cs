@@ -46,6 +46,7 @@ public class UnrealHelperLibrary : ModuleRules
 				"UMG",
 				"AnimGraphRuntime",
 				"DeveloperSettings",
+				"NavigationSystem"
 				// ... add private dependencies that you statically link with here ...
 			}
 			);

@@ -27,6 +27,7 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
+#include "NavigationSystem.h"
 #include "Core/UHLAbilitySystemInterface.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
@@ -328,7 +329,7 @@ float UUnrealHelperLibraryBPL::RelativeAngleToActor(
 		FColor DebugCol = DebugColor.ToFColor(true);
 		FVector LineStart = ActorRelativeToWhomAngleCalculated->GetActorLocation();
 		FVector LineEnd = TargetActor->GetActorLocation();
-		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
+		FVector TextLocation = GetCenterPointBetweenVectors(ActorRelativeToWhomAngleCalculated->GetWorld(), LineStart, LineEnd);
 
 		DrawDebugString(DebugWorld, TextLocation, FString::Printf(TEXT("RelativeAngle: %.2f°"), Result), 0, DebugCol, DebugLifetime, true, 1.0f);
 		DrawDebugDirectionalArrow(DebugWorld, LineStart, LineEnd, RELATIVE_POINT_ARROW_SIZE, DebugCol, true, DebugLifetime, DEPTH_PRIORITY, 2);
@@ -456,6 +457,7 @@ AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldC
 
 AActor* UUnrealHelperLibraryBPL::GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug, const float DebugLifetime)
 {
+	// TODO use GetMostDistantVector if possible
 	AActor* Result = nullptr;
 	float GreatestDistance = -9999999;
 	TMap<AActor*, float> ActorsAndDistances = {};
@@ -483,6 +485,78 @@ AActor* UUnrealHelperLibraryBPL::GetMostDistantActor(const TArray<AActor*>& Acto
 	}
 
 	return Result;
+}
+
+FVector UUnrealHelperLibraryBPL::GetMostDistantVector(
+	const UObject* WorldContextObject,
+	const TArray<FVector> Vectors, FVector Location,
+	float& MaxDistance_Out, int32& Index_Out, bool bUseNavigation,
+	const bool bDebug, const float DebugLifetime)
+{
+	FVector Result = VECTOR_ERROR;
+
+	TArray<float> Distances = {}; 
+	float GreatestDistance = -9999999;
+	
+	for (int32 i = 0; i < Vectors.Num(); i++)
+	{
+		float Distance = FLOAT_ERROR;
+		if (bUseNavigation)
+		{
+			double DistanceInDouble;
+			UNavigationSystemV1::GetPathLength(WorldContextObject->GetWorld(), Vectors[i], Location, DistanceInDouble);
+			Distance = DistanceInDouble;
+		}
+		else
+		{
+			Distance = FVector::Distance(Vectors[i], Location);
+		}
+		
+		Distances[i] = Distance;
+
+		if (Distance > GreatestDistance)
+		{
+			GreatestDistance = Distance;
+			Result = Vectors[i];
+			MaxDistance_Out = Distance;
+			Index_Out = i;
+		}
+	}
+	
+	if (bDebug)
+	{
+		for (int32 i = 0; i < Vectors.Num(); i++)
+		{
+			bool bMostDistant = i == Index_Out;
+			DrawDebugLine(WorldContextObject->GetWorld(), Vectors[i], Location, bMostDistant ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
+			DrawDebugString(WorldContextObject->GetWorld(), FVector::ZeroVector, FString::Printf(TEXT("Distance: %.2f"), Distances[i]), nullptr, bMostDistant ? FColor::Green : FColor::Red, 0, true, 1);
+		}
+	}
+
+	return Result;
+}
+
+FVector UUnrealHelperLibraryBPL::GetMostDistantActorComponent(
+	const UObject* WorldContextObject, const TArray<USceneComponent*> SceneComponents,
+	FVector Location, float& MaxDistance_Out, int32& Index_Out, bool bUseNavigation,
+	const bool bDebug, const float DebugLifetime)
+{
+	TArray<FVector> Vectors = {};
+	for (int32 i = 0; i < SceneComponents.Num(); i++)
+	{
+		if (IsValid(SceneComponents[i]))
+		{
+			Vectors.Add(SceneComponents[i]->GetComponentToWorld().GetLocation());
+		}
+		else
+		{
+			Vectors.Add(VECTOR_ERROR);
+		}
+	}
+	return GetMostDistantVector(WorldContextObject,
+		Vectors, Location, 
+		MaxDistance_Out, Index_Out, bUseNavigation,
+		bDebug, DebugLifetime);
 }
 
 void UUnrealHelperLibraryBPL::DrawDebugLineOnCanvas(UObject* WorldContextObject, const FLineInfo& LineInfo, const bool bRelativeToViewportCenter)
@@ -618,6 +692,21 @@ FBox UUnrealHelperLibraryBPL::GetComponentBox(const USceneComponent* Component)
 	const FVector BoxMin = Origin - BoxExtent;
 	const FVector BoxMax = Origin + BoxExtent;
 	return FBox(BoxMin, BoxMax);
+}
+
+FVector UUnrealHelperLibraryBPL::GetCenterPointBetweenVectors(
+	const UObject* WorldContextObject, const FVector& PointA, const FVector& PointB,
+	const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
+{
+	FVector Result = (PointB - PointA) / 2 + PointA;
+
+	if (bDebug)
+	{
+		UWorld* DebugWorld = WorldContextObject->GetWorld();
+		DrawDebugSphere(DebugWorld, Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, DEPTH_PRIORITY, 1);
+	}
+
+	return Result;
 }
 
 void UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(
