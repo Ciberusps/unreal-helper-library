@@ -32,7 +32,8 @@ public:
 	    UCurveVector* OptionalVectorInterpolationCurve,
 	    AActor* OptionalActorToInterpolate,
 	    const bool bIsIgnoreHits = true,
-	    const float DistanceToHit = 0.f
+	    const float DistanceOffset = 0.f,
+	    const bool bUseCapsuleTrace = false
 	);
 
 	UPROPERTY(BlueprintAssignable, Category="Ability|Tasks")
@@ -78,6 +79,24 @@ private:
         const TArray<AActor*>& ActorsToIgnore,
         FHitResult& OutHit
     );
-    static FVector GetCurrentEndLocation(const FVector& Start, const FVector& End, const float DistanceToHit = 0.f);
-    static float GetCurrentDuration(const float Duration, const FVector& Start, const FVector& End, const FVector& CurrentEnd);
+	static bool CheckCapsuleHit(
+		const UWorld* World,
+		const FVector& Start,
+		const FVector& End,
+		const float Radius,
+		const float HalfHeight,
+		const TArray<AActor*>& ActorsToIgnore,
+		FHitResult& OutHit
+	);
+    static FVector GetCurrentEndLocation(
+    	const FVector& Start,
+    	const FVector& End,
+    	const float DistanceOffset = 0.f
+    );
+    static float GetCurrentDuration(
+    	const float Duration,
+    	const FVector& Start,
+    	const FVector& End,
+    	const FVector& CurrentEnd
+    );
 };

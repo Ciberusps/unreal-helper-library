@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Tasks/AT_InterpolateToPosition.h"
 
+#include "Components/CapsuleComponent.h"
 #include "Curves/CurveVector.h"
 #include "Curves/CurveFloat.h"
 #include "Engine/World.h"
@@ -31,7 +32,8 @@ UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(
     UCurveVector* OptionalVectorInterpolationCurve,
     AActor* OptionalActorToInterpolate,
     const bool bIsIgnoreHit,
-    const float DistanceToHit
+    const float DistanceOffset,
+    const bool bUseCapsuleTrace
 )
 {
     UAT_InterpolateToPosition* MyObj = NewAbilityTask<UAT_InterpolateToPosition>(OwningAbility, TaskInstanceName);
@@ -45,11 +47,46 @@ UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(
 
     if (!bIsIgnoreHit)
     {
-        FHitResult OutHit {};
-        if (CheckHit(MyObj->GetWorld(),MyObj->ActorToInterpolate->GetActorLocation(),Location, {MyObj->ActorToInterpolate}, OutHit))
+    	FHitResult OutHit {};
+    	bool bBlockingHit = false;
+    	if (bUseCapsuleTrace)
+    	{
+		    const ACharacter* Character = Cast<ACharacter>(MyObj->ActorToInterpolate);
+    		if (IsValid(Character))
+    		{
+    			const float Radius = Character->GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+				const float HalfHeight = Character->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+
+    			bBlockingHit = CheckCapsuleHit(
+    				MyObj->GetWorld(),
+    				MyObj->ActorToInterpolate->GetActorLocation(),
+    				Location,
+    				Radius,
+    				HalfHeight,
+    				{MyObj->ActorToInterpolate},
+    				OutHit
+    			);
+    		}
+    	}
+	    else
+	    {
+	    	bBlockingHit = CheckHit(
+	    		MyObj->GetWorld(),
+	    		MyObj->ActorToInterpolate->GetActorLocation(),
+	    		Location,
+	    		{MyObj->ActorToInterpolate},
+	    		OutHit
+	    	);
+	    }
+
+        if (bBlockingHit)
         {
             const FVector Start = MyObj->ActorToInterpolate->GetActorLocation();
-            const FVector CurrentEnd = GetCurrentEndLocation(Start, OutHit.Location, DistanceToHit);
+            const FVector CurrentEnd = GetCurrentEndLocation(
+            	Start,
+            	OutHit.Location,
+            	DistanceOffset
+            );
 
             Duration = GetCurrentDuration(Duration, Start, Location, CurrentEnd);
             Location = CurrentEnd;
@@ -91,7 +128,7 @@ void UAT_InterpolateToPosition::TickTask(float DeltaTime)
     AActor* MyActor = ActorToInterpolate;
     if (MyActor)
     {
-        ACharacter* MyCharacter = Cast<ACharacter>(MyActor);
+	    const ACharacter* MyCharacter = Cast<ACharacter>(MyActor);
         if (MyCharacter)
         {
             UCharacterMovementComponent* CharMoveComp = Cast<UCharacterMovementComponent>(MyCharacter->GetMovementComponent());
@@ -210,11 +247,42 @@ bool UAT_InterpolateToPosition::CheckHit(
     );
 }
 
-FVector UAT_InterpolateToPosition::GetCurrentEndLocation(const FVector& Start, const FVector& End, const float DistanceToHit)
+bool UAT_InterpolateToPosition::CheckCapsuleHit(
+	const UWorld* World,
+	const FVector& Start,
+	const FVector& End,
+	const float Radius,
+	const float HalfHeight,
+	const TArray<AActor*>& ActorsToIgnore,
+	FHitResult& OutHit
+)
+{
+	return UKismetSystemLibrary::CapsuleTraceSingle(
+		World,
+		Start,
+		End,
+		Radius,
+		HalfHeight,
+		ETraceTypeQuery::TraceTypeQuery1,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::None,
+		OutHit,
+		true
+	);
+}
+
+FVector UAT_InterpolateToPosition::GetCurrentEndLocation(
+	const FVector& Start,
+	const FVector& End,
+	const float DistanceOffset
+)
 {
     FVector Result {};
-    const FVector Direction = End - Start;
-    const float Distance = FMath::Max(Direction.Length() - DistanceToHit, 0.f);
+	const FVector Direction = End - Start;
+	float Distance = FVector::Dist(Start, End); 
+
+	Distance = FMath::Max(Distance + DistanceOffset, 0.f);
     Result = Start + Direction.GetSafeNormal() * Distance;
 
     return Result;
