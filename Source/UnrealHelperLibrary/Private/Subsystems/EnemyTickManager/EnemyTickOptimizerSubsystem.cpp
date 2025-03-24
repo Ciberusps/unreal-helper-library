@@ -84,8 +84,8 @@ void UEnemyTickOptimizerSubsystem::UpdateTickIntervals()
 				TickInterval = Settings.DefaultEnemyTickInterval; // e.g., 1.0f
 			}
 
-			if (Settings.bDontTickIfNotRenderedRecently &&
-				!Enemy->WasRecentlyRendered()
+			if (Settings.bDontTickIfNotRenderedRecently 
+				&& !Enemy->WasRecentlyRendered()
 				&& Distance > Settings.MediumDistance)
 			{
 				TickInterval = Settings.RecentlyNotRenderedTickInterval;
