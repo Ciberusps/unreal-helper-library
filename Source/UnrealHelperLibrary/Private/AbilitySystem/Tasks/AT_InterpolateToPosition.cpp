@@ -128,7 +128,7 @@ void UAT_InterpolateToPosition::TickTask(float DeltaTime)
     AActor* MyActor = ActorToInterpolate;
     if (MyActor)
     {
-	    const ACharacter* MyCharacter = Cast<ACharacter>(MyActor);
+    const ACharacter* MyCharacter = Cast<ACharacter>(MyActor);
         if (MyCharacter)
         {
             UCharacterMovementComponent* CharMoveComp = Cast<UCharacterMovementComponent>(MyCharacter->GetMovementComponent());
