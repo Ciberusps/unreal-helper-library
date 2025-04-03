@@ -290,6 +290,11 @@ public:
 	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 	/** ~AI **/
 
+	/** Navigation **/
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary navigation"))
+	static void TurnOffActorCanEverAffectNavigation(AActor* Actor);
+	/** ~Navigation **/
+
 	/** Colors **/
 	// "Makes a random but quite nice color" - literally C++ FColor::MakeRandomColor
 	// if seed >= 0 than FColor::MakeRandomSeededColor will be used
