@@ -1000,19 +1000,6 @@ EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(FBlackboardKeyS
 	return Result;
 }
 
-void UUnrealHelperLibraryBPL::TurnOffActorCanEverAffectNavigation(AActor* Actor)
-{
-	TArray<UPrimitiveComponent*> PrimitiveComponents;
-	Actor->GetComponents(PrimitiveComponents);
-	for (UPrimitiveComponent* PrimComp : PrimitiveComponents)
-	{
-		if (PrimComp)
-		{
-			PrimComp->SetCanEverAffectNavigation(false);
-		}
-	}
-}
-
 FColor UUnrealHelperLibraryBPL::RandomColor(int32 Seed)
 {
 	if (Seed >= 0)
