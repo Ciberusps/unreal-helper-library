@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI/ValueOrBBKey_GameplayTag.h"
 #include "Abilities/GameplayAbilityTypes.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_InvokeGameplayAbility.generated.h"
@@ -31,20 +32,20 @@ public:
     UBTT_InvokeGameplayAbility(const FObjectInitializer& ObjectInitializer);
 
     UPROPERTY(Category="Blackboard", EditAnywhere)
-    FGameplayTag GameplayTag;
+    FValueOrBBKey_GameplayTag GameplayTag;
 
-	UPROPERTY(Category="Blackboard", EditAnywhere)
-    bool bActivate = true;
+	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "Activate")
+    FValueOrBBKey_Bool bActivate = true;
 
-	UPROPERTY(Category="Blackboard", EditAnywhere)
-    bool bWaitForFinishing = true;
+	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "WaitForFinishing")
+    FValueOrBBKey_Bool bWaitForFinishing = true;
 
-	UPROPERTY(Category="Blackboard", EditAnywhere)
-    bool bDebugMessages = false;
+	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "DebugMessages")
+    FValueOrBBKey_Bool bDebugMessages = false;
 
 	/** Cancelled ability should be handled as success. */
-	UPROPERTY(EditAnywhere, Category = "Gameplay Ability Activation")
-	bool bTreatCancelledAbilityAsSuccess = false;
+	UPROPERTY(EditAnywhere, Category = "Gameplay Ability Activation", DisplayName = "TreatCancelledAbilityAsSuccess")
+	FValueOrBBKey_Bool bTreatCancelledAbilityAsSuccess = false;
 
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
     virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
