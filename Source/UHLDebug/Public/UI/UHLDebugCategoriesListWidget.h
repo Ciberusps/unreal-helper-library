@@ -14,7 +14,7 @@ class UCanvasPanel;
  *
  */
 UCLASS()
-class UHLDEBUGSYSTEM_API UUHLDebugCategoriesListWidget : public UUserWidget
+class UHLDEBUG_API UUHLDebugCategoriesListWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

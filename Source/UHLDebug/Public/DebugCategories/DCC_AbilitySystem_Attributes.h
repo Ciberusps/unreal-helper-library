@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "UHLDebugCategoryComponent.h"
-#include "DCC_Collisions.generated.h"
+#include "DCC_AbilitySystem_Attributes.generated.h"
 
 /**
  *
  */
 UCLASS()
-class UHLDEBUGSYSTEM_API UDCC_Collisions : public UUHLDebugCategoryComponent
+class UHLDEBUG_API UDCC_AbilitySystem_Attributes : public UUHLDebugCategoryComponent
 {
 	GENERATED_BODY()
 

@@ -14,7 +14,7 @@ class UUHLDebugWidget;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUHLDebugCategoryChanged, FGameplayTag, DebugCategoryTag, bool, bEnabled);
 
 UCLASS()
-class UHLDEBUGSYSTEM_API UUHLDebugSubsystem : public UGameInstanceSubsystem
+class UHLDEBUG_API UUHLDebugSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

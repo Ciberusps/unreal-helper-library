@@ -5,7 +5,7 @@
 #include "Modules/ModuleManager.h"
 
 
-class FUHLDebugSystemModule : public IModuleInterface
+class FUHLDebugModule : public IModuleInterface
 {
 public:
 	/** IModuleInterface implementation */

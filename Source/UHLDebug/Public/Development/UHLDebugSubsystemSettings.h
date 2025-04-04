@@ -13,7 +13,7 @@
  *
  */
 UCLASS(config="Game", defaultconfig, PrioritizeCategories="DebugCategories")
-class UHLDEBUGSYSTEM_API UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
+class UHLDEBUG_API UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
 {
 	GENERATED_BODY()
 

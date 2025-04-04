@@ -10,7 +10,7 @@
 DEFINE_LOG_CATEGORY(LogUnrealHelperLibrary);
 DEFINE_LOG_CATEGORY(LogUHLAbilitySystem);
 
-void FUHLDebugSystemModule::StartupModule()
+void FUHLDebugModule::StartupModule()
 {
 	UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
@@ -87,7 +87,7 @@ void FUHLDebugSystemModule::StartupModule()
 	// }
 }
 
-void FUHLDebugSystemModule::ShutdownModule()
+void FUHLDebugModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -95,4 +95,4 @@ void FUHLDebugSystemModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FUHLDebugSystemModule, UnrealHelperLibrary)
+IMPLEMENT_MODULE(FUHLDebugModule, UnrealHelperLibrary)

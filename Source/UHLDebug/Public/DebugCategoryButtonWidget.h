@@ -20,7 +20,7 @@ class UButton;
  *
  */
 UCLASS()
-class UHLDEBUGSYSTEM_API UDebugCategoryButtonWidget : public UUserWidget
+class UHLDEBUG_API UDebugCategoryButtonWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

@@ -7,7 +7,7 @@
 
 // TODO force activation with "MMB" click
 UCLASS(Abstract, Blueprintable)
-class UHLDEBUGSYSTEM_API UUHLDebugCategoryComponent : public UObject
+class UHLDEBUG_API UUHLDebugCategoryComponent : public UObject
 {
     GENERATED_BODY()
 

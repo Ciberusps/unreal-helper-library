@@ -8,7 +8,7 @@
 #include "UHLDebugBlueprintLibrary.generated.h"
 
 UCLASS()
-class UHLDEBUGSYSTEM_API UUHLDebugBlueprintLibrary : public UBlueprintFunctionLibrary
+class UHLDEBUG_API UUHLDebugBlueprintLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

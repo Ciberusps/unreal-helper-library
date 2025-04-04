@@ -27,7 +27,7 @@
 			]
 		},
 		{
-			"Name": "UHLDebugSystem",
+			"Name": "UHLDebug",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [

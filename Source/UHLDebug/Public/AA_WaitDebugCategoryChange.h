@@ -10,7 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitDebugCategoryChanged, bool, bEnabled);
 
 UCLASS(BlueprintType, meta=(ExposedAsyncProxy = AsyncAction))
-class UHLDEBUGSYSTEM_API UAA_WaitDebugCategoryChange : public UBlueprintAsyncActionBase
+class UHLDEBUG_API UAA_WaitDebugCategoryChange : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 

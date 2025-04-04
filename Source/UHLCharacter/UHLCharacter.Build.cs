@@ -41,7 +41,7 @@ public class UHLCharacter : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"UnrealHelperLibrary",
-				"UHLDebugSystem",
+				"UHLDebug",
 			}
 			);
 

@@ -10,7 +10,7 @@
  *
  */
 UCLASS()
-class UHLDEBUGSYSTEM_API UDCC_AbilitySystem_Effects : public UUHLDebugCategoryComponent
+class UHLDEBUG_API UDCC_AbilitySystem_Effects : public UUHLDebugCategoryComponent
 {
 	GENERATED_BODY()
 

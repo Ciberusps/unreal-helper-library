@@ -15,7 +15,7 @@ class UTextBlock;
  *
  */
 UCLASS()
-class UHLDEBUGSYSTEM_API UUHLDebugWidget : public UUserWidget
+class UHLDEBUG_API UUHLDebugWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
