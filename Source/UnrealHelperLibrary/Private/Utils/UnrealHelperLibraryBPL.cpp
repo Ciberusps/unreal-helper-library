@@ -36,7 +36,6 @@
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/HUD.h"
-#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 #include "UI/UHLHUD.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
@@ -1016,17 +1015,4 @@ FLinearColor UUnrealHelperLibraryBPL::RandomLinearColor(int32 Seed)
 		return FLinearColor::MakeRandomSeededColor(Seed);
 	}
 	return FLinearColor::MakeRandomColor();
-}
-
-bool UUnrealHelperLibraryBPL::IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag)
-{
-	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	if (!IsValid(GameInstance))
-		return false;
-
-	UUHLDebugSubsystem* UHLDebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSubsystem>();
-	if (!IsValid(UHLDebugSubsystem))
-		return false;
-
-	return UHLDebugSubsystem->IsCategoryEnabled(DebugCategoryGameplayTag);
 }

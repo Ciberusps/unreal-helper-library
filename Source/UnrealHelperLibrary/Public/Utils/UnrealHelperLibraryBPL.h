@@ -300,10 +300,4 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Colors", meta = (Keywords = "UnrealHelperLibrary color random", AdvancedDisplay = "Seed"))
 	static FLinearColor RandomLinearColor(int32 Seed = -1);
 	/** ~Colors **/
-
-	/** DebugSubsystem **/
-	UFUNCTION(
-		BlueprintPure, Category = "UnrealHelperLibrary|Debug", meta = (Categories = "UHL.DebugCategory,DebugCategory", WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug"))
-	static bool IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag);
-	/** ~DebugSubsystem **/
 };
