@@ -23,6 +23,7 @@ UAT_InterpolateToPosition::UAT_InterpolateToPosition(const FObjectInitializer& O
 }
 
 UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(
+	FHitResult& OutHit,
     UGameplayAbility* OwningAbility,
     const FName TaskInstanceName,
     FVector Location,
@@ -47,7 +48,6 @@ UAT_InterpolateToPosition* UAT_InterpolateToPosition::InterpolateToPosition(
 
     if (!bIsIgnoreHit)
     {
-    	FHitResult OutHit {};
     	bool bBlockingHit = false;
     	if (bUseCapsuleTrace)
     	{

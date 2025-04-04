@@ -23,6 +23,7 @@ public:
 	/** Move to the specified location, using the vector curve (range 0 - 1) if specified, otherwise the float curve (range 0 - 1) or fallback to linear interpolation */
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
 	static UAT_InterpolateToPosition* InterpolateToPosition(
+		FHitResult& OutHit,
 	    UGameplayAbility* OwningAbility,
 	    FName TaskInstanceName,
 	    FVector Location,
