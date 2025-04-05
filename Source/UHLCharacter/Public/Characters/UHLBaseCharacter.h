@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/UHLActorSettings.h"
+#include "Core/UHLAIActorSettings.h"
 #include "GameFramework/Character.h"
 #include "UHLBaseCharacter.generated.h"
 
@@ -14,7 +14,7 @@
  */
 UCLASS()
 class UHLCHARACTER_API AUHLBaseCharacter : public ACharacter,
-	public IUHLActorSettings
+	public IUHLAIActorSettings
 {
 	GENERATED_BODY()
 

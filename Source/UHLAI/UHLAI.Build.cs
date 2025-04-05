@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UHLCharacter : ModuleRules
+public class UHLAI : ModuleRules
 {
-	public UHLCharacter(ReadOnlyTargetRules Target) : base(Target)
+	public UHLAI(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -26,11 +26,14 @@ public class UHLCharacter : ModuleRules
 			new string[]
 			{
 				"Core",
-				// ... add other public dependencies that you statically link with here ...
+				
 				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
-				"EnhancedInput", 
+
+				"AIModule", 
+
+				// ... add other public dependencies that you statically link with here ...
 			}
 			);
 
@@ -40,10 +43,11 @@ public class UHLCharacter : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-
+				
+				// TODO: probably should be removed
 				"UnrealHelperLibrary",
-				"UHLDebug",
-				"UHLAI",
+				
+				"AnimGraphRuntime",
 			}
 			);
 

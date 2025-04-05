@@ -27,6 +27,14 @@
 			]
 		},
 		{
+			"Name": "UHLAI",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
 			"Name": "UHLDebug",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
