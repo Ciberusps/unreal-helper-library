@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UHLDebug : ModuleRules
+public class UHLModulesHelper : ModuleRules
 {
-	public UHLDebug(ReadOnlyTargetRules Target) : base(Target)
+	public UHLModulesHelper(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -27,10 +27,6 @@ public class UHLDebug : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
-				"GameplayAbilities",
-				"GameplayTags",
-				"GameplayTasks",
-				"EnhancedInput",
 			}
 			);
 
@@ -40,17 +36,6 @@ public class UHLDebug : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-				"Slate",
-				"SlateCore",
-				"UMG",
-				"AnimGraphRuntime",
-				"DeveloperSettings", 
-				
-				// TODO check that we should depend on UHL
-				"UnrealHelperLibrary",
-				
-				"UHLModulesHelper",
-				// ... add private dependencies that you statically link with here ...
 			}
 			);
 

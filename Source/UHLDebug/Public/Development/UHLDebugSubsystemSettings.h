@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Misc/App.h"
-#include "Engine/DeveloperSettingsBackedByCVars.h"
 #include "UHLDebugSubsystem.h"
 #include "UHLDebugSubsystemSettings.generated.h"
 
@@ -13,7 +12,7 @@
  *
  */
 UCLASS(config="Game", defaultconfig, PrioritizeCategories="DebugCategories")
-class UHLDEBUG_API UUHLDebugSubsystemSettings : public UDeveloperSettingsBackedByCVars
+class UHLDEBUG_API UUHLDebugSubsystemSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
@@ -27,6 +26,9 @@ public:
 
     UPROPERTY(config, EditAnywhere, Category="DebugCategoriesSettings", meta=(TitleProperty="Name", NoElementDuplicate))
     TArray<FUHLDebugCategory> DebugCategories = {};
+
+	UPROPERTY(config)
+	bool bMigrationFromOldSettingsDone = false;
 
     // TODO: choosing debug subsystem class??? user can extend debug subsystem with own things?
     // TSubclassOf<UUHLDebugSubsystem> UHLDebugSubsystemClass;
@@ -50,4 +52,6 @@ private:
     void RecreateEnabledDebugCategoriesList();
     void UpdateEnabledDebugCategoriesList();
     void UpdateDefaultUHLDebugCategories();
+
+	
 };

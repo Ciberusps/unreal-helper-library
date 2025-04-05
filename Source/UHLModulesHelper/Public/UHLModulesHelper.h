@@ -5,13 +5,10 @@
 #include "Modules/ModuleManager.h"
 
 
-class FUHLDebugModule final : public IModuleInterface
+class FUHLModulesHelperModule : public IModuleInterface
 {
 public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
-
-private:
-	void MigrateOldSettingsFromMainModule();
 };
