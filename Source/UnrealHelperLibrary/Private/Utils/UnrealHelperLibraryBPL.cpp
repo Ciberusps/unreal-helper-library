@@ -2,9 +2,6 @@
 
 #include "Utils/UnrealHelperLibraryBPL.h"
 
-#include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "GameplayTagsManager.h"
 #include "KismetAnimationLibrary.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
@@ -28,35 +25,16 @@
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
 #include "NavigationSystem.h"
-#include "Core/UHLAbilitySystemInterface.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Widget.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
-#include "GameFramework/HUD.h"
 #include "UI/UHLHUD.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
 
 static const int32 DEPTH_PRIORITY = -1;
-
-UUHLAbilitySystemComponent* UUnrealHelperLibraryBPL::GetUHLAbilitySystemComponent(AActor* Actor)
-{
-	if (Actor == nullptr)
-	{
-		return nullptr;
-	}
-
-	const IUHLAbilitySystemInterface* ASI = Cast<IUHLAbilitySystemInterface>(Actor);
-	if (ASI)
-	{
-		return IUHLAbilitySystemInterface::Execute_GetUHLAbilitySystemComponent(Actor);
-	}
-
-	return Actor->FindComponentByClass<UUHLAbilitySystemComponent>();
-}
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {
@@ -109,157 +87,6 @@ float UUnrealHelperLibraryBPL::GetAnimMontageSectionLengthByName(UAnimMontage* A
 	Result = AnimMontage->GetSectionLength(SectionIdx);
 
 	return Result;
-}
-
-FGameplayEffectSpec UUnrealHelperLibraryBPL::CreateGenericGASGameplayEffectSpec(
-	TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser, const FHitResult& HitResult, const UObject* SourceObject)
-{
-	const UGameplayEffect* GameplayEffect = GameplayEffectClass->GetDefaultObject<UGameplayEffect>();
-	FGameplayEffectContext* GameplayEffectContext = new FGameplayEffectContext(HitInstigator, InEffectCauser);
-	FGameplayEffectContextHandle GameplayEffectContextHandle(GameplayEffectContext);
-	GameplayEffectContextHandle.AddHitResult(HitResult);
-	GameplayEffectContextHandle.AddSourceObject(SourceObject);
-	FGameplayEffectSpec GameplayEffectSpec(GameplayEffect, GameplayEffectContextHandle);
-	return GameplayEffectSpec;
-}
-
-void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag)
-{
-	if (!ASC)
-		return;
-
-	if (bCondition)
-	{
-		if (!ASC->HasMatchingGameplayTag(PositiveConditionTag))
-		{
-			ASC->AddLooseGameplayTag(PositiveConditionTag);
-		}
-		if (NegativeConditionTag != FGameplayTag::EmptyTag)
-		{
-			ASC->RemoveLooseGameplayTag(NegativeConditionTag, 999999);
-		}
-	}
-	else
-	{
-		if (NegativeConditionTag == FGameplayTag::EmptyTag)
-		{
-			ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
-		}
-		else
-		{
-			if (!ASC->HasMatchingGameplayTag(NegativeConditionTag))
-			{
-				ASC->AddLooseGameplayTag(NegativeConditionTag);
-			}
-			ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
-		}
-	}
-}
-
-bool UUnrealHelperLibraryBPL::IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
-{
-	if (!IsValid(ASC)) return false;
-
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
-	ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToActivate, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToActivate)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			bResult |= Ability->IsActive();
-		}
-	}
-	return bResult;
-}
-
-bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
-{
-	if (!IsValid(ASC)) return false;
-	return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
-}
-
-bool UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
-{
-	if (!IsValid(ASC))
-		return false;
-
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToCancel;
-	ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToCancel, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToCancel)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			if (Ability->IsActive())
-			{
-				Ability->K2_CancelAbility();
-				bResult = true;
-			}
-		}
-	}
-	return bResult;
-}
-
-bool UUnrealHelperLibraryBPL::ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
-{
-	if (!IsValid(ASC)) return false; 
-
-	bool bResult = false;
-	
-	if (IsAbilityActiveByTag(ASC, GameplayTag))
-	{
-		bResult = TryCancelAbilityWithTag(ASC, GameplayTag);
-	}
-	else
-	{
-		bResult = TryActivateAbilityWithTag(ASC, GameplayTag, bAllowRemoteActivation);
-	}
-
-	return bResult;
-}
-
-TArray<bool> UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags)
-{
-	if (!IsValid(ASC))
-		return {};
-
-	TArray<bool> Result;
-	for (auto GameplayTag : GameplayTags)
-	{
-		Result.Add(TryCancelAbilityWithTag(ASC, GameplayTag));
-	}
-	return Result;
-}
-
-int32 UUnrealHelperLibraryBPL::FireGameplayEvent(UAbilitySystemComponent* ASC, FGameplayTag EventTag, const FGameplayEventData& Payload) { return ASC->HandleGameplayEvent(EventTag, &Payload); }
-
-FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, bool bMatchPartialString)
-{
-	const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
-	FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
-
-	if (!Tag.IsValid() && bMatchPartialString)
-	{
-		FGameplayTagContainer AllTags;
-		Manager.RequestAllGameplayTags(AllTags, true);
-
-		for (const FGameplayTag& TestTag : AllTags)
-		{
-			if (TestTag.ToString().Contains(TagString))
-			{
-				// UE_LOG(LogUnrealHelperLibrary, Display, TEXT("Could not find exact match for tag [%s] but found partial match on tag [%s]."), *TagString, *TestTag.ToString());
-				Tag = TestTag;
-				break;
-			}
-		}
-	}
-
-	return Tag;
 }
 
 EUHLDirection UUnrealHelperLibraryBPL::GetOppositeDirection(EUHLDirection Direction_In)

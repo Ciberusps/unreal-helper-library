@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
+#include "UHLAbilitySystemComponent.h"
 #include "Characters/UHLBaseCharacter.h"
 #include "Core/UHLAbilitySystemInterface.h"
 #include "UHLBaseCharacterWithASC.generated.h"

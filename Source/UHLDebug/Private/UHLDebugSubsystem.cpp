@@ -5,7 +5,6 @@
 
 #include "GameFramework/Pawn.h"
 #include "AbilitySystemInterface.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Core/UHLGameplayTags.h"
 #include "Development/UHLDebugSubsystemSettings.h"

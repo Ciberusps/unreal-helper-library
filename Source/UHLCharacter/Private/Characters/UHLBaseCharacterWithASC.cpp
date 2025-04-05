@@ -4,8 +4,8 @@
 #include "Characters/UHLBaseCharacterWithASC.h"
 
 #include "GameFramework/Controller.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
-#include "AbilitySystem/AttributeSets/UHLBaseCharacterAttributeSet.h"
+#include "UHLAbilitySystemComponent.h"
+#include "AttributeSets/UHLBaseCharacterAttributeSet.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLBaseCharacterWithASC)
 

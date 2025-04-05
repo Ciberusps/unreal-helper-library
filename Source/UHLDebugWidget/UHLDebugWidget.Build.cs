@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UHLCharacter : ModuleRules
+public class UHLDebugWidget : ModuleRules
 {
-	public UHLCharacter(ReadOnlyTargetRules Target) : base(Target)
+	public UHLDebugWidget(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -43,7 +43,6 @@ public class UHLCharacter : ModuleRules
 
 				"UnrealHelperLibrary",
 				"UHLDebug",
-				"UHLAI",
 				"UHLGAS",
 			}
 			);

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UHLCharacter : ModuleRules
+public class UHLGAS : ModuleRules
 {
-	public UHLCharacter(ReadOnlyTargetRules Target) : base(Target)
+	public UHLGAS(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -30,7 +30,7 @@ public class UHLCharacter : ModuleRules
 				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
-				"EnhancedInput",  
+				"EnhancedInput", 
 			}
 			);
 
@@ -40,11 +40,12 @@ public class UHLCharacter : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
+				
+				"DeveloperSettings",
 
 				"UnrealHelperLibrary",
 				"UHLDebug",
 				"UHLAI",
-				"UHLGAS",
 			}
 			);
 

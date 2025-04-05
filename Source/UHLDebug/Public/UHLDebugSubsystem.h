@@ -9,7 +9,6 @@
 #include "UHLDebugSubsystem.generated.h"
 
 
-class UUHLAbilitySystemComponent;
 class UUHLDebugWidget;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUHLDebugCategoryChanged, FGameplayTag, DebugCategoryTag, bool, bEnabled);
 
