@@ -46,7 +46,11 @@ public class UHLDebug : ModuleRules
 				"AnimGraphRuntime",
 				"DeveloperSettings", 
 				
-				// TODO check that we should depend on UHL
+				// Should not use any other UHL modules
+				
+				// TODO remove if possible used only for DebugPrints
+				// what if UHL debugging functions should be here in this module
+				// or in separate module UHLDebugLibrary?
 				"UnrealHelperLibrary",
 				
 				"UHLModulesHelper",
