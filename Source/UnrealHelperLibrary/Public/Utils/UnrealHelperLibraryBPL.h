@@ -2,14 +2,11 @@
 
 #pragma once
 
-#include "GameplayEffect.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/UHLHUD.h"
-#include "Core/UHLAbilitySystemInterface.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
 class UWidget;
@@ -44,10 +41,6 @@ class UNREALHELPERLIBRARY_API UUnrealHelperLibraryBPL : public UBlueprintFunctio
 	GENERATED_BODY()
 
 public:
-	/** Tries to find an ability system component on the actor, will use AbilitySystemInterface or fall back to a component search */
-	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", Meta=(DefaultToSelf = "Actor"))
-	static UUHLAbilitySystemComponent* GetUHLAbilitySystemComponent(AActor* Actor);
-	
 	// UFUNCTION(BlueprintCallable, meta = (Keywords = "UnrealHelperLibrary sample test testing"), Category = "UnrealHelperLibraryTesting")
 	// static float UnrealHelperLibraryRandomWeight(TMap<FString, >);
 
@@ -123,43 +116,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Animations", meta = (Keywords = "UnrealHelperLibrary anim montage"))
 	static float GetAnimMontageSectionLengthByName(UAnimMontage* AnimMontage, FName SectionName = NAME_None);
 	/** ~Anims **/
-
-	/** GAS **/
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary debug GAS Development"))
-	static FGameplayEffectSpec CreateGenericGASGameplayEffectSpec(
-		TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser, const FHitResult& HitResult, const UObject* SourceObject);
-	/**
-	*   UUnrealHelperLibraryBPL::UpdateStateGameplayTags(ASC, GetMovementComponent()->Velocity.Length() > 0,
-			UHLGameplayTags::TAG_Character_State_IsMoving,
-			UHLGameplayTags::TAG_Character_State_IsIdling);
-		bCondition = true ? TAG_Character_State_IsMoving : TAG_Character_State_IsIdling
-
-		UUnrealHelperLibraryBPL::UpdateStateGameplayTags(ASC, CharacterMovementVector.Length() > 0.4f,
-			UHLGameplayTags::TAG_Character_State_HasMoveInput,
-			FGameplayTag::EmptyTag);
-		bCondition = true ? TAG_Character_State_HasMoveInput : NONE
-	 */
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
-
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static bool IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static bool TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static bool TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static bool ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation);
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static TArray<bool> TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags);
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability event fire"))
-	static int32 FireGameplayEvent(UAbilitySystemComponent* ASC, FGameplayTag EventTag, const FGameplayEventData& Payload);
-
-	// "FGameplayTag::RequestGameplayTag()" crashes build on start, use this to find tag
-	// function from Lyra
-	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary gameplaytag tag"))
-	static FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
-	/** ~GAS **/
 
 	/** Angles **/
 	/**
@@ -300,10 +256,4 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Colors", meta = (Keywords = "UnrealHelperLibrary color random", AdvancedDisplay = "Seed"))
 	static FLinearColor RandomLinearColor(int32 Seed = -1);
 	/** ~Colors **/
-
-	/** DebugSubsystem **/
-	UFUNCTION(
-		BlueprintPure, Category = "UnrealHelperLibrary|Debug", meta = (Categories = "UHL.DebugCategory,DebugCategory", WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary debug"))
-	static bool IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag);
-	/** ~DebugSubsystem **/
 };

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/UHLAbilitySystemConfig.h"
 #include "Engine/DeveloperSettings.h"
 #include "Subsystems/EnemyTickManager/EnemyTickOptimizerSubsystem.h"
 #include "UHLSettings.generated.h"
@@ -17,12 +16,6 @@ class UNREALHELPERLIBRARY_API UUHLSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(config, EditAnywhere, Category="Ability System Defaults")
-	FUHLAbilitySystemSettings AbilitySystemConfigDefaults = {};
-
-	UPROPERTY(config, EditAnywhere, Category="Ability System Defaults")
-	bool bUseAbilitySystemConfigDefaultsInASC = true;
-
 	UPROPERTY(config, EditAnywhere, Category="EnemyTickOptimizerSubsystemSettings")
 	FEnemyTickOptimizerSubsystemSettings EnemyTickOptimizerSubsystemSettings;
 	
