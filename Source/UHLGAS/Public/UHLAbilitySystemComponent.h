@@ -58,9 +58,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UHL AbilitySystemComponent", meta=(EditCondition="bGiveInitialGameplayTags"))
 	FGameplayTagContainer InitialGameplayTags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL AbilitySystemComponent", AdvancedDisplay, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL AbilitySystemComponent",  meta=(InlineEditConditionToggle))
 	bool bGiveAbilitySetsOnStart = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UHL AbilitySystemComponent", AdvancedDisplay, meta=(EditCondition="bGiveAbilitySetsOnStart"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UHL AbilitySystemComponent", meta=(EditCondition="bGiveAbilitySetsOnStart"))
 	TArray<UUHLAbilitySet*> AbilitySets = {};
 
 	UPROPERTY(EditAnywhere, Transient, BlueprintReadWrite, Category="UHL AbilitySystemComponent", AdvancedDisplay, meta=(InlineEditConditionToggle))

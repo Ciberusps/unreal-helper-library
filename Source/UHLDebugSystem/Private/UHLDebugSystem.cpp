@@ -28,7 +28,7 @@ void FUHLDebugSystemModule::MigrateOldSettingsFromMainModule()
 {
 	UHLConfigMigrationUtils::MigrateConfigSectionIfNeeded(
 		TEXT("/Script/UnrealHelperLibrary.UHLDebugSubsystemSettings"),
-		TEXT("/Script/UHLDebugSystem.UHLDebugSystemSubsystemSettings"),
+		TEXT("/Script/UHLDebugSystem.UHLDebugSystemSettings"),
 		TEXT("bMigrationFromOldSettingsDone"),
 		GGameIni,
 		GGameIni
