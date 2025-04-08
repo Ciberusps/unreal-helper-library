@@ -43,7 +43,7 @@
 			]
 		},
 		{
-			"Name": "UHLDebug",
+			"Name": "UHLDebugSystem",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [
@@ -51,7 +51,7 @@
 			]
 		},
 		{
-			"Name": "UHLDebugUI",
+			"Name": "UHLDebug",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [

@@ -2,6 +2,9 @@
 
 using UnrealBuildTool;
 
+// Module that helps debugging UnrealHelperLibrary and can depend on all other modules
+// Don't mess with UHLDebugSystem - that completely independent system from UHL
+// and probably should be other plugin 
 public class UHLDebug : ModuleRules
 {
 	public UHLDebug(ReadOnlyTargetRules Target) : base(Target)
@@ -30,7 +33,7 @@ public class UHLDebug : ModuleRules
 				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
-				"EnhancedInput",
+				"EnhancedInput",  
 			}
 			);
 
@@ -40,21 +43,15 @@ public class UHLDebug : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
+				
 				"Slate",
 				"SlateCore",
 				"UMG",
-				"AnimGraphRuntime",
-				"DeveloperSettings", 
-				
-				// Should not use any other UHL modules
-				
-				// TODO remove if possible used only for DebugPrints
-				// what if UHL debugging functions should be here in this module
-				// or in separate module UHLDebugLibrary?
+				"DeveloperSettings",
+
 				"UnrealHelperLibrary",
-				
-				"UHLModulesHelper",
-				// ... add private dependencies that you statically link with here ...
+				"UHLDebugSystem",
+				"UHLGAS",
 			}
 			);
 
