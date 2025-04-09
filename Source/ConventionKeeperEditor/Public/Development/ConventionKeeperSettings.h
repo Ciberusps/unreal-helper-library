@@ -25,7 +25,7 @@
 /**
  *
  */
-UCLASS(Config="Editor", DefaultConfig, meta = (DisplayName="ConventionKeeper Settings"))
+UCLASS(Config="Editor", DefaultConfig, meta = (DisplayName="ConventionKeeper"))
 class CONVENTIONKEEPEREDITOR_API UConventionKeeperSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
@@ -34,9 +34,13 @@ public:
 	UPROPERTY(Config, EditAnywhere)
 	TSubclassOf<UConvention> Convention = UUHLConvention::StaticClass();
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, meta=(RelativePath))
 	TArray<FString> ExceptionFolders = {
 		"MyCustomFOlder2323",
 		"RetardedFolderForMyDrawings1337",
 	};
+
+	//~UDeveloperSettings interface
+	virtual FName GetCategoryName() const override { return FApp::GetProjectName(); };
+	//~End of UDeveloperSettings interface
 };

@@ -10,4 +10,11 @@ UUHLConvention::UUHLConvention()
 {
 	Name = "UHL Convention";
 	NamingConvention = UPascalCaseNamingConvention::StaticClass();
+
+	FFolderStructure FolderStructure = {};
+	FolderStructure.FolderPath = FDirectoryPath("/Game");
+	FolderStructure.RequiredFolders.Add(FDirectoryPath("/Game/3rdParty"));
+	FolderStructure.RequiredFolders.Add(FDirectoryPath("/Game/{ProjectName}"));
+	FolderStructure.RequiredFolders.Add(FDirectoryPath("/Game/Bogatyr"));
+	FolderStructures.Add(FolderStructure);
 }

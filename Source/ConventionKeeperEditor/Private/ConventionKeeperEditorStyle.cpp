@@ -31,7 +31,7 @@ void FConventionKeeperEditorStyle::Shutdown()
 
 FName FConventionKeeperEditorStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("UnrealHelperEditorStyle"));
+	static FName StyleSetName(TEXT("ConventionKeeperEditorStyle"));
 	return StyleSetName;
 }
 
@@ -41,7 +41,7 @@ const FVector2D Icon20x20(20.0f, 20.0f);
 
 TSharedRef< FSlateStyleSet > FConventionKeeperEditorStyle::Create()
 {
-    TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("UnrealHelperEditorStyle"));
+    TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("ConventionKeeperEditorStyle"));
     Style->SetContentRoot(IPluginManager::Get().FindPlugin("UnrealHelperLibrary")->GetBaseDir() / TEXT("Resources"));
     // Style->SetContentRoot(FPaths::ProjectContentDir());
 
@@ -74,7 +74,7 @@ TSharedRef< FSlateStyleSet > FConventionKeeperEditorStyle::Create()
     //     }
     // }
 
-    Style->Set("UnrealHelperEditor.PluginAction", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
+    Style->Set("ConventionKeeperEditor.PluginAction", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
     return Style;
 }
 

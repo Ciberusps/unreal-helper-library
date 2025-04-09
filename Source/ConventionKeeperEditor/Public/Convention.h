@@ -13,13 +13,10 @@ struct FFolderStructure
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString FolderPath = "";
+	FDirectoryPath FolderPath = {};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FString> RequiredFolders = {
-		"3rdParty",
-		"{ProjectName}",
-	};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(RelativePath))
+	TArray<FDirectoryPath> RequiredFolders = {};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bOtherFoldersNotAllowed = true;
@@ -34,6 +31,9 @@ class CONVENTIONKEEPEREDITOR_API UConvention : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Name = "";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FFolderStructure> FolderStructures = {};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UNamingConvention> NamingConvention;

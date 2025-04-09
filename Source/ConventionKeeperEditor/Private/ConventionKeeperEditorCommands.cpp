@@ -6,7 +6,7 @@
 
 void FConventionKeeperEditorCommands::RegisterCommands()
 {
-	UI_COMMAND(PluginAction, "UnrealHelperEditor", "Execute UnrealHelperEditor action", EUserInterfaceActionType::Button, FInputChord());
+	UI_COMMAND(PluginAction, "ConventionKeeper", "Execute ConventionKeeper action", EUserInterfaceActionType::Button, FInputChord());
 }
 
 #undef LOCTEXT_NAMESPACE

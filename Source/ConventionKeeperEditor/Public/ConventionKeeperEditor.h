@@ -23,6 +23,7 @@ private:
 
 	void RegisterMenus();
 
+	bool CheckAssetPathExists(const FString& PackagePath);
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;

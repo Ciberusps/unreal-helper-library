@@ -5,6 +5,8 @@
 #include "ConventionKeeperEditorCommands.h"
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Development/ConventionKeeperSettings.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
 static const FName ConventionKeeperEditorTabName("ConventionKeeperEditor");
@@ -34,6 +36,7 @@ void FConventionKeeperEditorModule::StartupModule()
 	// Register the details customizer
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.NotifyCustomizationModuleChanged();
+
 }
 
 void FConventionKeeperEditorModule::ShutdownModule()
@@ -60,13 +63,53 @@ void FConventionKeeperEditorModule::ShutdownModule()
 
 void FConventionKeeperEditorModule::PluginButtonClicked()
 {
-	// Put your "OnButtonClicked" stuff here
-	FText DialogText = FText::Format(
-							LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
-							FText::FromString(TEXT("FConventionKeeperEditorModule::PluginButtonClicked()")),
-							FText::FromString(TEXT("UnrealHelperEditor.cpp"))
-					   );
-	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+	const UConventionKeeperSettings* ConventionKeeperSettings = GetDefault<UConventionKeeperSettings>();
+
+	FMessageLog MyMessageLog = FMessageLog(TEXT("ConventionKeeperLog"));
+	MyMessageLog.NewPage(FText::FromString("Starting a new logging session..."));
+
+	UConvention* Convention = ConventionKeeperSettings->Convention.GetDefaultObject();
+	for (FFolderStructure FolderStructure : Convention->FolderStructures)
+	{
+		// bool bExists = CheckAssetPathExists(TEXT("/Game/Bogatyr"));
+		bool bExists = CheckAssetPathExists(FolderStructure.FolderPath.Path);
+		MyMessageLog.Info(FText::Format(LOCTEXT("ConventionKeeperEditor","Path {0} exists? {1}"), FText::FromString(FolderStructure.FolderPath.Path), bExists));
+		for (FDirectoryPath RequiredFolder : FolderStructure.RequiredFolders)
+		{
+			bool bRequiredFOlderExists = CheckAssetPathExists(RequiredFolder.Path);
+			MyMessageLog.Info(FText::Format(LOCTEXT("ConventionKeeperEditor","Path {0} exists? {1}"), FText::FromString(RequiredFolder.Path), bRequiredFOlderExists));
+		}
+	}
+
+	MyMessageLog.Open();
+	// FText DialogText = FText::Format(
+	// 						LOCTEXT("PluginButtonDialogText", "Path exists {0}"),
+	// 						bExists);
+	// FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+}
+
+bool FConventionKeeperEditorModule::CheckAssetPathExists(const FString& PackagePath)
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+	FARFilter Filter;
+	Filter.PackagePaths.Add(*PackagePath);
+	Filter.bRecursivePaths = false; // or true if you want subfolders too
+
+	TArray<FAssetData> AssetData;
+	AssetRegistry.GetAssets(Filter, AssetData);
+
+	if (AssetData.Num() > 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Assets found in: %s"), *PackagePath);
+		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No assets found in: %s"), *PackagePath);
+		return false;
+	}
 }
 
 void FConventionKeeperEditorModule::RegisterMenus()
