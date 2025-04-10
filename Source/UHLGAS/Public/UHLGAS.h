@@ -4,6 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 
+UHLGAS_API DECLARE_LOG_CATEGORY_EXTERN(LogUHLAbilitySystem, Log, All);
 
 class FUHLGASModule : public IModuleInterface
 {

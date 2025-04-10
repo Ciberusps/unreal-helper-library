@@ -8,9 +8,8 @@
 #define LOCTEXT_NAMESPACE "FUnrealHelperLibraryModule"
 
 DEFINE_LOG_CATEGORY(LogUnrealHelperLibrary);
-DEFINE_LOG_CATEGORY(LogUHLAbilitySystem);
 
-void FUHLDebugModule::StartupModule()
+void FUnrealHelperLibraryModule::StartupModule()
 {
 	UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
@@ -87,7 +86,7 @@ void FUHLDebugModule::StartupModule()
 	// }
 }
 
-void FUHLDebugModule::ShutdownModule()
+void FUnrealHelperLibraryModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -95,4 +94,4 @@ void FUHLDebugModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FUHLDebugModule, UnrealHelperLibrary)
+IMPLEMENT_MODULE(FUnrealHelperLibraryModule, UnrealHelperLibrary)
