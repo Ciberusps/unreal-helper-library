@@ -1,6 +1,6 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
-#include "UHEValueOrBBKeyDetails.h"
+#include "UHLEditorValueOrBBKeyDetails.h"
 
 #include "GameplayTagContainer.h"
 #include "IDetailChildrenBuilder.h"

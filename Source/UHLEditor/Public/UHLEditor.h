@@ -8,7 +8,7 @@
 class FToolBarBuilder;
 class FMenuBuilder;
 
-class FUnrealHelperEditorModule : public IModuleInterface
+class FUHLEditorModule : public IModuleInterface
 {
 public:
 

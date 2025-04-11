@@ -67,7 +67,7 @@
 			]
 		},
 		{
-			"Name": "UnrealHelperEditor",
+			"Name": "UHLEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit",
 			"PlatformAllowList": [

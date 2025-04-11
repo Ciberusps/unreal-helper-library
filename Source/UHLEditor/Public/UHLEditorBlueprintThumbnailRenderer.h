@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "ThumbnailRendering/BlueprintThumbnailRenderer.h"
-#include "UHEBlueprintThumbnailRenderer.generated.h"
+#include "UHLEditorBlueprintThumbnailRenderer.generated.h"
 
 /**
  *
  */
 UCLASS()
-class UNREALHELPEREDITOR_API UUHEBlueprintThumbnailRenderer : public UBlueprintThumbnailRenderer
+class UHLEDITOR_API UUHLEditorBlueprintThumbnailRenderer : public UBlueprintThumbnailRenderer
 {
     GENERATED_BODY()
 protected:
 
-    UUHEBlueprintThumbnailRenderer(const FObjectInitializer& ObjectInitializer)
+    UUHLEditorBlueprintThumbnailRenderer(const FObjectInitializer& ObjectInitializer)
         : Super(ObjectInitializer)
     {}
 

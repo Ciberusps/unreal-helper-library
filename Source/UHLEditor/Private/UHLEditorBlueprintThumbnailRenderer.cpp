@@ -1,16 +1,16 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
 
-#include "UHEBlueprintThumbnailRenderer.h"
+#include "UHLEditorBlueprintThumbnailRenderer.h"
 
 #include "CanvasItem.h"
 #include "CanvasTypes.h"
-#include "UHECustomThumbnail.h"
+#include "UHLEditorCustomThumbnail.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(UHEBlueprintThumbnailRenderer)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UHLEditorBlueprintThumbnailRenderer)
 
-void UUHEBlueprintThumbnailRenderer::GetThumbnailSize(UObject* Object, float Zoom, uint32& OutWidth, uint32& OutHeight) const
+void UUHLEditorBlueprintThumbnailRenderer::GetThumbnailSize(UObject* Object, float Zoom, uint32& OutWidth, uint32& OutHeight) const
 {
     UBlueprint* Blueprint = Cast<UBlueprint>(Object);
 
@@ -25,7 +25,7 @@ void UUHEBlueprintThumbnailRenderer::GetThumbnailSize(UObject* Object, float Zoo
     Super::GetThumbnailSize(Object, Zoom, OutWidth, OutHeight);
 }
 
-void UUHEBlueprintThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* RenderTarget, FCanvas* Canvas, bool bAdditionalViewFamily)
+void UUHLEditorBlueprintThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* RenderTarget, FCanvas* Canvas, bool bAdditionalViewFamily)
 {
     UBlueprint* Blueprint = Cast<UBlueprint>(Object);
     if (Blueprint)
@@ -72,7 +72,7 @@ void UUHEBlueprintThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uin
     Super::Draw(Object, X, Y, Width, Height, RenderTarget, Canvas, bAdditionalViewFamily);
 }
 
-bool UUHEBlueprintThumbnailRenderer::CanVisualizeAsset(UObject* Object)
+bool UUHLEditorBlueprintThumbnailRenderer::CanVisualizeAsset(UObject* Object)
 {
     UBlueprint* Blueprint = Cast<UBlueprint>(Object);
 
@@ -83,15 +83,15 @@ bool UUHEBlueprintThumbnailRenderer::CanVisualizeAsset(UObject* Object)
     return Super::CanVisualizeAsset(Object);
 }
 
-UTexture2D* UUHEBlueprintThumbnailRenderer::GetTextureFromGeneratedClass(UClass* Class) const
+UTexture2D* UUHLEditorBlueprintThumbnailRenderer::GetTextureFromGeneratedClass(UClass* Class) const
 {
     if (Class)
     {
-        if (Class->ImplementsInterface(UUHECustomThumbnail::StaticClass()))
+        if (Class->ImplementsInterface(UUHLEditorCustomThumbnail::StaticClass()))
         {
             if (UObject* CDO = Class->GetDefaultObject())
             {
-                IUHECustomThumbnail* CustomThumbnailInterface = Cast<IUHECustomThumbnail>(CDO);
+                IUHLEditorCustomThumbnail* CustomThumbnailInterface = Cast<IUHLEditorCustomThumbnail>(CDO);
                 if (CustomThumbnailInterface)
                 {
                     return CustomThumbnailInterface->Execute_GetCustomThumbnailIcon(CDO);

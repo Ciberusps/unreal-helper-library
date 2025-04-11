@@ -14,7 +14,27 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 
 ![AiModule](https://github.com/user-attachments/assets/4becb592-c02e-423a-bf80-fcfc629ce518)
 
-## Install
+## ✨ Features
+
+- AI nodes
+  - `GameplayFocus` - set focus on actor
+  - `RandomChance` - randomize actions
+  - `InRange` - check distance to enemy
+  - `InAngle` - check angle to enemy
+  - `PlayAnimMontage` - play attack animation
+  - `SetBBValue` - set blackboard value
+  - `DebugPrintBBValue` - print blackboard value
+  - `DebugPrintString` - print string on screen
+  - `InvokeGameplayAbility` - activate/deactivate GAS Gameplay Ability by tag, with optional "wait for finishing"
+  - `TurnTo` - turn enemy using turn animations
+- GAS - Lyra based inputs, ability system component, ability system config, input cache, attribute set, ability sets
+- **GAS** strong Lyra based toolset for quick start with GAS and scalable for big projects
+- GAS abilities input binding using tags based on Lyra and enhanced with real project needs
+- GameplayTags based **DebugSystem**
+- Utils - utility functions for your game, e.g. `GetProjectVersion`, `GetAssetsOfClass`, `GetHighestPoint`
+- Editor - editor customization, e.g. `Custom thumnails`, `Custom class icon`
+
+## 🚀 Install
 
 #### From source (recommended):
 
@@ -26,12 +46,6 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 
 - <details>
   <summary>C++ setup, old engine versions</summary>
-  
-  - to use specific engine version specify branch e.g. `-b UE5.4`
-
-    ```bash
-    git submodule add -b UE5.4 https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
-    ```
 
   - to use C++ things add code to file `<ProjectName>.Build.cs`
 
@@ -51,6 +65,12 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
           }
       }
   ```
+  
+  - to use specific engine version specify branch e.g. `-b UE5.4`
+
+    ```bash
+    git submodule add -b UE5.4 https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
+    ```
 
   > [!NOTE]
   > Don't forget to update your `README.md` with instructions on how to setup - `git submodule update --init --recursive` and how to update submodules/plugin(s) - `git submodule update --remote`
@@ -62,15 +82,15 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 
 #### From marketplace:
 
-early 2025 on **FAB**
+https://www.fab.com/listings/9f7d82e9-bc72-42ff-b302-b3d6562bd4c8
 
-## Update
+## ⬆️ Update
 
 From source:
 
 - `git submodule update --remote` to update plugin from source
 
-## Modules
+## 🧩 Modules
 
 UHL consists of 3 modules:
 
@@ -78,65 +98,69 @@ UHL consists of 3 modules:
 - **UnrealHelperEditor** - optional module with editor customization, e.g. custom thumnails, custom class icons
 - **UHL Utils (EditorUtilityWidget)** - widget with tools helping you make trivial things, like `ConvertToORM` quite often task when you want to combine 3 textures `Occlusion`, `Roughness`, `Metalic` in one ORM texture
 
-## Documentation
+## 📄 Documentation
+
+**AI**
+
+> - Components
+>   - [AIPerceptionComponent](#uhlaiperceptioncomponent)
+> - Composite
+>   - [RandomSelector](#btc_randomselector)
+> - Services
+>   - [GameplayFocus](#setgameplayfocus)
+> - Decorators
+>   - [CheckGASGameplayTagsOnActor](#checkgasgameplaytagsonactor)
+>   - [InAngle](#inangle)
+>   - [InRange](#inrange)
+>   - [LoopRandomCount](#looprandomcount)
+>   - [RandomChance](#randomchance)
+>   - [TimeLimitRandom](#timelimitrandom)
+> - Tasks
+>   - [SetBBValue](#setbbvalue)
+>   - [DebugPrintBBValue](#debugprintbbvalue)
+>   - [DebugPrintString](#debugprintstring)
+>   - [InvokeGameplayAbility](#invokegameplayability)
+>   - [PlayAnimMontage](#playanimmontage)
+>   - [TurnTo](#turnto)
+
+**GAS**
+
+> - Components
+>   - [AbilitySystemComponent](#abilitysystemcomponent)
+>   - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
+>     - [AbilityInputCache (beta)](#abilityinputcache)
+>   - [GameplayAbility](#gameplayability)
+>   - [AttributeSet](#attributeset)
+>   - [AbilitySet](#abilityset)
+>   - [AbilitySystem Config](#abilitysystem-config)
+> - Tasks
+>   - [InterpolateToPosition](#interpolatetoposition)
+> - AbilityAsync tasks (AbilityAsync versions of GAS UAbilityTask's that available in blueprints)
+>   - AA_WaitAbilityActivate
+> - UHLGASBlueprintLibrary
+>   - TryActivateAbilityWithTag
+>   - TryCancelAbilityWithTag
+>   - TryCancelAbilitiesWithTags
+>   - FireGameplayEvent
+>   - UpdateStateGameplayTags
+>   - FindTagByString
+
+**Character**
+
+> - BaseCharacters
+>   - [BaseCharacter](#basecharacter)
+>   - [BaseCharacterWithASC (recommended for start)](#basecharacterwithasc)
+
+**DebugSystem**
+
+> - [DebugSubsystem](#debugsubsystem)
 
 **UnrealHelperLibrary** - main module
 
-> - [GAS](#gas)
->   - Components
->     - [AbilitySystemComponent](#abilitysystemcomponent)
->     - [InputConfig (GAS abilities input binding)](#inputconfig-gas-abilities-input-binding)
->       - [AbilityInputCache (beta)](#abilityinputcache)
->     - [GameplayAbility](#gameplayability)
->     - [AttributeSet](#attributeset)
->     - [AbilitySet](#abilityset)
->     - [AbilitySystem Config](#abilitysystem-config)
->   - Tasks
->     - [InterpolateToPosition](#interpolatetoposition)
->     - AbilityAsync tasks (AbilityAsync versions of GAS UAbilityTask's that available in blueprints)
->       - AA_WaitAbilityActivate
->       - 
->   - BaseCharacters
->     - [BaseCharacter](#basecharacter)
->     - [BaseCharacterWithASC (recommended for start)](#basecharacterwithasc)
->   - AnimNotifyState (ANS)
->     - [ANS_UHL_Base](#ans_uhl_base)
->     - [ANS_ActivateAbility](#ans_activateability)
-> - [AI](#ai)
->   - Components
->     - [AIPerceptionComponent](#uhlaiperceptioncomponent)
->   - Composite
->     - [RandomSelector](#btc_randomselector)
->   - Services
->     - [GameplayFocus](#setgameplayfocus)
->   - Decorators
->     - [CheckGASGameplayTagsOnActor](#checkgasgameplaytagsonactor)
->     - [InAngle](#inangle)
->     - [InRange](#inrange)
->     - [LoopRandomCount](#looprandomcount)
->     - [RandomChance](#randomchance)
->     - [TimeLimitRandom](#timelimitrandom)
->   - Tasks
->     - [SetBBValue](#setbbvalue)
->     - [DebugPrintBBValue](#debugprintbbvalue)
->     - [DebugPrintString](#debugprintstring)
->     - [InvokeGameplayAbility](#invokegameplayability)
->     - [PlayAnimMontage](#playanimmontage)
->     - [TurnTo](#turnto)
-> - [Subsystems](#subsystems)
->   - [DebugSubsystem](#debugsubsystem)
->   - [UHLHUD](#uhlhud)
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - Gameplay
 >     - GetActorClosestToCenterOfScreen
 >     - GetMostDistantActor
->   - GAS
->     - TryActivateAbilityWithTag
->     - TryCancelAbilityWithTag
->     - TryCancelAbilitiesWithTags
->     - FireGameplayEvent
->     - UpdateStateGameplayTags
->     - FindTagByString
 >    <!--  - CreateGenericGASGameplayEffectSpec -->
 >   - RelativeAngles
 >     - [RelativeAngleToActor](#relativeangletoactor)
@@ -169,21 +193,155 @@ UHL consists of 3 modules:
 >   - SweepCapsuleSingleByChannel
 > - [Settings](#settings)
 >   - [UHL Settings](#uhl-settings)
+> - [Subsystems](#subsystems)
+>   - [UHLHUD](#uhlhud)
+> - AnimNotifyState (ANS)
+>   - [ANS_UHL_Base](#ans_uhl_base)
+>   - [ANS_ActivateAbility](#ans_activateability)
 
-**UnrealHelperEditor**
+**Editor**
 
-> - [UnrealHelperEditor](#unrealhelpereditor)
->   - [Custom thumnails](#custom-thumnails)
->   - [Custom class icon](#custom-class-icon)
-
-**UHL Utils (Editor Utility Widget)**
-
+> - [Custom thumnails](#custom-thumnails)
+> - [Custom class icon](#custom-class-icon)
 > - [UHL Utils (Editor Utility Widget)](#uhl-utils-editor-utility-widget)
 >   - [ConvertToORM](#converttoorm)
 
 ---
 
-### GAS
+### 🧠 AI
+
+UHL provides most needed AI nodes toolset for developing at least 3d-action AI - GameplayFocus, Random choices using RandomChance and RandomSelector, PlayAnimMontage to play attacks animations, InRange and InAngle to check distance to enemy and required angle
+![AI_nodes](https://github.com/user-attachments/assets/1a00afdf-ab36-4e1c-9bd1-1b29c46cd8ac)
+
+#### `BTC_RandomSelector`
+
+Select random child node using weights
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/ad19828d-032f-4938-9106-2763ec6fb1fd)
+
+<details>
+  <summary>With cool validations</summary>
+
+#### Warns if summary of weights > 1
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/78c62bb9-1b1e-4f5a-89b2-68ea4b445ec2)
+
+#### Warns if chances array have more items then child nodes
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/8dc579a0-7f89-4f27-8a1b-a43fa9889496)
+
+#### Shows error if child nodes count > than chances count
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/b8416859-a557-4378-85e3-27091f631b54)
+
+</details>
+
+#### `CheckGASGameplayTagsOnActor`
+
+**BTD_CheckGASGameplayTagsOnActor** - checks that actor has GAS gameplay tags specified.
+
+> [!WARNING]
+> Don't mess with `UBTDecorator_CheckGameplayTagsOnActor` - its only checks `GameplayTags` on actor itself not on `AbilitySystem`.
+
+Requirements:
+
+- actor should implement `IAbilitySystemInterface` to get `AbilitySystemComponent`
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/f1581009-b9cd-408f-84de-2475b43012ae)
+
+#### `InAngle`
+
+**BTD_InAngle** - decorator to check is enemy in one of specified angle ranges. Useful in developing big enemies, for example we developing dragon we want to know is player under the right wing or leg, is player in front of dragon or behind and so on.
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/20f95715-a013-4b5f-8107-cd72d3163f4a)
+
+#### `InRange`
+
+**BTD_InRange** - decorator to check distance between actors. Compliant with "MoveTo" node have same settings `bIncludeSelfCapsuleRadius` and `bIncludeTargetCapsuleRadius` to check distance excluding capsules radiuses
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5ee47572-0fdb-4afa-bbd1-d18eafb86807)
+![InRange](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/e32b5d05-de82-4dfb-80d1-539c866008ff)
+
+#### `LoopRandomCount`
+
+**BTD_LoopRandomCount** - randomized version of decorator `Loop`
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/9a97dd83-d5d3-4cfd-a9bb-830ce7f4c450)
+
+#### `TimeLimitRandom`
+
+**BTD_TimeLimitRandom** - randomized version of decorator `TimeLimit`
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/4fd5b54f-5066-4b47-9425-fac0f92b1b07)
+
+#### `RandomChance`
+
+**BTD_RandomChance** - commonly used decorator to randomize actions. Fine for single child node, extra bad for multiple nodes due to chance regression, for randomization between multiple child nodes better to use [RandomSelector](#btc_randomselector)
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/b469a200-5655-440a-a754-8f8f544a38a2)
+
+#### `SetGameplayFocus`
+
+**BTS_SetGameplayFocus** - alternative for "Set default focus". SetGameplayFocus made right way - prevents rotation jittering while enemy rotation.
+One of most common problems that anybody stucks when starting developing AI - "focus dont work"/"focus works wrong".
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c0add45c-76ef-44bc-b97c-0c56901e6e03)
+![GameplayFocus](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/0126fc2b-8a20-4b61-93d8-b1ead6802057)
+
+Requirements:
+
+- turn on `UseControllerDesiredRotation`
+- turn off
+  - `bOrientRotationToMovement`
+  - `UseControllerRotationYaw`
+  - `UseControllerRotationPitch`
+  - `UseControllerRotationRoll`
+
+
+Troubleshooting:
+
+- check that nothing "ClearFocus"
+- check that MoveTo uses "AllowStafe"
+
+#### `SetBBValue`
+
+**BTT_SetBBValue** - helps settings values in blackboard, supports all blackboard types and for some values event provides opportunity to make calculations like `int`
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/baf4ea25-5d19-482d-a60c-799663def759)
+
+#### `DebugPrintBBValue`
+
+**BTT_DebugPrintBBValue** - prints BB value of any type
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/d138c011-fc9a-438e-bd39-658480cd95bf)
+
+#### `DebugPrintString`
+
+**BTT_DebugPrintString** - simple task for printing debug info on screen
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/510e9766-37be-4f43-a60f-e0e012521841)
+
+#### `InvokeGameplayAbility`
+
+**BTT_InvokeGameplayAbility** - activate/deactivate GAS Gameplay Ability by tag, with optional "wait for finishing"
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/1916c411-7068-43db-9e69-3e6190874de5)
+
+#### `PlayAnimMontage`
+
+**BTT_PlayAnimMontage** - play anim montage with option to customize PlayRate, Starting Position, Start Section Name and stopping montage on task abort
+
+![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5026ebdc-689d-4dba-a168-22ae8d6850bf)
+
+#### `TurnTo`
+
+**BTT_TurnTo** - turn to enemy using turn animations
+Drop in replacement for "RotateToFaceBBEntry" but with option to "RotateTo" with animations
+To get settings from actor requires `IUHLActorSettings` to be implemented on character
+
+---
+
+### 💪 GAS (Gameplay Ability System)
 
 Many GAS-related things based on "Lyra" sample project.
 
@@ -443,139 +601,6 @@ inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOn
 
 ---
 
-### AI
-
-UHL provides most needed AI nodes toolset for developing at least 3d-action AI - GameplayFocus, Random choices using RandomChance and RandomSelector, PlayAnimMontage to play attacks animations, InRange and InAngle to check distance to enemy and required angle
-![AI_nodes](https://github.com/user-attachments/assets/1a00afdf-ab36-4e1c-9bd1-1b29c46cd8ac)
-
-#### `BTC_RandomSelector`
-
-Select random child node using weights
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/ad19828d-032f-4938-9106-2763ec6fb1fd)
-
-<details>
-  <summary>With cool validations</summary>
-
-#### Warns if summary of weights > 1
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/78c62bb9-1b1e-4f5a-89b2-68ea4b445ec2)
-
-#### Warns if chances array have more items then child nodes
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/8dc579a0-7f89-4f27-8a1b-a43fa9889496)
-
-#### Shows error if child nodes count > than chances count
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/b8416859-a557-4378-85e3-27091f631b54)
-
-</details>
-
-#### `CheckGASGameplayTagsOnActor`
-
-**BTD_CheckGASGameplayTagsOnActor** - checks that actor has GAS gameplay tags specified.
-
-> [!WARNING]
-> Don't mess with `UBTDecorator_CheckGameplayTagsOnActor` - its only checks `GameplayTags` on actor itself not on `AbilitySystem`.
-
-Requirements:
-
-- actor should implement `IAbilitySystemInterface` to get `AbilitySystemComponent`
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/f1581009-b9cd-408f-84de-2475b43012ae)
-
-#### `InAngle`
-
-**BTD_InAngle** - decorator to check is enemy in one of specified angle ranges. Useful in developing big enemies, for example we developing dragon we want to know is player under the right wing or leg, is player in front of dragon or behind and so on.
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/20f95715-a013-4b5f-8107-cd72d3163f4a)
-
-#### `InRange`
-
-**BTD_InRange** - decorator to check distance between actors. Compliant with "MoveTo" node have same settings `bIncludeSelfCapsuleRadius` and `bIncludeTargetCapsuleRadius` to check distance excluding capsules radiuses
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5ee47572-0fdb-4afa-bbd1-d18eafb86807)
-![InRange](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/e32b5d05-de82-4dfb-80d1-539c866008ff)
-
-#### `LoopRandomCount`
-
-**BTD_LoopRandomCount** - randomized version of decorator `Loop`
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/9a97dd83-d5d3-4cfd-a9bb-830ce7f4c450)
-
-#### `TimeLimitRandom`
-
-**BTD_TimeLimitRandom** - randomized version of decorator `TimeLimit`
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/4fd5b54f-5066-4b47-9425-fac0f92b1b07)
-
-#### `RandomChance`
-
-**BTD_RandomChance** - commonly used decorator to randomize actions. Fine for single child node, extra bad for multiple nodes due to chance regression, for randomization between multiple child nodes better to use [RandomSelector](#btc_randomselector)
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/b469a200-5655-440a-a754-8f8f544a38a2)
-
-#### `SetGameplayFocus`
-
-**BTS_SetGameplayFocus** - alternative for "Set default focus". SetGameplayFocus made right way - prevents rotation jittering while enemy rotation.
-One of most common problems that anybody stucks when starting developing AI - "focus dont work"/"focus works wrong".
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/c0add45c-76ef-44bc-b97c-0c56901e6e03)
-![GameplayFocus](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/0126fc2b-8a20-4b61-93d8-b1ead6802057)
-
-Requirements:
-
-- turn on `UseControllerDesiredRotation`
-- turn off
-  - `bOrientRotationToMovement`
-  - `UseControllerRotationYaw`
-  - `UseControllerRotationPitch`
-  - `UseControllerRotationRoll`
-
-
-Troubleshooting:
-
-- check that nothing "ClearFocus"
-- check that MoveTo uses "AllowStafe"
-
-#### `SetBBValue`
-
-**BTT_SetBBValue** - helps settings values in blackboard, supports all blackboard types and for some values event provides opportunity to make calculations like `int`
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/baf4ea25-5d19-482d-a60c-799663def759)
-
-#### `DebugPrintBBValue`
-
-**BTT_DebugPrintBBValue** - prints BB value of any type
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/d138c011-fc9a-438e-bd39-658480cd95bf)
-
-#### `DebugPrintString`
-
-**BTT_DebugPrintString** - simple task for printing debug info on screen
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/510e9766-37be-4f43-a60f-e0e012521841)
-
-#### `InvokeGameplayAbility`
-
-**BTT_InvokeGameplayAbility** - activate/deactivate GAS Gameplay Ability by tag, with optional "wait for finishing"
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/1916c411-7068-43db-9e69-3e6190874de5)
-
-#### `PlayAnimMontage`
-
-**BTT_PlayAnimMontage** - play anim montage with option to customize PlayRate, Starting Position, Start Section Name and stopping montage on task abort
-
-![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/5026ebdc-689d-4dba-a168-22ae8d6850bf)
-
-#### `TurnTo`
-
-**BTT_TurnTo** - turn to enemy using turn animations
-Drop in replacement for "RotateToFaceBBEntry" but with option to "RotateTo" with animations
-To get settings from actor requires `IUHLActorSettings` to be implemented on character
-
----
-
 ### UnrealHelperLibraryBPL
 
 #### > RelativeAngles
@@ -628,21 +653,21 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 
 ### Subsystems
 
-#### DebugSubsystem
+#### DebugSystem
 
 Any game needs debug system, in mid-size commands you always use limited set of debugging tools
-more always than others, so **DebugSubsystem** is as tool for creating your debug system as fast as possible
+more always than others, so **DebugSystem** is as tool for creating your debug system as fast as possible
 
 Use case:
 I want to have debug for AbilitySystem, it should turn on/off, available in editor between sessions and
 
 Components:
 
-##### DebugSubsystem
+##### DebugSystem
 
 - you can get `IsDebugCategoryEnabled`
 
-##### DebugSubsystemSettings
+##### DebugSystemSettings
 
 - add new categories, turn on/off default state, every debug category is a tag
 - `DebugCategoryComponents` (DCC)
@@ -650,7 +675,7 @@ Components:
 ##### Check is category enabled/subscribe on debug category state change
 
 - `WaitDebugCategoryChange` - blueprint node to easier check `isDebugCategoryEnabled` or not and wait for its changes
-- `IsUHLDebugSubsystemEnabled` - blueprint node
+- `IsUHLDebugSystemEnabled` - blueprint node
 - `DebugCategoriesList` - UI component for quick integration in your debug menu
 
 Features:
@@ -690,7 +715,7 @@ How to subscribe on debug category change in C++
 
 HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden attributes)
 
-### LoadingUtilLibrary
+### 🔃 LoadingUtilLibrary
 
 **UHLLoadingUtilLibrary** - loading utils from Lyra
 
@@ -706,20 +731,20 @@ HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden 
 
 #### FlushLevelStreaming
 
-### TraceUtilsBPL
+### 🎯 TraceUtilsBPL
 
 **UHLTraceUtilsBPL** - trace utils
 
-### Settings
+### ⚙️ Settings
 
 #### UHL Settings
 
 - You can set defaults for all [AbilitySystem](#abilitysystemcomponent) and [AbilitySystem Config](#abilitysystem-config) in your project its can be usefull
 if you don't want to copy paste your `AttributeSets`
 
-### UnrealHelperEditor
+### UHL Editor
 
-**UnrealHelperEditor** - optional module with editor customization, e.g. custom thumnails, custom class icons
+**UHL Editor** - optional module with editor customization, e.g. custom thumnails, custom class icons
 
 #### `Custom thumnails`
 

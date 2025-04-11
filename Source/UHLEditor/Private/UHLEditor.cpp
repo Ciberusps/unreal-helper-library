@@ -1,38 +1,40 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
-#include "UnrealHelperEditor.h"
-#include "UnrealHelperEditorStyle.h"
-#include "UnrealHelperEditorCommands.h"
+#include "UHLEditor.h"
+#include "UHLEditorStyle.h"
+#include "UHLEditorCommands.h"
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
-#include "UHEBlueprintThumbnailRenderer.h"
-#include "UHEValueOrBBKeyDetails.h"
+#include "UHLConfigMigrationUtils.h"
+#include "UHLEditorBlueprintThumbnailRenderer.h"
+#include "UHLEditorValueOrBBKeyDetails.h"
+#include "Development/UHLEditorSettings.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
-static const FName UnrealHelperEditorTabName("UnrealHelperEditor");
+static const FName UHLEditorTabName("UHLEditor");
 
-#define LOCTEXT_NAMESPACE "FUnrealHelperEditorModule"
+#define LOCTEXT_NAMESPACE "FUHLEditorModule"
 
-void FUnrealHelperEditorModule::StartupModule()
+void FUHLEditorModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
-	FUnrealHelperEditorStyle::Initialize();
-	FUnrealHelperEditorStyle::ReloadTextures();
+	FUHLEditorStyle::Initialize();
+	FUHLEditorStyle::ReloadTextures();
 
-	FUnrealHelperEditorCommands::Register();
+	FUHLEditorCommands::Register();
 
 	PluginCommands = MakeShareable(new FUICommandList);
 
 	PluginCommands->MapAction(
-		FUnrealHelperEditorCommands::Get().PluginAction,
-		FExecuteAction::CreateRaw(this, &FUnrealHelperEditorModule::PluginButtonClicked),
+		FUHLEditorCommands::Get().PluginAction,
+		FExecuteAction::CreateRaw(this, &FUHLEditorModule::PluginButtonClicked),
 		FCanExecuteAction());
 
-	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FUnrealHelperEditorModule::RegisterMenus));
+	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FUHLEditorModule::RegisterMenus));
 
     UThumbnailManager::Get().UnregisterCustomRenderer(UBlueprint::StaticClass());
-    UThumbnailManager::Get().RegisterCustomRenderer(UBlueprint::StaticClass(), UUHEBlueprintThumbnailRenderer::StaticClass());
+    UThumbnailManager::Get().RegisterCustomRenderer(UBlueprint::StaticClass(), UUHLEditorBlueprintThumbnailRenderer::StaticClass());
 	
 	// Register the details customizer
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
@@ -42,9 +44,24 @@ void FUnrealHelperEditorModule::StartupModule()
 	// PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_Struct::MakeInstance));
 	PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_GameplayTag::MakeInstance));
 	PropertyModule.NotifyCustomizationModuleChanged();
+
+	UHLConfigMigrationUtils::MigrateConfigSectionIfNeeded(
+		TEXT("/Script/UnrealHelperEditor.UHESettings"),
+		TEXT("/Script/UHLEditor.UHLEditorSettings"),
+		TEXT("bMigrationFromOldSettingsDone"),
+		GEditorIni,
+		GEditorIni
+	);
+
+	UUHLEditorSettings* Settings = GetMutableDefault<UUHLEditorSettings>();
+	if (Settings)
+	{
+		Settings->ReloadConfig();
+		// Settings->SaveConfig();
+	}
 }
 
-void FUnrealHelperEditorModule::ShutdownModule()
+void FUHLEditorModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -53,9 +70,9 @@ void FUnrealHelperEditorModule::ShutdownModule()
 
 	UToolMenus::UnregisterOwner(this);
 
-	FUnrealHelperEditorStyle::Shutdown();
+	FUHLEditorStyle::Shutdown();
 
-	FUnrealHelperEditorCommands::Unregister();
+	FUHLEditorCommands::Unregister();
 
 	// Unregister the details customization
 	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
@@ -66,18 +83,18 @@ void FUnrealHelperEditorModule::ShutdownModule()
 	}
 }
 
-void FUnrealHelperEditorModule::PluginButtonClicked()
+void FUHLEditorModule::PluginButtonClicked()
 {
 	// Put your "OnButtonClicked" stuff here
 	FText DialogText = FText::Format(
 							LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
-							FText::FromString(TEXT("FUnrealHelperEditorModule::PluginButtonClicked()")),
-							FText::FromString(TEXT("UnrealHelperEditor.cpp"))
+							FText::FromString(TEXT("FUHLEditorModule::PluginButtonClicked()")),
+							FText::FromString(TEXT("UHLEditor.cpp"))
 					   );
 	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
 }
 
-void FUnrealHelperEditorModule::RegisterMenus()
+void FUHLEditorModule::RegisterMenus()
 {
 	// Owner will be used for cleanup in call to UToolMenus::UnregisterOwner
 	FToolMenuOwnerScoped OwnerScoped(this);
@@ -86,7 +103,7 @@ void FUnrealHelperEditorModule::RegisterMenus()
 		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Window");
 		{
 			FToolMenuSection& Section = Menu->FindOrAddSection("WindowLayout");
-			Section.AddMenuEntryWithCommandList(FUnrealHelperEditorCommands::Get().PluginAction, PluginCommands);
+			Section.AddMenuEntryWithCommandList(FUHLEditorCommands::Get().PluginAction, PluginCommands);
 		}
 	}
 
@@ -95,7 +112,7 @@ void FUnrealHelperEditorModule::RegisterMenus()
 		{
 			FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("PluginTools");
 			{
-				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FUnrealHelperEditorCommands::Get().PluginAction));
+				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FUHLEditorCommands::Get().PluginAction));
 				Entry.SetCommandList(PluginCommands);
 			}
 		}
@@ -104,4 +121,4 @@ void FUnrealHelperEditorModule::RegisterMenus()
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FUnrealHelperEditorModule, UnrealHelperEditor)
+IMPLEMENT_MODULE(FUHLEditorModule, UHLEditor)

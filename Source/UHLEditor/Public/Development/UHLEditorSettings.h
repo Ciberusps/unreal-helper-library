@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DeveloperSettingsBackedByCVars.h"
-#include "UHESettings.generated.h"
+#include "UHLEditorSettings.generated.h"
 
 USTRUCT(BlueprintType)
-struct UNREALHELPEREDITOR_API FUHECustomClassIconDescription
+struct UHLEDITOR_API FUHLEditorCustomClassIconDescription
 {
     GENERATED_BODY()
 
@@ -23,12 +22,15 @@ struct UNREALHELPEREDITOR_API FUHECustomClassIconDescription
 /**
  *
  */
-UCLASS(Config="Editor", DefaultConfig, meta = (DisplayName="UnrealHelperEditor Settings"))
-class UNREALHELPEREDITOR_API UUHESettings : public UDeveloperSettingsBackedByCVars
+UCLASS(Config="Editor", DefaultConfig, meta = (DisplayName="UHL Editor"))
+class UHLEDITOR_API UUHLEditorSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
 public:
     UPROPERTY(config, EditAnywhere, Category="Custom Class Icons", meta=(FullyExpand))
-    TArray<FUHECustomClassIconDescription> CustomClassIcons;
+    TArray<FUHLEditorCustomClassIconDescription> CustomClassIcons;
+
+	UPROPERTY(config)
+	bool bMigrationFromOldSettingsDone = false;
 };
