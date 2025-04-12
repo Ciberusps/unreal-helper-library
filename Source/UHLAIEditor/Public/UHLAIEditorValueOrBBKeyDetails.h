@@ -11,12 +11,13 @@ public:
 	/** Makes a new instance of this detail layout class for a specific detail view requesting it */
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 
-	virtual void CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
+	virtual void CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 
 protected:
+	TSharedPtr<IPropertyHandle> GameplayTagProperty;
+	
 	virtual TSharedRef<SWidget> CreateDefaultValueWidget() override;
 
 	void OnGameplayTagChanged(const FGameplayTag NewTag);
 	FGameplayTag GetGameplayTag() const;
 };
-

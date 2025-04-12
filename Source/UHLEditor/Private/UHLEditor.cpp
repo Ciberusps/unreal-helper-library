@@ -5,10 +5,7 @@
 #include "UHLEditorCommands.h"
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
-#include "UHLConfigMigrationUtils.h"
 #include "UHLEditorBlueprintThumbnailRenderer.h"
-#include "UHLEditorValueOrBBKeyDetails.h"
-#include "Development/UHLEditorSettings.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
 static const FName UHLEditorTabName("UHLEditor");
@@ -35,15 +32,6 @@ void FUHLEditorModule::StartupModule()
 
     UThumbnailManager::Get().UnregisterCustomRenderer(UBlueprint::StaticClass());
     UThumbnailManager::Get().RegisterCustomRenderer(UBlueprint::StaticClass(), UUHLEditorBlueprintThumbnailRenderer::StaticClass());
-	
-	// Register the details customizer
-	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	// PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_GameplayTag::MakeInstance));
-	// PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_GameplayTag::MakeInstance));
-	// PropertyModule.RegisterCustomClassLayout("BlackboardKeyType_Class", FOnGetDetailCustomizationInstance::CreateStatic(&FBlackboardKeyDetails_Class::MakeInstance));
-	// PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_Struct::MakeInstance));
-	PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_GameplayTag::MakeInstance));
-	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
 void FUHLEditorModule::ShutdownModule()
@@ -58,14 +46,6 @@ void FUHLEditorModule::ShutdownModule()
 	FUHLEditorStyle::Shutdown();
 
 	FUHLEditorCommands::Unregister();
-
-	// Unregister the details customization
-	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
-	{
-		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-		PropertyModule.UnregisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag");
-		PropertyModule.NotifyCustomizationModuleChanged();
-	}
 }
 
 void FUHLEditorModule::PluginButtonClicked()

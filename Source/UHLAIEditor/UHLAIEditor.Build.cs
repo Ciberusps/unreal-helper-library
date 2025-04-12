@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UHLEditor : ModuleRules
+public class UHLAIEditor : ModuleRules
 {
-	public UHLEditor(ReadOnlyTargetRules Target) : base(Target)
+	public UHLAIEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -50,8 +50,7 @@ public class UHLEditor : ModuleRules
 				"UnrealEd",
 				"DeveloperSettings", 
 				
-				"UnrealHelperLibrary",
-				"UHLModulesHelper",
+				"UHLAI",
 				
 				"EditorWidgets",
 				
