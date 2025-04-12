@@ -32,13 +32,8 @@ void FValueOrBBKeyDetails_GameplayTag::OnGameplayTagChanged(const FGameplayTag N
 {
 	if (DefaultValueProperty.IsValid())
 	{
-		// Assume this is your tag to set
 		FGameplayTag TagToSet = NewTag;
-
-		// Convert to string (format: "Your.Tag.Path")
 		FString TagAsString = TagToSet.ToString();
-
-		// Set it via string
 		const FPropertyAccess::Result Result = DefaultValueProperty->SetValueFromFormattedString(TagAsString);
 		if (Result != FPropertyAccess::Success)
 		{
@@ -53,7 +48,6 @@ FGameplayTag FValueOrBBKeyDetails_GameplayTag::GetGameplayTag() const
 	void* StructData = nullptr;
 	if (DefaultValueProperty->GetValueData(StructData) == FPropertyAccess::Success)
 	{
-		// Here, you cast StructData to your known struct type
 		GameplayTag = reinterpret_cast<FGameplayTag*>(StructData);
 	}
 	return *GameplayTag;
