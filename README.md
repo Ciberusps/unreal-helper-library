@@ -125,7 +125,7 @@ AI nodes for behavior tree, based on `BehaviorTree` and `BehaviorTreeComponent` 
 >   - [PlayAnimMontage](#playanimmontage)
 >   - [TurnTo](#turnto)
 
-**[💪 GAS](#-gas)**
+**[💪 GAS](#-gas-gameplay-ability-system)**
 
 Gameplay Ability System - Lyra based inputs, ability system component, ability system config, input cache, attribute set, ability sets
 
@@ -164,9 +164,14 @@ Default character class with UHL interfaces implemented, so you don't need to do
 
 Debug system for your game, in mid-size commands you always use limited set of debugging tools
 
-> - [DebugSubsystem](#debugsubsystem)
+> - Settings
+>   - [DebugSystemSettings](#debugsystemsettings)
+> - Subsystem
+>   - [UHLDebugSystemSubsystem](#uhldebugsystemsubsystem)
+> - AsyncActions
+>   - [WaitDebugCategoryChange](#aa_waitdebugcategorychange)
 > - [DebugBlueprintLibrary](#debugblueprintlibrary)
->   - [IsUHLDebugCategoryEnabled]()
+>   - [IsUHLDebugCategoryEnabled](#isuhldebugcategoryenabled)
 
 **[📚 UnrealHelperLibrary](#unrealhelperlibrarybpl)**
 
@@ -657,10 +662,6 @@ for most cases you want to use "InRange" like `IsOtherActorInAngle` (or `IsOther
 
 #### `DirectionToAngle`
 
-#### > GAS
-
-#### `CreateGenericGASGameplayEffectSpec` - TODO: rename, remove "GAS"
-
 #### > Misc
 
 #### `GetProjectVersion`
@@ -690,8 +691,8 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 
 ### 🪲 DebugSystem
 
-Powerful debug system for gameplay based on GameplayTags. Any game needs debug system, in mid-size commands you always use limited set of debugging tools
-more always than others, so **DebugSystem** is as tool for creating your debug system as fast as possible
+Powerful debug system for gameplay based on GameplayTags. So any game needs debug system, in mid-size commands you always use limited set of debugging tools
+more always than others, so **DebugSystem** is as tool for creating your debug system as fast as possible by providing `DebugCategories`(gameplaytags) that can be enabled/disabled
 
 Use case:
 I want to have debug for AbilitySystem, it should turn on/off, available in editor between sessions and.....
@@ -731,6 +732,18 @@ How to subscribe on debug category change in C++
     // on activation "OnDebugCategoryChanged" will be fired
     WaitDebugCategoryChangeTask->Activate();
 ```
+
+##### DebugSystemSubsystem
+
+##### `UHLDebugSystemSubsystem`
+
+**UHLDebugSystemSubsystem** - subsystem that provides interaction with debug categories
+
+##### DebugBlueprintLibrary
+
+###### `IsUHLDebugCategoryEnabled`
+
+Check is debug category enabled or not
 
 ### Subsystems
 
