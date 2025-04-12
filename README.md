@@ -100,7 +100,9 @@ UHL consists of 3 modules:
 
 ## 📄 Documentation
 
-**🧠 AI**
+**[🧠 AI](#-ai)**
+
+AI nodes for behavior tree, based on `BehaviorTree` and `BehaviorTreeComponent` from `UE5.4` and `UE5.5` with some improvements and additional features
 
 > - Components
 >   - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -123,7 +125,9 @@ UHL consists of 3 modules:
 >   - [PlayAnimMontage](#playanimmontage)
 >   - [TurnTo](#turnto)
 
-**💪 GAS**
+**[💪 GAS](#-gas)**
+
+Gameplay Ability System - Lyra based inputs, ability system component, ability system config, input cache, attribute set, ability sets
 
 > - Components
 >   - [AbilitySystemComponent](#abilitysystemcomponent)
@@ -135,27 +139,36 @@ UHL consists of 3 modules:
 >   - [AbilitySystem Config](#abilitysystem-config)
 > - Tasks
 >   - [InterpolateToPosition](#interpolatetoposition)
-> - AbilityAsync tasks (AbilityAsync versions of GAS UAbilityTask's that available in blueprints)
->   - AA_WaitAbilityActivate
-> - UHLGASBlueprintLibrary
->   - TryActivateAbilityWithTag
->   - TryCancelAbilityWithTag
->   - TryCancelAbilitiesWithTags
->   - FireGameplayEvent
->   - UpdateStateGameplayTags
->   - FindTagByString
+> - AbilityAsync tasks (AbilityAsync versions of GAS UAbilityTask's, AbilityAsync available in blueprints)
+>   - WaitForAbilityActivate
+>   - WaitForAbilityActivateWithTagRequirements
+>   - WaitForAbilityActivate_Query
+> - [UHLGASBlueprintLibrary](#uhlgasblueprintlibrary)
+>   - [TryActivateAbilityWithTag](#tryactivateabilitywithtag)
+>   - [TryCancelAbilityWithTag](#trycancelabilitywithtag)
+>   - [TryCancelAbilitiesWithTags](#trycancelabilitieswithtags)
+>   - [FireGameplayEvent](#firegameplayevent)
+>   - [UpdateStateGameplayTags](#updatestategameplaytags)
+>   - [FindTagByString](#findtagbystring)
+>   - [GetUHLAbilitySystemComponent](#getuhlabilitysystemcomponent)
+>   - [CreateGenericGASGameplayEffectSpec](#creategenericgasgameplayeffectspec)
 
-**🦸 Character**
+**[🦸 Character](#character)**
 
-> - BaseCharacters
->   - [BaseCharacter](#basecharacter)
->   - [BaseCharacterWithASC (recommended for start)](#basecharacterwithasc)
+Default character class with UHL interfaces implemented, so you don't need to do it by yourself
 
-**🪲 DebugSystem**
+> - [BaseCharacterWithASC](#basecharacterwithasc) (recommended for start)
+> - [BaseCharacter](#basecharacter)
+
+**[🪲 DebugSystem](#-debugsystem)**
+
+Debug system for your game, in mid-size commands you always use limited set of debugging tools
 
 > - [DebugSubsystem](#debugsubsystem)
+> - [DebugBlueprintLibrary](#debugblueprintlibrary)
+>   - [IsUHLDebugCategoryEnabled]()
 
-**📚 UnrealHelperLibrary** - main module
+**[📚 UnrealHelperLibrary](#unrealhelperlibrarybpl)**
 
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - Gameplay
@@ -199,7 +212,7 @@ UHL consists of 3 modules:
 >   - [ANS_UHL_Base](#ans_uhl_base)
 >   - [ANS_ActivateAbility](#ans_activateability)
 
-**Editor**
+**[⌨ Editor](#-uhl-editor)**
 
 > - [Custom thumnails](#custom-thumnails)
 > - [Custom class icon](#custom-class-icon)
@@ -212,6 +225,10 @@ UHL consists of 3 modules:
 
 UHL provides most needed AI nodes toolset for developing at least 3d-action AI - GameplayFocus, Random choices using RandomChance and RandomSelector, PlayAnimMontage to play attacks animations, InRange and InAngle to check distance to enemy and required angle
 ![AI_nodes](https://github.com/user-attachments/assets/1a00afdf-ab36-4e1c-9bd1-1b29c46cd8ac)
+
+#### `UHLAIPerceptionComponent`
+
+⚒️ InProgress
 
 #### `BTC_RandomSelector`
 
@@ -519,7 +536,7 @@ Instructions here provided with souls-like developing background. Remember you c
 
 ##### Debug:
 
-- activate `AbilityInputCache` debug category in [DebugSubsystem](#debugsubsystem) from
+- activate `AbilityInputCache` debug category in [DebugSystem](#-debugsystem) from
   - `ProjectSettings -> UHL DebugSubsystem Settings`
   - or in runtime via `UHLDebugCategoriesListWidget`
 - write in console `ToggleAbilityInputDebug`, don't forget to add `ProcessConsoleExec` to your `GameInstance` or it won't work
@@ -565,21 +582,23 @@ InputCache - to use it required to nest from GameplayAbility
 
 ![image](https://github.com/Ciberusps/unreal-helper-library/assets/14001879/764ddf72-595e-4316-9149-b7b0accc2b89)
 
-#### `BaseCharacter`
+#### `UHLGASBlueprintLibrary`
 
-**UHLBaseCharacter** - simplest BaseCharacter with only UHL interfaces implemented, so you don't need to do it by yourself
+##### TryActivateAbilityWithTag
 
-#### `BaseCharacterWithASC`
+##### TryCancelAbilityWithTag
 
-**UHLBaseCharacterWithASC** - recommended BaseCharacter for start - ASC created on start and
-inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOnPosses`
+##### TryCancelAbilitiesWithTags
 
-#### `ANS_UHL_Base`
+##### FireGameplayEvent
 
-**ANS_UHL_Base** - base `AnimNotifyState` class with commonly used features like
+##### UpdateStateGameplayTags
 
-- subscribing `OnMontageBlendingOut` by overriding `OnMontageBlendingOut` can be disabled by `bUseOnMontageBlendingOut=false(true by default)`
-- more come later
+##### FindTagByString
+
+##### GetUHLAbilitySystemComponent
+
+##### CreateGenericGASGameplayEffectSpec
 
 #### `ANS_ActivateAbility`
 
@@ -591,13 +610,24 @@ inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOn
 - `bDeactivateOnMontageBlendingOut` - should ability deactivates on montage blends out
 - `bAllowRemoteActivation` - you can allow remote activation
 
-#### `UHLAIPerceptionComponent`
-
-⚒️ InProgress
-
 <!-- with ability to subscribe on
 
 - `OnSightStimulusExpired` -->
+
+---
+
+### 🦸 Character
+
+Default characters classess with UHL interfaces implemented, so you don't need to do it by yourself
+
+#### `BaseCharacterWithASC`
+
+**UHLBaseCharacterWithASC** - recommended BaseCharacter for start - ASC created on start and
+inited on `PossessedBy`. Can be turned off by disabling `bInitUHLAbilitySystemOnPosses`
+
+#### `BaseCharacter`
+
+**UHLBaseCharacter** - simplest BaseCharacter with only UHL interfaces implemented, so you don't need to do it by yourself
 
 ---
 
@@ -651,21 +681,22 @@ Get names of actor components on object, usefull for [`GetOptions` UPROPERTY](ht
 
 #### `GetHighestPoint`
 
-### Subsystems
+#### `ANS_UHL_Base`
 
-#### DebugSystem
+**ANS_UHL_Base** - base `AnimNotifyState` class with commonly used features like
 
-Any game needs debug system, in mid-size commands you always use limited set of debugging tools
+- subscribing `OnMontageBlendingOut` by overriding `OnMontageBlendingOut` can be disabled by `bUseOnMontageBlendingOut=false(true by default)`
+- more come later
+
+### 🪲 DebugSystem
+
+Powerful debug system for gameplay based on GameplayTags. Any game needs debug system, in mid-size commands you always use limited set of debugging tools
 more always than others, so **DebugSystem** is as tool for creating your debug system as fast as possible
 
 Use case:
-I want to have debug for AbilitySystem, it should turn on/off, available in editor between sessions and
+I want to have debug for AbilitySystem, it should turn on/off, available in editor between sessions and.....
 
 Components:
-
-##### DebugSystem
-
-- you can get `IsDebugCategoryEnabled`
 
 ##### DebugSystemSettings
 
@@ -678,26 +709,16 @@ Components:
 - `IsUHLDebugSystemEnabled` - blueprint node
 - `DebugCategoriesList` - UI component for quick integration in your debug menu
 
-Features:
+**Features:**
 
 - you can create DebugCategoryComponents that activate/deactivate console commands, event in blueprints like GAS abilities
 - you can even compose DebugCategoryComponents e.g. you want Collisions + HitBoxes, so you can create combined DebugCategory and add "DCC_Collisions" and "DCC_HitBoxes"
 - you can "Block" other DebugCategories by tag
 - WaitDebugCategoryChange
 
-Setup:
-
-```c++
-void AUHLPlayerController::BeginPlay()
-{
-    Super::BeginPlay();
-    UUHLDebugSubsystem* UHLDebugSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<UUHLDebugSubsystem>();
-    UHLDebugSubsystem->SetUpCategoriesThatRequiresPlayerController();
-}
-```
-
-How to add DebugCategory:
-1)
+**How to add DebugCategory:**
+1) ...
+2) ...
 
 How to subscribe on debug category change in C++
 
@@ -710,6 +731,8 @@ How to subscribe on debug category change in C++
     // on activation "OnDebugCategoryChanged" will be fired
     WaitDebugCategoryChangeTask->Activate();
 ```
+
+### Subsystems
 
 #### UHLHUD
 
@@ -742,7 +765,7 @@ HUD with debugging abilities, for now used to display debug bars(e.g. HP/hidden 
 - You can set defaults for all [AbilitySystem](#abilitysystemcomponent) and [AbilitySystem Config](#abilitysystem-config) in your project its can be usefull
 if you don't want to copy paste your `AttributeSets`
 
-### UHL Editor
+### ⌨ UHL Editor
 
 **UHL Editor** - optional module with editor customization, e.g. custom thumnails, custom class icons
 
