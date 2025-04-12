@@ -6,15 +6,17 @@
 #include "UHLEditorSettings.generated.h"
 
 USTRUCT(BlueprintType)
-struct UHLEDITOR_API FUHLEditorCustomClassIconDescription
+struct FUHLEditorCustomClassIconDescription
 {
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
     TSoftObjectPtr<UTexture2D> Texture2D;
+
 	// deprecated, TODO: remove
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription", meta=(DeprecatedProperty, DeprecationMessage="Deprecated use Classes"))
     TSubclassOf<UObject> Class;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CustomClassIconDescription")
 	TArray<TSubclassOf<UObject>> Classes;
 };
@@ -30,7 +32,4 @@ class UHLEDITOR_API UUHLEditorSettings : public UDeveloperSettings
 public:
     UPROPERTY(config, EditAnywhere, Category="Custom Class Icons", meta=(FullyExpand))
     TArray<FUHLEditorCustomClassIconDescription> CustomClassIcons;
-
-	UPROPERTY(config)
-	bool bMigrationFromOldSettingsDone = false;
 };

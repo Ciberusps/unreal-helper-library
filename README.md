@@ -100,7 +100,7 @@ UHL consists of 3 modules:
 
 ## 📄 Documentation
 
-**AI**
+**🧠 AI**
 
 > - Components
 >   - [AIPerceptionComponent](#uhlaiperceptioncomponent)
@@ -123,7 +123,7 @@ UHL consists of 3 modules:
 >   - [PlayAnimMontage](#playanimmontage)
 >   - [TurnTo](#turnto)
 
-**GAS**
+**💪 GAS**
 
 > - Components
 >   - [AbilitySystemComponent](#abilitysystemcomponent)
@@ -145,17 +145,17 @@ UHL consists of 3 modules:
 >   - UpdateStateGameplayTags
 >   - FindTagByString
 
-**Character**
+**🦸 Character**
 
 > - BaseCharacters
 >   - [BaseCharacter](#basecharacter)
 >   - [BaseCharacterWithASC (recommended for start)](#basecharacterwithasc)
 
-**DebugSystem**
+**🪲 DebugSystem**
 
 > - [DebugSubsystem](#debugsubsystem)
 
-**UnrealHelperLibrary** - main module
+**📚 UnrealHelperLibrary** - main module
 
 > - [UnrealHelperLibraryBPL](#unrealhelperlibrarybpl)
 >   - Gameplay

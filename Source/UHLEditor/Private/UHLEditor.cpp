@@ -44,21 +44,6 @@ void FUHLEditorModule::StartupModule()
 	// PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_Struct::MakeInstance));
 	PropertyModule.RegisterCustomPropertyTypeLayout("ValueOrBBKey_GameplayTag", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FValueOrBBKeyDetails_GameplayTag::MakeInstance));
 	PropertyModule.NotifyCustomizationModuleChanged();
-
-	UHLConfigMigrationUtils::MigrateConfigSectionIfNeeded(
-		TEXT("/Script/UnrealHelperEditor.UHESettings"),
-		TEXT("/Script/UHLEditor.UHLEditorSettings"),
-		TEXT("bMigrationFromOldSettingsDone"),
-		GEditorIni,
-		GEditorIni
-	);
-
-	UUHLEditorSettings* Settings = GetMutableDefault<UUHLEditorSettings>();
-	if (Settings)
-	{
-		Settings->ReloadConfig();
-		// Settings->SaveConfig();
-	}
 }
 
 void FUHLEditorModule::ShutdownModule()
