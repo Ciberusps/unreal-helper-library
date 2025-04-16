@@ -242,10 +242,6 @@ public:
 	static EUHLBuildType GetBuildType();
 	/** ~Utils **/
 
-	/** AI **/
-	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
-	/** ~AI **/
-
 	/** Colors **/
 	// "Makes a random but quite nice color" - literally C++ FColor::MakeRandomColor
 	// if seed >= 0 than FColor::MakeRandomSeededColor will be used

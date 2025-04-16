@@ -3,6 +3,7 @@
 
 #include "Tasks/BTT_DebugPrintBBValue.h"
 
+#include "UHLAIBlueprintLibrary.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -32,7 +33,7 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
-	EBBValueType BBValueType = UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(BlackboardKey);
+	EBBValueType BBValueType = UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(BlackboardKey);
 
 	FString Description = FString();
 

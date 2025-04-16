@@ -5,17 +5,9 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "Core/UHLBlackboardValueType.h"
+#include "Core/UHLMathOperations.h"
 #include "BTT_SetBBValue.generated.h"
-
-UENUM(BlueprintType)
-enum class ESetBBValue_MathOperations : uint8
-{
-    Set,
-    Add,
-    Multiply,
-    Divide,
-};
 
 /**
  * Use with caution, setting BB values in BehaviorTrees directly is "anti-pattern"
@@ -40,8 +32,11 @@ public:
     // UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="CurrentBBKeyValueType==EBBValueType::Int"))
     // bool bDoMath = false;
     // UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="bDoMath && CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
-    UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
-    ESetBBValue_MathOperations MathOperation = ESetBBValue_MathOperations::Set;
+    UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Use \"MathOperationNew\" instead"))
+    EUHL_MathOperations MathOperation = EUHL_MathOperations::Set;
+
+	UPROPERTY(EditAnywhere, Category="Blackboard")
+	FMathOperation MathOperationNew;
 
 	/** Values */
 	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Bool", EditConditionHides))
@@ -93,9 +88,4 @@ private:
 
     UFUNCTION()
     TArray<FString> GetEnumOptions();
-    bool IsMathOperationRequired() const {
-        return MathOperation == ESetBBValue_MathOperations::Add
-            || MathOperation == ESetBBValue_MathOperations::Multiply
-            || MathOperation == ESetBBValue_MathOperations::Divide;
-    };
 };

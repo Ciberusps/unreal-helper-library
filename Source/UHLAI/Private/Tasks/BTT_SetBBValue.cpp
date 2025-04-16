@@ -3,6 +3,7 @@
 
 #include "Tasks/BTT_SetBBValue.h"
 
+#include "UHLAIBlueprintLibrary.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -43,25 +44,7 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
 	{
-	    int32 ResultInt = 0;
-	    if (IsMathOperationRequired())
-	    {
-	        ResultInt = MathOperation == ESetBBValue_MathOperations::Set
-	            ? IntValue
-	            : BlackboardComponent->GetValueAsInt(BlackboardKey.SelectedKeyName);
-		    if (MathOperation == ESetBBValue_MathOperations::Add)
-		    {
-		        ResultInt += IntValue;
-		    }
-		    else if (MathOperation == ESetBBValue_MathOperations::Multiply)
-		    {
-		        ResultInt *= IntValue;
-		    }
-		    else if (MathOperation == ESetBBValue_MathOperations::Divide)
-		    {
-		        ResultInt /= IntValue;
-		    }
-	    }
+	    int32 ResultInt = MathOperationNew.CalculateResult().IntValue;
 		BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, ResultInt);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
@@ -183,8 +166,11 @@ void UBTT_SetBBValue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
-	CurrentBBKeyValueType = UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(BlackboardKey);
-    MathOperation = ESetBBValue_MathOperations::Set;
+	CurrentBBKeyValueType = UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(BlackboardKey);
+	// if (CurrentBBKeyValueType == EBBValueType::Int)
+	// {
+	// 	MathOperation = EUHL_MathOperations::Set;
+	// }
 }
 #endif
 

@@ -33,7 +33,7 @@ bool UBTD_RandomChance::CalculateRawConditionValue(UBehaviorTreeComponent& Owner
 	// }
 	// else
 	// {
-		CurrentChance = Chance;
+		CurrentChance = Chance.GetValue(OwnerComp);
 	// }
 
 	return UKismetMathLibrary::RandomBoolWithWeight(CurrentChance);
@@ -43,7 +43,7 @@ FString UBTD_RandomChance::GetStaticDescription() const
 {
 	// TODO BB value preview?
 	// float CurrentChance = bUseBlackboardValue ? GetBlackboardAsset()->GetKey(ChanceInBB.GetSelectedKeyID()) : Chance;
-	return FString::Printf(TEXT("Chance - %.2f%% (%.2f)"), Chance * 100.0f, Chance);
+	return FString::Printf(TEXT("Chance - %.2f%% (%s)"), Chance * 100.0f, *Chance.ToString());
 }
 
 #if WITH_EDITOR
@@ -53,3 +53,40 @@ FName UBTD_RandomChance::GetNodeIconName() const
 	return FName("GraphEditor.StructGlyph");
 }
 #endif
+
+float UBTD_RandomChance::GetCurrentChance(UBehaviorTreeComponent& OwnerComp)
+{
+	float Result = 0.0f;
+	switch (ScaleType)
+	{
+		case EScalableChanceType::None:
+			Result = Chance.GetValue(OwnerComp);
+			break;
+		
+		case EScalableChanceType::ScalableFloat:
+			float ScalableChanceLevel = 0.0f;
+			UBlackboardData* BBAsset = GetBlackboardAsset();
+			if (ensure(BBAsset))
+			{
+				ScalableChanceLevel = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(ScalableChanceValueLevelFromBB.SelectedKeyName);
+			}
+			ScalableChanceLevel = ScalableChanceValueLevelFromBB.IsNone() ? 0.0f : ScalableChanceLevel;
+			Result = ScalableChanceValue.GetValueAtLevel(ScalableChanceLevel);
+			break;
+
+		case EScalableChanceType::BBDependantWithSteps:
+			
+			break;
+	}
+
+	// clamp if MaxChance defined it could be 0.6f or something like that
+	if (ScaleType != EScalableChanceType::None)
+	{
+		Result = FMath::Clamp(Result, 0.0f, MaxChance.GetValue(OwnerComp));
+	}
+
+	// clamp anything chance range 0.0f-1.0f
+	Result = FMath::Clamp(Result, 0.0f, 1.0f);
+	
+	return Result;
+}
