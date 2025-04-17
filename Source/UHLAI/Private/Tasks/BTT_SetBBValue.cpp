@@ -4,6 +4,7 @@
 #include "Tasks/BTT_SetBBValue.h"
 
 #include "UHLAIBlueprintLibrary.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -18,7 +19,6 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_String.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_SetBBValue)
 
@@ -38,18 +38,22 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
+
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
 	{
 		BlackboardComponent->SetValueAsBool(BlackboardKey.SelectedKeyName, BoolValue);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
 	{
-	    int32 ResultInt = MathOperationNew.CalculateResult().IntValue;
-		BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, ResultInt);
+		int32 CurrentValue = BlackboardComponent->GetValueAsInt(BlackboardKey.SelectedKeyName);
+	    int32 Result = OperationOnBBValue.CalculateIntResult(OwnerComp, CurrentValue);
+		BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, Result);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
 	{
-		BlackboardComponent->SetValueAsFloat(BlackboardKey.SelectedKeyName, FloatValue);
+		float CurrentValue = BlackboardComponent->GetValueAsFloat(BlackboardKey.SelectedKeyName);
+		float Result = OperationOnBBValue.CalculateFloatResult(OwnerComp, CurrentValue);
+		BlackboardComponent->SetValueAsFloat(BlackboardKey.SelectedKeyName, Result);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
 	{
@@ -61,11 +65,15 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
 	{
-		BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, VectorValue);
+		FVector CurrentValue = BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName);
+		FVector Result = OperationOnBBValue.CalculateVectorResult(OwnerComp, CurrentValue);
+		BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, Result);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
 	{
-		BlackboardComponent->SetValueAsRotator(BlackboardKey.SelectedKeyName, RotatorValue);
+		FRotator CurrentValue = BlackboardComponent->GetValueAsRotator(BlackboardKey.SelectedKeyName);
+		FRotator Result = OperationOnBBValue.CalculateRotatorResult(OwnerComp, CurrentValue);
+		BlackboardComponent->SetValueAsRotator(BlackboardKey.SelectedKeyName, Result);
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 	{
@@ -113,37 +121,37 @@ FString UBTT_SetBBValue::GetStaticDescription() const
 
 	switch (CurrentBBKeyValueType)
 	{
-		case EBBValueType::Bool:
+		case EBlackboardValueType::Bool:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue ? TEXT("true") : TEXT("false"));
 			break;
-		case EBBValueType::Int:
-			Description = FString::Printf(TEXT("Set \"%s\" to %d"), *BlackboardKey.SelectedKeyName.ToString(), IntValue);
+		case EBlackboardValueType::Int:
+			Description = OperationOnBBValue.ToStringIntValue(BlackboardKey.SelectedKeyName.ToString());
 			break;
-		case EBBValueType::Float:
-			Description = FString::Printf(TEXT("Set \"%s\" to %f"), *BlackboardKey.SelectedKeyName.ToString(), FloatValue);
+		case EBlackboardValueType::Float:
+			Description = OperationOnBBValue.ToStringFloatValue(BlackboardKey.SelectedKeyName.ToString());
 			break;
-		case EBBValueType::String:
+		case EBlackboardValueType::String:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *StringValue);
 			break;
-		case EBBValueType::Name:
+		case EBlackboardValueType::Name:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *NameValue.ToString());
 			break;
-		case EBBValueType::Vector:
-			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *VectorValue.ToString());
+		case EBlackboardValueType::Vector:
+			Description = OperationOnBBValue.ToStringVectorValue(BlackboardKey.SelectedKeyName.ToString());
 			break;
-		case EBBValueType::Rotator:
-			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *RotatorValue.ToString());
+		case EBlackboardValueType::Rotator:
+			Description = OperationOnBBValue.ToStringRotatorValue(BlackboardKey.SelectedKeyName.ToString());
 			break;
-		case EBBValueType::Enum:
+		case EBlackboardValueType::Enum:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			break;
-		case EBBValueType::NativeEnum:
+		case EBlackboardValueType::NativeEnum:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			break;
-		case EBBValueType::Object:
+		case EBlackboardValueType::Object:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), *ObjectValue.SelectedKeyName.ToString());
 			break;
-		case EBBValueType::Class:
+		case EBlackboardValueType::Class:
 			Description = FString::Printf(TEXT("Set \"%s\" to %s"), *BlackboardKey.SelectedKeyName.ToString(), ClassValue ? *ClassValue->GetName() : TEXT(""));
 			break;
 		default:
@@ -152,6 +160,53 @@ FString UBTT_SetBBValue::GetStaticDescription() const
 
 	// return FString::Printf(TEXT("%s: \n%s"), *Super::GetStaticDescription(), *Description);
 	return FString::Printf(TEXT("%s"), *Description);
+}
+
+void UBTT_SetBBValue::InitializeFromAsset(UBehaviorTree& Asset)
+{
+	Super::InitializeFromAsset(Asset);
+
+	BlackboardKey.ResolveSelectedKey(*Asset.BlackboardAsset);
+
+	CurrentBBKeyValueType = UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(BlackboardKey);
+	OperationOnBBValue.SetCurrentBBKeyValueType(CurrentBBKeyValueType);
+}
+
+void UBTT_SetBBValue::PostLoad()
+{
+	Super::PostLoad();
+
+	// migrate to FOperationOnBBValue
+	if (!bMigratedToMathOperation)
+	{
+		if (MathOperation != EUHL_MathOperations::None)
+		{
+			OperationOnBBValue.MathOperation = MathOperation;
+			MathOperation = EUHL_MathOperations::None;
+		}
+		if (IntValue != 0)
+		{
+			OperationOnBBValue.IntValue = IntValue;
+			IntValue = 0;
+		};
+		if (FloatValue != 0)
+		{
+			OperationOnBBValue.FloatValue = FloatValue;
+			FloatValue = 0;
+		};
+		if (VectorValue != FVector::ZeroVector)
+		{
+			OperationOnBBValue.VectorValue = VectorValue;
+			VectorValue = FVector::ZeroVector;
+		};
+		if (RotatorValue != FRotator::ZeroRotator)
+		{
+			OperationOnBBValue.RotatorValue = RotatorValue;
+			RotatorValue = FRotator::ZeroRotator;
+		};
+		
+		bMigratedToMathOperation = true;
+	}
 }
 
 #if WITH_EDITOR
@@ -164,10 +219,11 @@ void UBTT_SetBBValue::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 	if (!BlackboardKey.IsSet()) return;
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
-	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
 
 	CurrentBBKeyValueType = UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(BlackboardKey);
-	// if (CurrentBBKeyValueType == EBBValueType::Int)
+	OperationOnBBValue.SetCurrentBBKeyValueType(CurrentBBKeyValueType);
+
+	// if (CurrentBBKeyValueType == EBlackboardValueType::Int)
 	// {
 	// 	MathOperation = EUHL_MathOperations::Set;
 	// }
@@ -183,6 +239,14 @@ TArray<FString> UBTT_SetBBValue::GetEnumOptions()
 
 	BlackboardKey.ResolveSelectedKey(*BlackboardAsset);
 	const FBlackboardEntry* EntryInfo = BlackboardAsset ? BlackboardAsset->GetKey(BlackboardKey.GetSelectedKeyID()) : NULL;
+
+	if (BlackboardKey.SelectedKeyType != UBlackboardKeyType_Enum::StaticClass()
+		|| BlackboardKey.SelectedKeyType != UBlackboardKeyType_NativeEnum::StaticClass())
+	{
+		return Result;
+	}
+	
+	if (!EntryInfo) return Result;
 
 	const UEnum* Enum = (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 		                    ? ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType

@@ -6,14 +6,16 @@
 #include "ScalableFloat.h"
 #include "BehaviorTree/BTDecorator.h"
 #include "BehaviorTree/ValueOrBBKey.h"
+#include "Core/UHLAIDebugSettings.h"
+#include "Core/UHLMathOperations.h"
 #include "BTD_RandomChance.generated.h"
 
 UENUM(BlueprintType)
 enum class EScalableChanceType : uint8
 {
 	None,
-	ScalableFloat,
-	BBDependantWithSteps,
+	ScalableFloat UMETA(ToolTip = "with FScalableFloat value level getted from blackboard ScalableChanceLevelInBB"),
+	BBDependantWithSteps UMETA(ToolTip = "Chance changes by math operation that applies every step e.g. step 0 - \"BaseChance\", step 1 - \"BaseChance\" + 20%, step 2 - \"BaseChance\" + 40% with math operation \"Add\" 20%"),
 };
 
 /**
@@ -27,40 +29,36 @@ class UHLAI_API UBTD_RandomChance : public UBTDecorator
 public:
 	UBTD_RandomChance(const FObjectInitializer& ObjectInitializer);
 
-	// UPROPERTY(Category="Decorator", EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f, EditCondition="!bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
-	UPROPERTY(Category="Decorator", EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f, EditCondition="ScaleType != EScalableChanceType::None", EditConditionHides))
-	FValueOrBBKey_Float Chance = 1.0f;
-
-	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseUnclamped && !bUseBlackboardValue", EditConditionHides))
-	// float ChanceUnclamped;
-    // TODO value from blackboard
-	// UPROPERTY(Category=Decorator, EditAnywhere, meta=(EditCondition="bUseBlackboardValue", EditConditionHides))
-	// FBlackboardKeySelector ChanceInBB;
-
-	// UPROPERTY(Category=Decorator, EditAnywhere)
-	// bool bUseUnclamped = false;
-    // TODO value from blackboard
-	// UPROPERTY(Category=Decorator, EditAnywhere)
-	// bool bUseBlackboardValue = false;
-
 	UPROPERTY(Category="Decorator", EditAnywhere)
 	EScalableChanceType ScaleType = EScalableChanceType::None;
 	
-	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="ScaleType == EScalableChanceType::ScalableFloat", EditConditionHides))
-	FScalableFloat ScalableChanceValue = false;
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f, EditCondition="ScaleType != EScalableChanceType::ScalableFloat", EditConditionHides))
+	FValueOrBBKey_Float Chance = 1.0f;
 
 	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="ScaleType == EScalableChanceType::ScalableFloat", EditConditionHides))
-	FBlackboardKeySelector ScalableChanceValueLevelFromBB;
+	FScalableFloat ScalableChance;
 
 	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="ScaleType == EScalableChanceType::ScalableFloat", EditConditionHides))
-	float ChanceChangePerStep = false;
+	FBlackboardKeySelector ScalableChanceLevelInBB;
+
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="ScaleType == EScalableChanceType::BBDependantWithSteps", EditConditionHides))
+	FOperationOnBBValue ChanceChangePerStep = {};
+
+	UPROPERTY(Category="Decorator", EditAnywhere, meta=(EditCondition="ScaleType == EScalableChanceType::BBDependantWithSteps", EditConditionHides))
+	FBlackboardKeySelector StepsCount;
 
 	UPROPERTY(Category="Decorator", EditAnywhere, meta=(UIMin=0.0f, UIMax=1.0f, ClampMin=0.0f, ClampMax=1.0f, EditCondition="ScaleType != EScalableChanceType::None", EditConditionHides))
 	FValueOrBBKey_Float MaxChance = 1.0f;
 
+	UPROPERTY(Category="Decorator", EditAnywhere, AdvancedDisplay, meta=(ShowOnlyInnerProperties))
+	FUHLAIDebugSettings DebugSettings;
+	
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
 	virtual FString GetStaticDescription() const override;
+
+	virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
+
 	// TODO value preview?
 	// virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 
@@ -69,5 +67,5 @@ public:
 #endif // WITH_EDITOR
 
 private:
-	float GetCurrentChance(UBehaviorTreeComponent& OwnerComp);
+	float GetCurrentChance(UBehaviorTreeComponent& OwnerComp) const;
 };

@@ -2,76 +2,63 @@
 
 #include "UHLBlackboardValueType.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
+#include "BehaviorTree/ValueOrBBKey.h"
 #include "UHLMathOperations.generated.h"
 
 UENUM(BlueprintType)
 enum class EUHL_MathOperations : uint8
 {
+	None UMETA(Hidden),
 	Set,
 	Add,
 	Multiply,
 	Divide,
 };
 
-USTRUCT()
-struct FMathOperationResult
-{
-	EBBValueType CurrentBBKeyValueType;
-	int32 IntValue;
-	float FloatValue;
-	FVector VectorValue;
-	FRotator RotatorValue;
-};
-
 // struct for easier creating BBValue + BBValue math operations
-USTRUCT()
-struct FMathOperation
+USTRUCT(BlueprintType)
+struct FOperationOnBBValue
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Int || CurrentBBKeyValueType==EBlackboardValueType::Float", EditConditionHides))
 	EUHL_MathOperations MathOperation = EUHL_MathOperations::Set;
 
 	/** Values */
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Bool", EditConditionHides))
-	bool BoolValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
-	int32 IntValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Float", EditConditionHides))
-	float FloatValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::String", EditConditionHides, MultiLine))
-	FString StringValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Name", EditConditionHides, MultiLine))
-	FName NameValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Vector", EditConditionHides))
-	FVector VectorValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Rotator", EditConditionHides))
-	FRotator RotatorValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Enum || CurrentBBKeyValueType==EBBValueType::NativeEnum", EditConditionHides, GetOptions="GetEnumOptions"))
-	FString EnumStringValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Object", EditConditionHides))
-	FBlackboardKeySelector ObjectValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Class", EditConditionHides))
-	UClass* ClassValue;
+	// UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Bool", EditConditionHides))
+	// bool BoolValue;
+
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Int", EditConditionHides))
+	FValueOrBBKey_Int32 IntValue;
+
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Float", EditConditionHides))
+	FValueOrBBKey_Float FloatValue;
+
+	// UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::String", EditConditionHides, MultiLine))
+	// FString StringValue;
+	// UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Name", EditConditionHides, MultiLine))
+	// FName NameValue;
+
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Vector", EditConditionHides))
+	FValueOrBBKey_Vector VectorValue;
+
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Rotator", EditConditionHides))
+	FValueOrBBKey_Rotator RotatorValue;
 	/** ~Values */
 
-	FString ToString(EBBValueType CurrentBBKeyValueType);
+	void SetCurrentBBKeyValueType(EBlackboardValueType CurrentBBKeyValueType_In);
+	
+	int32 CalculateIntResult(UBehaviorTreeComponent& OwnerComp, int32 CurrentValue) const;
+	float CalculateFloatResult(UBehaviorTreeComponent& OwnerComp, float CurrentValue) const;
+	FVector CalculateVectorResult(UBehaviorTreeComponent& OwnerComp, FVector CurrentValue) const;
+	FRotator CalculateRotatorResult(UBehaviorTreeComponent& OwnerComp, FRotator CurrentValue) const;
 
-	FMathOperationResult CalculateResult(EBBValueType CurrentBBKeyValueType) const;
-
-	bool IsMathOperationRequired() const {
-		return MathOperation == EUHL_MathOperations::Add
-			|| MathOperation == EUHL_MathOperations::Multiply
-			|| MathOperation == EUHL_MathOperations::Divide;
-	};
+	FString ToStringIntValue(FString KeyName) const;
+	FString ToStringFloatValue(FString KeyName) const;
+	FString ToStringVectorValue(FString KeyName) const;
+	FString ToStringRotatorValue(FString KeyName) const;
 
 private:
-	
+	UPROPERTY()
+	EBlackboardValueType CurrentBBKeyValueType = EBlackboardValueType::None;
 };
-
-// class UHLBlackboardMathOperations
-// {
-// public:
-// 	
-// };

@@ -17,53 +17,53 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAIBlueprintLibrary)
 
 
-EBBValueType UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey)
+EBlackboardValueType UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey)
 {
-	EBBValueType Result = EBBValueType::None;
+	EBlackboardValueType Result = EBlackboardValueType::None;
 
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
 	{
-		Result = EBBValueType::Bool;
+		Result = EBlackboardValueType::Bool;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
 	{
-		Result = EBBValueType::Int;
+		Result = EBlackboardValueType::Int;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
 	{
-		Result = EBBValueType::Float;
+		Result = EBlackboardValueType::Float;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
 	{
-		Result = EBBValueType::String;
+		Result = EBlackboardValueType::String;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Name::StaticClass())
 	{
-		Result = EBBValueType::Name;
+		Result = EBlackboardValueType::Name;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
 	{
-		Result = EBBValueType::Vector;
+		Result = EBlackboardValueType::Vector;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
 	{
-		Result = EBBValueType::Rotator;
+		Result = EBlackboardValueType::Rotator;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 	{
-		Result = EBBValueType::Enum;
+		Result = EBlackboardValueType::Enum;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_NativeEnum::StaticClass())
 	{
-		Result = EBBValueType::NativeEnum;
+		Result = EBlackboardValueType::NativeEnum;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 	{
-		Result = EBBValueType::Object;
+		Result = EBlackboardValueType::Object;
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Class::StaticClass())
 	{
-		Result = EBBValueType::Class;
+		Result = EBlackboardValueType::Class;
 	}
 
 	return Result;

@@ -32,5 +32,5 @@ class UHLAI_API UUHLAIBlueprintLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	static EBBValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
+	static EBlackboardValueType BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey);
 };

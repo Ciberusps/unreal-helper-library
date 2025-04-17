@@ -1,9 +1,12 @@
+// Pavel Penkov 2025 All Rights Reserved.
+
+
 #pragma once
 
 #include "UHLBlackboardValueType.generated.h"
 
 UENUM()
-enum class EBBValueType
+enum class EBlackboardValueType
 {
 	None,
 	Bool,
