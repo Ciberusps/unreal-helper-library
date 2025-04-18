@@ -77,12 +77,12 @@ void UUHLDebugSystemSubsystem::Deinitialize()
 
 void UUHLDebugSystemSubsystem::OnActorSpawned(AActor* SpawnedActor)
 {
-	if (APawn* Pawn = Cast<APawn>(SpawnedActor))
+	if (AController* Controller = Cast<AController>(SpawnedActor))
 	{
 		// Pawn spawned, check if it’s controlled by a player
-		if (APlayerController* PC = Cast<APlayerController>(Pawn->GetController()))
+		if (APlayerController* PC = Cast<APlayerController>(Controller))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Pawn %s began play, controlled by PlayerController %s"), *Pawn->GetName(), *PC->GetName());
+			UE_LOG(LogTemp, Log, TEXT("Pawn %s began play, controlled by PlayerController %s"), *Controller->GetName(), *PC->GetName());
 			// Handle the player/pawn here (e.g., subscribe to further events, spawn effects, etc.)
 
 			// unsubscribe as fast as possible

@@ -7,6 +7,7 @@
 
 #define LOCTEXT_NAMESPACE "FUHLGASModule"
 
+DEFINE_LOG_CATEGORY(LogUHLAbilitySystem);
 
 void FUHLGASModule::StartupModule()
 {

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UnrealHelperEditor : ModuleRules
+public class UHLAIEditor : ModuleRules
 {
-	public UnrealHelperEditor(ReadOnlyTargetRules Target) : base(Target)
+	public UHLAIEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -49,10 +49,13 @@ public class UnrealHelperEditor : ModuleRules
 				"SlateCore",
 				"UnrealEd",
 				"DeveloperSettings", 
-				"UnrealHelperLibrary", 
+				
+				"UHLAI",
+				
 				"EditorWidgets",
+				
 				"GameplayTags",
-				"GameplayTagsEditor",
+				"GameplayTagsEditor", 
 				// ... add private dependencies that you statically link with here ...
 			}
 			);

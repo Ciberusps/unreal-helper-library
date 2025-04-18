@@ -10,7 +10,7 @@
  *
  */
 UCLASS(Blueprintable)
-class UNREALHELPEREDITOR_API UEUW_UHL_Utils : public UEditorUtilityWidget
+class UHLEDITOR_API UEUW_UHL_Utils : public UEditorUtilityWidget
 {
 	GENERATED_BODY()
 

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UHLAI : ModuleRules
+public class UHLEditor : ModuleRules
 {
-	public UHLAI(ReadOnlyTargetRules Target) : base(Target)
+	public UHLEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -27,13 +27,11 @@ public class UHLAI : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-
-				"GameplayAbilities",
-				"GameplayTags",
-				"GameplayTasks",
-
-				"AIModule", 
-
+				"Engine",
+				"PropertyEditor",
+				"Blutility",
+				"UMG", 
+				"BehaviorTreeEditor",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -42,12 +40,24 @@ public class UHLAI : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Engine",
+				"Projects",
+				"InputCore",
+				"EditorFramework",
+				"UnrealEd",
+				"ToolMenus",
+				"Slate",
+				"SlateCore",
+				"UnrealEd",
+				"DeveloperSettings", 
 				
-				// TODO: probably should be removed
 				"UnrealHelperLibrary",
+				"UHLModulesHelper",
 				
-				"AnimGraphRuntime",
+				"EditorWidgets",
+				
+				"GameplayTags",
+				"GameplayTagsEditor", 
+				// ... add private dependencies that you statically link with here ...
 			}
 			);
 

@@ -1,9 +1,9 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
-#include "UnrealHelperEditorStyle.h"
-#include "UnrealHelperEditor.h"
+#include "UHLEditorStyle.h"
+#include "UHLEditor.h"
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "Development/UHESettings.h"
+#include "Development/UHLEditorSettings.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Slate/SlateGameResources.h"
@@ -12,9 +12,9 @@
 
 #define RootToContentDir Style->RootToContentDir
 
-TSharedPtr<FSlateStyleSet> FUnrealHelperEditorStyle::StyleInstance = nullptr;
+TSharedPtr<FSlateStyleSet> FUHLEditorStyle::StyleInstance = nullptr;
 
-void FUnrealHelperEditorStyle::Initialize()
+void FUHLEditorStyle::Initialize()
 {
 	if (!StyleInstance.IsValid())
 	{
@@ -23,16 +23,16 @@ void FUnrealHelperEditorStyle::Initialize()
 	}
 }
 
-void FUnrealHelperEditorStyle::Shutdown()
+void FUHLEditorStyle::Shutdown()
 {
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleInstance);
 	ensure(StyleInstance.IsUnique());
 	StyleInstance.Reset();
 }
 
-FName FUnrealHelperEditorStyle::GetStyleSetName()
+FName FUHLEditorStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("UnrealHelperEditorStyle"));
+	static FName StyleSetName(TEXT("UHLEditorStyle"));
 	return StyleSetName;
 }
 
@@ -40,14 +40,14 @@ FName FUnrealHelperEditorStyle::GetStyleSetName()
 const FVector2D Icon16x16(16.0f, 16.0f);
 const FVector2D Icon20x20(20.0f, 20.0f);
 
-TSharedRef< FSlateStyleSet > FUnrealHelperEditorStyle::Create()
+TSharedRef< FSlateStyleSet > FUHLEditorStyle::Create()
 {
-    TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("UnrealHelperEditorStyle"));
+    TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("UHLEditorStyle"));
     Style->SetContentRoot(IPluginManager::Get().FindPlugin("UnrealHelperLibrary")->GetBaseDir() / TEXT("Resources"));
     // Style->SetContentRoot(FPaths::ProjectContentDir());
 
-    const UUHESettings* DeveloperSettings = GetDefault<UUHESettings>();
-    for (FUHECustomClassIconDescription CustomClassIcon : DeveloperSettings->CustomClassIcons)
+    const UUHLEditorSettings* DeveloperSettings = GetDefault<UUHLEditorSettings>();
+    for (FUHLEditorCustomClassIconDescription CustomClassIcon : DeveloperSettings->CustomClassIcons)
     {
         // FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
         FString Path = CustomClassIcon.Texture2D.GetLongPackageName();
@@ -75,11 +75,11 @@ TSharedRef< FSlateStyleSet > FUnrealHelperEditorStyle::Create()
         }
     }
 
-    Style->Set("UnrealHelperEditor.PluginAction", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
+    Style->Set("UHLEditor.PluginAction", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
     return Style;
 }
 
-void FUnrealHelperEditorStyle::ReloadTextures()
+void FUHLEditorStyle::ReloadTextures()
 {
 	if (FSlateApplication::IsInitialized())
 	{
@@ -87,7 +87,7 @@ void FUnrealHelperEditorStyle::ReloadTextures()
 	}
 }
 
-const ISlateStyle& FUnrealHelperEditorStyle::Get()
+const ISlateStyle& FUHLEditorStyle::Get()
 {
 	return *StyleInstance;
 }

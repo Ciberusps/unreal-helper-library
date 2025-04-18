@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS(Config="Game", DefaultConfig, DisplayName="UHL GAS Settings")
+UCLASS(Config="Game", DefaultConfig, DisplayName="UHL GAS")
 class UHLGAS_API UUHLGASSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

@@ -35,6 +35,14 @@
 			]
 		},
 		{
+			"Name": "UHLAIEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
 			"Name": "UHLGAS",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
@@ -67,7 +75,7 @@
 			]
 		},
 		{
-			"Name": "UnrealHelperEditor",
+			"Name": "UHLEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit",
 			"PlatformAllowList": [

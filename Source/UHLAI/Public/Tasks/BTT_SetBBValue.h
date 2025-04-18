@@ -5,17 +5,9 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "Core/UHLBlackboardValueType.h"
+#include "Core/UHLMathOperations.h"
 #include "BTT_SetBBValue.generated.h"
-
-UENUM(BlueprintType)
-enum class ESetBBValue_MathOperations : uint8
-{
-    Set,
-    Add,
-    Multiply,
-    Divide,
-};
 
 /**
  * Use with caution, setting BB values in BehaviorTrees directly is "anti-pattern"
@@ -36,39 +28,34 @@ public:
 	UPROPERTY(EditAnywhere, Category="Blackboard")
 	struct FBlackboardKeySelector BlackboardKey;
 
-    // TODO:
-    // UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="CurrentBBKeyValueType==EBBValueType::Int"))
-    // bool bDoMath = false;
-    // UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="bDoMath && CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
-    UPROPERTY(Category="Blackboard", EditAnywhere, meta=(EditCondition="CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
-    ESetBBValue_MathOperations MathOperation = ESetBBValue_MathOperations::Set;
+	UPROPERTY(
+		EditAnywhere, Category="Blackboard",
+		meta=(EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Int || CurrentBBKeyValueType==EBlackboardValueType::Float || CurrentBBKeyValueType==EBlackboardValueType::Vector || CurrentBBKeyValueType==EBlackboardValueType::Rotator",
+			EditConditionHides, ShowOnlyInnerProperties))
+	FOperationOnBBValue OperationOnBBValue;
 
 	/** Values */
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Bool", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Bool", EditConditionHides))
 	bool BoolValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Int", EditConditionHides))
-	int32 IntValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Float", EditConditionHides))
-	float FloatValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::String", EditConditionHides, MultiLine))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::String", EditConditionHides, MultiLine))
 	FString StringValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Name", EditConditionHides, MultiLine))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Name", EditConditionHides, MultiLine))
 	FName NameValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Vector", EditConditionHides))
-	FVector VectorValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Rotator", EditConditionHides))
-	FRotator RotatorValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Enum || CurrentBBKeyValueType==EBBValueType::NativeEnum", EditConditionHides, GetOptions="GetEnumOptions"))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Enum || CurrentBBKeyValueType==EBlackboardValueType::NativeEnum", EditConditionHides, GetOptions="GetEnumOptions"))
 	FString EnumStringValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Object", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Object", EditConditionHides))
 	FBlackboardKeySelector ObjectValue;
-	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBBValueType::Class", EditConditionHides))
+	UPROPERTY(Category="Blackboard", EditAnywhere, meta=(DisplayName="Value", EditCondition="CurrentBBKeyValueType==EBlackboardValueType::Class", EditConditionHides))
 	UClass* ClassValue;
 	/** ~Values */
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	virtual FString GetStaticDescription() const override;
+
+	virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
+
+	virtual void PostLoad() override;
 
 #if WITH_EDITORONLY_DATA
 
@@ -89,13 +76,22 @@ private:
 	UPROPERTY()
 	UEnum* CurrentEnum;
 	UPROPERTY()
-	EBBValueType CurrentBBKeyValueType = EBBValueType::None;
+	EBlackboardValueType CurrentBBKeyValueType = EBlackboardValueType::None;
 
     UFUNCTION()
     TArray<FString> GetEnumOptions();
-    bool IsMathOperationRequired() const {
-        return MathOperation == ESetBBValue_MathOperations::Add
-            || MathOperation == ESetBBValue_MathOperations::Multiply
-            || MathOperation == ESetBBValue_MathOperations::Divide;
-    };
+
+	UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Use \"MathOperationNew\" instead"))
+	EUHL_MathOperations MathOperation = EUHL_MathOperations::None;
+	UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Use \"OperationOnBBValue.IntValue\" instead"))
+	int32 IntValue;
+	UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Use \"OperationOnBBValue.FloatValue\" instead"))
+	float FloatValue;
+	UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Use \"OperationOnBBValue.VectorValue\" instead"))
+	FVector VectorValue;
+	UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Use \"OperationOnBBValue.RotatorValue\" instead"))
+	FRotator RotatorValue;
+
+	UPROPERTY()
+	bool bMigratedToMathOperation = false;
 };

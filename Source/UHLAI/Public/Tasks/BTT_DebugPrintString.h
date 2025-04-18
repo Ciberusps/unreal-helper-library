@@ -24,11 +24,14 @@ public:
     	FValueOrBBKey_String(""),
     	FValueOrBBKey_String("")
     };
-    UPROPERTY(Category="Decorator", EditAnywhere)
+
+	UPROPERTY(Category="Decorator", EditAnywhere)
     FValueOrBBKey_Float Duration = 3.5f;
-    UPROPERTY(Category="Decorator", EditAnywhere)
+
+	UPROPERTY(Category="Decorator", EditAnywhere)
     FLinearColor Color = FLinearColor(0, 0.66, 1);
-    UPROPERTY(Category="Decorator", EditAnywhere)
+
+	UPROPERTY(Category="Decorator", EditAnywhere)
     FValueOrBBKey_Name Key = FValueOrBBKey_Name();
 
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
