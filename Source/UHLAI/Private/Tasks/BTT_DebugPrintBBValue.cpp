@@ -3,11 +3,12 @@
 
 #include "Tasks/BTT_DebugPrintBBValue.h"
 
-#include "Utils/UnrealHelperLibraryBPL.h"
+#include "UHLAIBlueprintLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_NativeEnum.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_DebugPrintBBValue)
 
@@ -19,7 +20,11 @@ UBTT_DebugPrintBBValue::UBTT_DebugPrintBBValue(const FObjectInitializer& ObjectI
 
 EBTNodeResult::Type UBTT_DebugPrintBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	UUnrealHelperLibraryBPL::DebugPrintStrings(GetBBKeyDescription(OwnerComp), "", "", "", "", "","","","","",Duration, Key, true);
+	UKismetSystemLibrary::PrintString(
+		nullptr, GetBBKeyDescription(OwnerComp),
+		true, true,
+		Color, Duration, Key
+	);
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }
 
@@ -32,55 +37,55 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
-	EBBValueType BBValueType = UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(BlackboardKey);
+	EBlackboardValueType BBValueType = UUHLAIBlueprintLibrary::BlackboardKeyToBBValueType(BlackboardKey);
 
 	FString Description = FString();
 
 	switch (BBValueType)
 	{
-		case EBBValueType::Bool:
+		case EBlackboardValueType::Bool:
 			{
 				bool BoolValue = BlackboardComponent->GetValueAsBool(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %hhd"), *BlackboardKey.SelectedKeyName.ToString(), BoolValue);
 			}
 			break;
-		case EBBValueType::Int:
+		case EBlackboardValueType::Int:
 			{
 				int32 IntValue = BlackboardComponent->GetValueAsInt(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %d"), *BlackboardKey.SelectedKeyName.ToString(), IntValue);
 			}
 			break;
-		case EBBValueType::Float:
+		case EBlackboardValueType::Float:
 			{
 				float FloatValue = BlackboardComponent->GetValueAsFloat(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %f"), *BlackboardKey.SelectedKeyName.ToString(), FloatValue);
 			}
 			break;
-		case EBBValueType::String:
+		case EBlackboardValueType::String:
 			{
 				FString StringValue = BlackboardComponent->GetValueAsString(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *StringValue);
 			}
 			break;
-		case EBBValueType::Name:
+		case EBlackboardValueType::Name:
 			{
 				FName NameValue = BlackboardComponent->GetValueAsName(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *NameValue.ToString());
 			}
 			break;
-		case EBBValueType::Vector:
+		case EBlackboardValueType::Vector:
 			{
 				FVector VectorValue = BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *VectorValue.ToString());
 			}
 			break;
-		case EBBValueType::Rotator:
+		case EBlackboardValueType::Rotator:
 			{
 				FRotator RotatorValue = BlackboardComponent->GetValueAsRotator(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *RotatorValue.ToString());
 			}
 			break;
-		case EBBValueType::Enum:
+		case EBlackboardValueType::Enum:
 			{
 				UEnum* Enum = (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 							   ? ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType
@@ -91,7 +96,7 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			}
 			break;
-		case EBBValueType::NativeEnum:
+		case EBlackboardValueType::NativeEnum:
 			{
 				UEnum* Enum = (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
 							   ? ((UBlackboardKeyType_Enum*)(EntryInfo->KeyType))->EnumType
@@ -101,13 +106,13 @@ FString UBTT_DebugPrintBBValue::GetBBKeyDescription(UBehaviorTreeComponent& Owne
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *EnumStringValue);
 			}
 			break;
-		case EBBValueType::Object:
+		case EBlackboardValueType::Object:
 			{
 				FBlackboardKeySelector ObjectValue = BlackboardKey;
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), *ObjectValue.SelectedKeyName.ToString());
 			}
 			break;
-		case EBBValueType::Class:
+		case EBlackboardValueType::Class:
 			{
 				UClass* ClassValue = BlackboardComponent->GetValueAsClass(BlackboardKey.SelectedKeyName);
 				Description = FString::Printf(TEXT("\"%s\" is %s"), *BlackboardKey.SelectedKeyName.ToString(), ClassValue ? *ClassValue->GetName() : TEXT(""));

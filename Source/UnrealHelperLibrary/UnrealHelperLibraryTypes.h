@@ -5,22 +5,6 @@
 const FVector VECTOR_ERROR = FVector(404, 404, 404);
 const float FLOAT_ERROR = -99999.0f;
 
-UENUM()
-enum class EBBValueType
-{
-	None,
-	Bool,
-	Int,
-	Float,
-	String,
-	Name,
-	Vector,
-	Rotator,
-	Enum,
-	NativeEnum,
-	Object,
-	Class,
-};
 
 UENUM(BlueprintType)
 enum class EUHLDirection: uint8

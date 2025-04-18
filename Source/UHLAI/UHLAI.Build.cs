@@ -26,7 +26,8 @@ public class UHLAI : ModuleRules
 			new string[]
 			{
 				"Core",
-				
+				"CoreUObject",
+
 				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
@@ -41,7 +42,6 @@ public class UHLAI : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"CoreUObject",
 				"Engine",
 				
 				// TODO: probably should be removed
