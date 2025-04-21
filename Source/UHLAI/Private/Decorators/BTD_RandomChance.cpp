@@ -3,6 +3,7 @@
 
 #include "Decorators/BTD_RandomChance.h"
 
+#include "BehaviorTree/BTCompositeNode.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/UnrealType.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -68,7 +69,7 @@ bool UBTD_RandomChance::CalculateRawConditionValue(UBehaviorTreeComponent& Owner
 	{
 		GEngine->AddOnScreenDebugMessage(-1,
 			DrawDebugTime, bResult ? FColor::Green : FColor::White,
-			FString::Printf(TEXT("[UBTD_RandomChance] %s on \"%s\" with chance %.2f scaled by %s (%s)"), *ResultString, *GetNodeName(), CurrentChance, *ScalabilitySetting, *UEnum::GetDisplayValueAsText(ScaleType).ToString())
+			FString::Printf(TEXT("[UBTD_RandomChance] %s on \"%s\" with chance %.2f scaled by %s (%s)"), *ResultString, *GetParentNode()->GetName(), CurrentChance, *ScalabilitySetting, *UEnum::GetDisplayValueAsText(ScaleType).ToString())
 		);	
 	}
 	
