@@ -63,10 +63,15 @@ bool UBTD_RandomChance::CalculateRawConditionValue(UBehaviorTreeComponent& Owner
 			ScalabilitySetting = FString::SanitizeFloat(ScaleLevel);
 		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1,
-		DrawDebugTime, bResult ? FColor::Green : FColor::White,
-		FString::Printf(TEXT("[UBTD_RandomChance] %s on \"%s\" with chance %.2f scaled by %s (%s)"), *ResultString, *GetNodeName(), CurrentChance, *ScalabilitySetting, *UEnum::GetDisplayValueAsText(ScaleType).ToString())
-	);
+
+	if (DebugSettings.bEnableDebug)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,
+			DrawDebugTime, bResult ? FColor::Green : FColor::White,
+			FString::Printf(TEXT("[UBTD_RandomChance] %s on \"%s\" with chance %.2f scaled by %s (%s)"), *ResultString, *GetNodeName(), CurrentChance, *ScalabilitySetting, *UEnum::GetDisplayValueAsText(ScaleType).ToString())
+		);	
+	}
+	
 	return bResult;
 }
 
