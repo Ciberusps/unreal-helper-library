@@ -6,8 +6,11 @@
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Developer/MessageLog/Public/MessageLogModule.h"
 #include "Development/ConventionKeeperSettings.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
+
+DEFINE_LOG_CATEGORY(LogConventionKeeper);
 
 static const FName ConventionKeeperEditorTabName("ConventionKeeperEditor");
 
@@ -37,6 +40,8 @@ void FConventionKeeperEditorModule::StartupModule()
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.NotifyCustomizationModuleChanged();
 
+	FMessageLogModule& MessageLogModule = FModuleManager::LoadModuleChecked<FMessageLogModule>("MessageLog");
+	MessageLogModule.RegisterLogListing("ConventionKeeper", FText::FromString("ConventionKeeper"));
 }
 
 void FConventionKeeperEditorModule::ShutdownModule()
@@ -64,24 +69,17 @@ void FConventionKeeperEditorModule::ShutdownModule()
 void FConventionKeeperEditorModule::PluginButtonClicked()
 {
 	const UConventionKeeperSettings* ConventionKeeperSettings = GetDefault<UConventionKeeperSettings>();
-
-	FMessageLog MyMessageLog = FMessageLog(TEXT("ConventionKeeperLog"));
-	MyMessageLog.NewPage(FText::FromString("Starting a new logging session..."));
-
-	UConvention* Convention = ConventionKeeperSettings->Convention.GetDefaultObject();
-	for (FFolderStructure FolderStructure : Convention->FolderStructures)
+	if (!ConventionKeeperSettings->Convention.Get())
 	{
-		// bool bExists = CheckAssetPathExists(TEXT("/Game/Bogatyr"));
-		bool bExists = CheckAssetPathExists(FolderStructure.FolderPath.Path);
-		MyMessageLog.Info(FText::Format(LOCTEXT("ConventionKeeperEditor","Path {0} exists? {1}"), FText::FromString(FolderStructure.FolderPath.Path), bExists));
-		for (FDirectoryPath RequiredFolder : FolderStructure.RequiredFolders)
-		{
-			bool bRequiredFOlderExists = CheckAssetPathExists(RequiredFolder.Path);
-			MyMessageLog.Info(FText::Format(LOCTEXT("ConventionKeeperEditor","Path {0} exists? {1}"), FText::FromString(RequiredFolder.Path), bRequiredFOlderExists));
-		}
+		return;
 	}
-
-	MyMessageLog.Open();
+	
+	UConvention* Convention = ConventionKeeperSettings->Convention.GetDefaultObject();
+	if (Convention)
+	{
+		Convention->ValidateFolderStructures();
+	}
+	
 	// FText DialogText = FText::Format(
 	// 						LOCTEXT("PluginButtonDialogText", "Path exists {0}"),
 	// 						bExists);

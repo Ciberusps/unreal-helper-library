@@ -32,6 +32,9 @@ class CONVENTIONKEEPEREDITOR_API UConventionKeeperSettings : public UDeveloperSe
 
 public:
 	UPROPERTY(Config, EditAnywhere)
+	FString ProjectNameFolder = FApp::GetProjectName();
+	
+	UPROPERTY(Config, EditAnywhere)
 	TSubclassOf<UConvention> Convention = UUHLConvention::StaticClass();
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, meta=(RelativePath))
@@ -43,4 +46,9 @@ public:
 	//~UDeveloperSettings interface
 	virtual FName GetCategoryName() const override { return FApp::GetProjectName(); };
 	//~End of UDeveloperSettings interface
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite)
+	TMap<FString, FString> Placeholders = {
+		{"{ProjectName}", FApp::GetProjectName()}
+	};
 };
