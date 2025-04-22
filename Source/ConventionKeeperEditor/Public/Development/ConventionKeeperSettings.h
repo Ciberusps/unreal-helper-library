@@ -47,8 +47,11 @@ public:
 	virtual FName GetCategoryName() const override { return FApp::GetProjectName(); };
 	//~End of UDeveloperSettings interface
 
+	TMap<FString, FString> GetPlaceholders() const;
+	
+protected:
+	// for explicitly added placeholders
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite)
-	TMap<FString, FString> Placeholders = {
-		{"{ProjectName}", FApp::GetProjectName()}
-	};
+	TMap<FString, FString> Placeholders = {};
+	
 };

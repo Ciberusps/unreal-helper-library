@@ -34,7 +34,6 @@ UUHLConvention::UUHLConvention()
 
 	FFolderStructure CharacterFolderStructure = {};
 	CharacterFolderStructure.FolderPath = FDirectoryPath("Content/{ProjectName}/Characters/{CharacterName}/");
-	CharacterFolderStructure.bTemplatedFolder = true;
 	CharacterFolderStructure.RequiredFolders.Add(FDirectoryPath("Content/{ProjectName}/Characters/{CharacterName}/AI"));
 	CharacterFolderStructure.RequiredFolders.Add(FDirectoryPath("Content/{ProjectName}/Characters/{CharacterName}/Projectiles"));
 	CharacterFolderStructure.RequiredFolders.Add(FDirectoryPath("Content/{ProjectName}/Characters/{CharacterName}/Animations"));
