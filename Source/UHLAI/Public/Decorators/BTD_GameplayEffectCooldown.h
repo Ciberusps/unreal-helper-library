@@ -14,6 +14,7 @@ struct FBTGameplayEffectCooldownDecoratorMemory
 };
 
 /**
+ * TODO: finish node StaticDescription, Runtime and so on
  * Actor should implement "IAbilitySystemInterface"
  */
 UCLASS()

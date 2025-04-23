@@ -32,36 +32,13 @@ bool UBTD_GameplayEffectCooldown::CalculateRawConditionValue(UBehaviorTreeCompon
 	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OwnerActor);
 	if (!ASC) return true;
 
-	FGameplayEffectQuery ActiveGameplayEffectsQuery = FGameplayEffectQuery();
-	ActiveGameplayEffectsQuery.EffectTagQuery.MakeQuery_MatchTag(CooldownGameplayEffectTag);
-
+	FGameplayEffectQuery const ActiveGameplayEffectsQuery = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(FGameplayTagContainer(CooldownGameplayEffectTag));
 	TArray<float> EffectsTimeRemaining = ASC->GetActiveEffectsTimeRemaining(ActiveGameplayEffectsQuery);
 	if (EffectsTimeRemaining.Num() > 0)
 	{
 		return EffectsTimeRemaining[0] > 0.0f ? false : true; 
 	}
 	return true;
-	// for (const FActiveGameplayEffectHandle& Handle : LocalEffectHandles)
-	// {
-	// 	const FActiveDebuff ActiveDebuff = LocalActiveDebuffs[Handle];
-	//
-	// 	const float TimeRemaining = ASC->GetActiveGameplayEffect(Handle)->GetTimeRemaining(GetWorld()->GetTimeSeconds());
-	// 	const float MaxTime = ActiveDebuff.Duration;
-	//
-	// 	if (IsValid(ActiveDebuff.DebuffIconWidget))
-	// 	{
-	// 		const UBBaseGameplayEffect* GameplayEffect = Cast<UBBaseGameplayEffect>(ASC->GetGameplayEffectCDO(Handle));
-	// 		if (IsValid(GameplayEffect) && IsValid(GameplayEffect->GetCustomUIComponents()))
-	// 		{
-	// 			ActiveDebuff.DebuffIconWidget->Icon = GameplayEffect->GetCustomUIComponents()->Icon;
-	// 			ActiveDebuff.DebuffIconWidget->FullColor = GameplayEffect->GetCustomUIComponents()->FullColor;
-	// 			ActiveDebuff.DebuffIconWidget->EmptyColor = GameplayEffect->GetCustomUIComponents()->EmptyColor;
-	// 			ActiveDebuff.DebuffIconWidget->EffectStacks = ASC->GetCurrentStackCount(Handle);
-	// 		}
-	//
-	// 		ActiveDebuff.DebuffIconWidget->Percent = FMath::Clamp(TimeRemaining / MaxTime, 0.f, 1.f);
-	// 	}
-	// }
 }
 
 void UBTD_GameplayEffectCooldown::OnNodeDeactivation(FBehaviorTreeSearchData& SearchData, EBTNodeResult::Type NodeResult)
