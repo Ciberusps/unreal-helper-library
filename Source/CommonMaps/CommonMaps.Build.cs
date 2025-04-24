@@ -7,10 +7,12 @@ public class CommonMaps : ModuleRules
 	public CommonMaps(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		
 		PublicDependencyModuleNames.AddRange(new string[] 
 			{
 				"Core", 
-				"DeveloperSettings",
+				"DeveloperSettings", 
+				"PropertyEditor",
 			}
 		);
 		
@@ -23,7 +25,7 @@ public class CommonMaps : ModuleRules
 				"UnrealEd",
 				"AssetTools",
 				"ToolMenus",
-				"ContentBrowser"
+				"DesktopWidgets",
 			}
 		);
 	}

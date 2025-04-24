@@ -2,6 +2,7 @@
 
 #include "CommonMaps.h"
 #include "AssetSelection.h"
+#include "CommonMapCategoryCustomization.h"
 #include "CommonMapsDeveloperSettings.h"
 #include "FileHelpers.h"
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -154,6 +155,13 @@ void FCommonMapsModule::StartupModule()
 				FSimpleMulticastDelegate::FDelegate::CreateStatic(&CommonMapsFunctionLibrary::RegisterGameEditorMenus));
 		}
 	}
+
+	// customization of "SearchFolder" to make "meta=(RelativePath)" work
+	FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropEd.RegisterCustomPropertyTypeLayout(
+		"CommonMapCategory",
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCommonMapCategoryCustomization::MakeInstance)
+	);
 }
 
 void FCommonMapsModule::ExtendContextMenu()
@@ -215,6 +223,9 @@ void FCommonMapsModule::CreateCategorySelectionSubmenu(FMenuBuilder& MenuBuilder
 void FCommonMapsModule::ShutdownModule()
 {
 	UToolMenus::UnRegisterStartupCallback(this);
+
+	FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropEd.UnregisterCustomPropertyTypeLayout("CommonMapCategory");
 }
 
 #undef LOCTEXT_NAMESPACE
