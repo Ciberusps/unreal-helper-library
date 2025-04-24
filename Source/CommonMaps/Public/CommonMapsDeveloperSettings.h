@@ -35,7 +35,7 @@ public:
 	bool bSearchMapsInFolder = false;
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="", meta=(RelativePath, EditCondition="bSearchMapsInFolder", EditConditionHides))
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(RelativePath))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ContentDir))
 	FDirectoryPath SearchFolder;
 
 	UPROPERTY(EditAnywhere, Category="")
@@ -63,7 +63,7 @@ public:
 	virtual FName GetCategoryName() const override { return FName("Plugins"); }
 	
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(Config,EditAnywhere, Category="Common Maps|MapsCategories", meta=(ForceInlineRow))
+	UPROPERTY(Config,EditAnywhere, Category="Common Maps", meta=(ForceInlineRow))
 	TArray<FCommonMapCategory> MapsCategories;
 #endif
 };

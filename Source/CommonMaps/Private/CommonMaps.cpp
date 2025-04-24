@@ -157,11 +157,11 @@ void FCommonMapsModule::StartupModule()
 	}
 
 	// customization of "SearchFolder" to make "meta=(RelativePath)" work
-	FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	PropEd.RegisterCustomPropertyTypeLayout(
-		"CommonMapCategory",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCommonMapCategoryCustomization::MakeInstance)
-	);
+	// FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	// PropEd.RegisterCustomPropertyTypeLayout(
+	// 	"CommonMapCategory",
+	// 	FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCommonMapCategoryCustomization::MakeInstance)
+	// );
 }
 
 void FCommonMapsModule::ExtendContextMenu()
@@ -224,8 +224,8 @@ void FCommonMapsModule::ShutdownModule()
 {
 	UToolMenus::UnRegisterStartupCallback(this);
 
-	FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	PropEd.UnregisterCustomPropertyTypeLayout("CommonMapCategory");
+	// FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	// PropEd.UnregisterCustomPropertyTypeLayout("CommonMapCategory");
 }
 
 #undef LOCTEXT_NAMESPACE
