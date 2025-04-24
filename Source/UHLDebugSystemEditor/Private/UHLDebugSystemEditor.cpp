@@ -3,7 +3,6 @@
 #include "UHLDebugSystemEditor.h"
 
 #include "FileHelpers.h"
-#include "Misc/MessageDialog.h"
 #include "Development/UHLDebugSystemSettings.h"
 #include "ToolMenus.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,26 +13,32 @@ static const FName UHLDebugSystemEditorTabName("UHLDebugSystemEditor");
 
 namespace UHLDebugSystemEditorFunctionLibrary
 {
-	static bool HasPlayWorld()
-	{
-		return GEditor->PlayWorld != nullptr;
-	}
+	static bool HasPlayWorld() { return GEditor->PlayWorld != nullptr; }
 
-	static bool HasNoPlayWorld()
-	{
-		return !HasPlayWorld();
-	}
+	static bool HasNoPlayWorld() { return !HasPlayWorld(); }
 
 	static bool IsOptionEnabled(const FGameplayTag DebugCategoryTag)
 	{
-		const UUHLDebugSystemSettings* Settings = GetDefault<UUHLDebugSystemSettings>();
-		bool bEnabled = Settings->EnabledDebugCategories[DebugCategoryTag];
-		return bEnabled;
+		if (HasPlayWorld())
+		{
+			UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GEditor->PlayWorld);
+			if (!GameInstance) return false;
+
+			UUHLDebugSystemSubsystem* DebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSystemSubsystem>();
+			if (!DebugSubsystem) return false;
+			
+			return DebugSubsystem->IsCategoryEnabled(DebugCategoryTag);
+		}
+		else
+		{
+			const UUHLDebugSystemSettings* Settings = GetDefault<UUHLDebugSystemSettings>();
+			bool bEnabled = Settings->EnabledDebugCategories[DebugCategoryTag];
+			return bEnabled;	
+		}
 	}
 
 	static void ToggleDebugCategory_Clicked(const FGameplayTag DebugCategoryTag)
 	{
-		// TODO if HasPlayWorld toggle DebugSubsystemCategories instead or both settings and subsystem
 		if (HasPlayWorld())
 		{
 			UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GEditor->PlayWorld);
@@ -51,7 +56,6 @@ namespace UHLDebugSystemEditorFunctionLibrary
 		bool bEnabled = Settings->EnabledDebugCategories[DebugCategoryTag];
 		Settings->EnabledDebugCategories.Emplace(DebugCategoryTag, !bEnabled);	
 		
-
 		// if this controls editor UI, you may need to force a menu refresh:
 		// FSlateApplication::Get().DismissAllMenus();
 		// ExtendToolbar();  // or however you re-populate your menu
@@ -67,13 +71,15 @@ namespace UHLDebugSystemEditorFunctionLibrary
 			const FText DisplayName = FText::FromString(DebugCategory.Tags.First().ToString());
 			MenuBuilder.AddMenuEntry(
 				DisplayName,
-				FText::Format(LOCTEXT("CommonPathDescription", "{0}"), FText::FromString(DebugCategory.Name)),
+				FText::Format(LOCTEXT("DebugCategoryDescription", "{0}"), FText::FromString(DebugCategory.Name)),
 				FSlateIcon(),
 				FUIAction(
 					FExecuteAction::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::ToggleDebugCategory_Clicked, DebugCategory.Tags.First()),
-					FCanExecuteAction::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::HasNoPlayWorld),
+					FCanExecuteAction(),
+					// FCanExecuteAction::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::HasNoPlayWorld),
 					FIsActionChecked::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::IsOptionEnabled, DebugCategory.Tags.First()),
-					FIsActionButtonVisible::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::HasNoPlayWorld)
+					FIsActionButtonVisible()
+					// FIsActionButtonVisible::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::HasNoPlayWorld)
 				),
 				NAME_None,
 				EUserInterfaceActionType::ToggleButton
@@ -95,8 +101,8 @@ namespace UHLDebugSystemEditorFunctionLibrary
 		FToolMenuSection& Section = Menu->AddSection("PlayGameExtensions", TAttribute<FText>(),
 		                                             FToolMenuInsert("Play", EToolMenuInsertType::Default));
 
-		FToolMenuEntry CommonMapEntry = FToolMenuEntry::InitComboButton(
-			"CommonMapOptions",
+		FToolMenuEntry ToolMenuEntry = FToolMenuEntry::InitComboButton(
+			"DebugCategoriesState",
 			FUIAction(
 				FExecuteAction(),
 				// FCanExecuteAction::CreateStatic(&UHLDebugSystemEditorFunctionLibrary::HasNoPlayWorld),
@@ -108,8 +114,8 @@ namespace UHLDebugSystemEditorFunctionLibrary
 			LOCTEXT("UHLDebugSystemEditor_ToolTip", "Enabling/Disabling debug categories fast"),
 			FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Tools")
 		);
-		CommonMapEntry.StyleNameOverride = "CalloutToolbar";
-		Section.AddEntry(CommonMapEntry);
+		ToolMenuEntry.StyleNameOverride = "CalloutToolbar";
+		Section.AddEntry(ToolMenuEntry);
 	}
 }
 
@@ -124,6 +130,7 @@ void FUHLDebugSystemEditorModule::StartupModule()
 
 void FUHLDebugSystemEditorModule::ShutdownModule()
 {
+	UToolMenus::UnRegisterStartupCallback(this);
 }
 
 #undef LOCTEXT_NAMESPACE
