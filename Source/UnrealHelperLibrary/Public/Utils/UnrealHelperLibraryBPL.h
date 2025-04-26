@@ -199,6 +199,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils")
 	static float ConvertPercentToMultiplier(float Percent);
 
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", Keywords = "UnrealHelperLibrary attach"))
+	static AActor* FindAttachedActorByTag(AActor* ActorIn, FName Tag);
+
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
 	static bool IsPreviewWorld(UObject* WorldContextObject);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary"))

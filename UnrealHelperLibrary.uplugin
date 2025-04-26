@@ -59,6 +59,14 @@
 			]
 		},
 		{
+			"Name": "UHLDebugSystemEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
 			"Name": "UHLDebug",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
@@ -90,8 +98,16 @@
 				"Win64"
 			]
 		},
-		{
+    {
 			"Name": "ConventionKeeperEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "CommonMaps",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit",
 			"PlatformAllowList": [

@@ -16,7 +16,7 @@
 
 UUHLDebugModuleSubsystem::UUHLDebugModuleSubsystem()
 {
-    UHLDebugWidgetClass = FSoftObjectPath(TEXT("/UHLDebug/UI/UI_UHL_DebugWidget.UI_UHL_DebugWidget_C"));
+    UHLDebugWidgetClass = FSoftObjectPath(TEXT("/UnrealHelperLibrary/UI/UI_UHL_DebugWidget.UI_UHL_DebugWidget_C"));
 }
 
 void UUHLDebugModuleSubsystem::Initialize(FSubsystemCollectionBase& Collection)

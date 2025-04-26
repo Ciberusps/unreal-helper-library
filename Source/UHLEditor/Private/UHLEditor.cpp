@@ -8,7 +8,7 @@
 #include "UHLEditorBlueprintThumbnailRenderer.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
-static const FName UHLEditorTabName("UHLEditor");
+static const FName UHLDebugSystemEditorTabName("UHLEditor");
 
 #define LOCTEXT_NAMESPACE "FUHLEditorModule"
 
