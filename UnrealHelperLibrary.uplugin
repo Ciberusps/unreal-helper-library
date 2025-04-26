@@ -98,14 +98,6 @@
 				"Win64"
 			]
 		},
-    {
-			"Name": "ConventionKeeperEditor",
-			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit",
-			"PlatformAllowList": [
-				"Win64"
-			]
-		},
 		{
 			"Name": "CommonMaps",
 			"Type": "Editor",
