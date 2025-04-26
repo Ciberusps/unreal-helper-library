@@ -6,19 +6,6 @@
 #include "CommonMapsDeveloperSettings.generated.h"
 
 USTRUCT(BlueprintType)
-struct FCommonMap
-{
-	GENERATED_BODY()
-
-public:
-	FCommonMap() = default;
-	explicit FCommonMap(const TArray<FSoftObjectPath>& InPaths) : MapURL(InPaths) {}
-
-	UPROPERTY(EditAnywhere, Category="", meta=(AllowedClasses="/Script/Engine.World"))
-	TSet<FSoftObjectPath> MapURL;
-};
-
-USTRUCT(BlueprintType)
 struct FCommonMapCategory
 {
 	GENERATED_BODY()
@@ -26,28 +13,30 @@ struct FCommonMapCategory
 public:
 	FCommonMapCategory() = default;
 	explicit FCommonMapCategory(FName CategoryName_In, const TArray<FSoftObjectPath>& InPaths)
-		: CategoryName(CategoryName_In), Maps({ FCommonMap(InPaths) }) {};
+		: Name(CategoryName_In), Maps({ InPaths }) {};
 	
 	UPROPERTY(EditAnywhere, Category="")
-	FName CategoryName = "";
+	FName Name = "";
 
 	UPROPERTY(EditAnywhere, Category="")
-	bool bSearchMapsInFolder = false;
+	bool bAutoSearchMapsInFolder = false;
 	
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="", meta=(RelativePath, EditCondition="bSearchMapsInFolder", EditConditionHides))
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ContentDir))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ContentDir, EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
 	FDirectoryPath SearchFolder;
 
-	UPROPERTY(EditAnywhere, Category="")
-	TArray<FCommonMap> Maps = {};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
+	int32 SubmenuDepth = 1;
+	
+	UPROPERTY(EditAnywhere, Category="", meta=(AllowedClasses="/Script/Engine.World", TitleProperty="CategoryName"))
+	TArray<FSoftObjectPath> Maps = {};
 
 	bool operator==(const FCommonMapCategory& Other) const
 	{
-		return CategoryName == Other.CategoryName;
+		return Name == Other.Name;
 	}
 	bool operator==(const FName& Other) const
 	{
-		return CategoryName == Other;
+		return Name == Other;
 	}
 };
 

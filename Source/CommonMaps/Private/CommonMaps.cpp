@@ -2,7 +2,6 @@
 
 #include "CommonMaps.h"
 #include "AssetSelection.h"
-#include "CommonMapCategoryCustomization.h"
 #include "CommonMapsDeveloperSettings.h"
 #include "FileHelpers.h"
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -39,6 +38,95 @@ namespace CommonMapsFunctionLibrary
 		}
 	}
 
+	// Recursive helper to either add entries or deeper sub-menus.
+    static void PopulateRecursive(
+        FMenuBuilder& Builder,
+        TArray<FAssetData> Assets,       // captured by value
+        const FString RootPath,          // e.g. "/Game/GameName/Characters"
+        int32 MaxDepth,                  // SubmenuDepth
+        int32 CurrentDepth               // 0 on first call
+    )
+    {
+        // Base case: we have descended MaxDepth levels, so just list maps here
+        if (CurrentDepth >= MaxDepth)
+        {
+            for (const FAssetData& Asset : Assets)
+            {
+                const FString AssetPathString = Asset.GetSoftObjectPath().ToString();
+                const FText   DisplayName      = FText::FromString(Asset.AssetName.ToString());
+
+                Builder.AddMenuEntry(
+                    DisplayName,
+                    FText::FromString(AssetPathString),
+                    FSlateIcon(),
+                    FUIAction(
+                        FExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::OpenCommonMap_Clicked, AssetPathString),
+                        FCanExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld),
+                        FIsActionChecked(),
+                        FIsActionButtonVisible::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld)
+                    )
+                );
+            }
+            return;
+        }
+
+        // Otherwise, bucket by the folder name at this level
+        TMap<FString, TArray<FAssetData>> Buckets;
+        const FString Prefix = RootPath + TEXT("/");
+
+        for (const FAssetData& Asset : Assets)
+        {
+            // Only World assets
+            if (Asset.AssetClassPath.GetAssetName() != FName("World"))
+                continue;
+
+            // "/Game/Root/Folder1/Folder2" => "Folder1/Folder2"
+            FString Rel = Asset.PackagePath.ToString();
+            if (Rel.StartsWith(Prefix))
+            {
+                Rel = Rel.Mid(Prefix.Len());
+            }
+            else
+            {
+                Rel.Empty();
+            }
+
+            // Split into ["Folder1","Folder2",...]
+            TArray<FString> Parts;
+            Rel.ParseIntoArray(Parts, TEXT("/"), /*CullEmpty=*/ true);
+
+            // Grab the segment at our current depth (0-based)
+            FString Key = Parts.IsValidIndex(CurrentDepth) ? Parts[CurrentDepth] : TEXT("");
+            Buckets.FindOrAdd(Key).Add(Asset);
+        }
+
+        // Create one submenu per bucket, capturing each subgroup by value
+        for (auto& Pair : Buckets)
+        {
+            const FString& FolderName = Pair.Key.IsEmpty() ? TEXT("<root>") : Pair.Key;
+            TArray<FAssetData> SubAssets = MoveTemp(Pair.Value);
+            int32 NextDepth = CurrentDepth + 1;
+
+            Builder.AddSubMenu(
+                FText::FromString(FolderName),
+                FText(),  // no extra tooltip
+                FNewMenuDelegate::CreateLambda(
+                    [SubAssets, RootPath, MaxDepth, NextDepth](FMenuBuilder& SubMenuBuilder)
+                    {
+                        // recurse with copies only
+                        CommonMapsFunctionLibrary::PopulateRecursive(
+                            SubMenuBuilder,
+                            SubAssets,
+                            RootPath,
+                            MaxDepth,
+                            NextDepth
+                        );
+                    }
+                )
+            );
+        }
+    }
+
 	static TSharedRef<SWidget> GetCommonMapsDropdown()
 	{
 		FMenuBuilder MenuBuilder(true, nullptr);
@@ -46,69 +134,52 @@ namespace CommonMapsFunctionLibrary
 		for (const FCommonMapCategory& MapCategory : GetDefault<UCommonMapsDeveloperSettings>()->MapsCategories)
 		{
 			TAttribute<FText> SectionText;
-			SectionText.Set(FText::FromName(MapCategory.CategoryName));
+			SectionText.Set(FText::FromName(MapCategory.Name));
 			MenuBuilder.BeginSection(NAME_None, SectionText);
 
-			for (const FCommonMap& Map : MapCategory.Maps)
+			for (const FSoftObjectPath& Map : MapCategory.Maps)
 			{
-				for (const FSoftObjectPath& MapURL : Map.MapURL)
+				if (!Map.IsValid())
 				{
-					if (!MapURL.IsValid())
-					{
-						continue;
-					}
-	
-					const FText DisplayName = FText::FromString(MapURL.GetAssetName());
-					MenuBuilder.AddMenuEntry(
-						DisplayName,
-						FText::Format(LOCTEXT("CommonPathDescription", "{0}"), FText::FromString(MapURL.ToString())),
-						FSlateIcon(),
-						FUIAction(
-							FExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::OpenCommonMap_Clicked, MapURL.ToString()),
-							FCanExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld),
-							FIsActionChecked(),
-							FIsActionButtonVisible::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld)
-						)
-					);
+					continue;
 				}
+
+				const FText DisplayName = FText::FromString(Map.GetAssetName());
+				MenuBuilder.AddMenuEntry(
+					DisplayName,
+					FText::Format(LOCTEXT("CommonPathDescription", "{0}"), FText::FromString(Map.ToString())),
+					FSlateIcon(),
+					FUIAction(
+						FExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::OpenCommonMap_Clicked, Map.ToString()),
+						FCanExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld),
+						FIsActionChecked(),
+						FIsActionButtonVisible::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld)
+					)
+				);
 			}
 
-			if (MapCategory.bSearchMapsInFolder)
+			if (MapCategory.bAutoSearchMapsInFolder)
 			{
-				FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-				TArray<FAssetData> MapAssets;
-	
-				FString Relative = MapCategory.SearchFolder.Path.TrimStartAndEnd();
-				FString AssetRegistryPath = FString::Printf(TEXT("/Game/%s"), *Relative);
-				FPaths::NormalizeDirectoryName(AssetRegistryPath);
-				
-				AssetRegistryModule.Get().GetAssetsByPath(FName(AssetRegistryPath), MapAssets, /*bRecursive=*/ true);
-	
-				if (MapAssets.Num() > 0)
-				{
-					for (const FAssetData& AssetData : MapAssets)
-					{
-						// Only include World assets (unreal maps have AssetClass "World")
-						if (AssetData.AssetClassPath.GetAssetName() == FName("World"))
-						{
-							const FString AssetPathString = AssetData.GetSoftObjectPath().ToString();
-							const FText DisplayName = FText::FromString(AssetData.AssetName.ToString());
-	
-							MenuBuilder.AddMenuEntry(
-								DisplayName,
-								FText::FromString(AssetPathString),
-								FSlateIcon(),
-								FUIAction(
-									FExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::OpenCommonMap_Clicked, AssetPathString),
-									FCanExecuteAction::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld),
-									FIsActionChecked(),
-									FIsActionButtonVisible::CreateStatic(&CommonMapsFunctionLibrary::HasNoPlayWorld)
-								)
-							);
-						}
-					}
-				}
+				// 1) Normalize root (assume always "/Game/..."), strip trailing slash
+				FString RootPath = MapCategory.SearchFolder.Path.TrimStartAndEnd();
+				RootPath.RemoveFromEnd("/");
+			
+				// Gather all map assets under that path
+				FAssetRegistryModule& AR = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+				TArray<FAssetData> AllAssets;
+				AR.Get().GetAssetsByPath(FName(*RootPath), AllAssets, /*bRecursive=*/ true);
+
+				// Kick off the recursive submenu build at depth=0
+				CommonMapsFunctionLibrary::PopulateRecursive(
+					MenuBuilder,
+					MoveTemp(AllAssets),
+					RootPath,
+					MapCategory.SubmenuDepth,
+					/*CurrentDepth=*/ 0
+				);
 			}
+
+			MenuBuilder.EndSection();
 		}
 
 		return MenuBuilder.MakeWidget();
@@ -192,7 +263,7 @@ void FCommonMapsModule::AddToCommonMapsFromMenu(FName CategoryName)
 		{
 			if (FCommonMapCategory* CurrentCategory = Settings->MapsCategories.FindByKey(CategoryName))
 			{
-				CurrentCategory->Maps.Add(FCommonMap({ AssetData.GetSoftObjectPath() }));
+				CurrentCategory->Maps.Add({ AssetData.GetSoftObjectPath() });
 			}
 			else
 			{
@@ -213,9 +284,9 @@ void FCommonMapsModule::CreateCategorySelectionSubmenu(FMenuBuilder& MenuBuilder
 	for (const FCommonMapCategory& Category : DevSettings->MapsCategories)
 	{
 		MenuBuilder.AddMenuEntry(
-			FText::Format(LOCTEXT("CategoryLabel", "{0}"), FText::FromName(Category.CategoryName)),
-			FText::Format(LOCTEXT("CategoryTooltip", "Add this map to \"{0}\" category."), FText::FromName(Category.CategoryName)),
-			FSlateIcon(), FUIAction(FExecuteAction::CreateRaw(this, &FCommonMapsModule::AddToCommonMapsFromMenu, Category.CategoryName)));
+			FText::Format(LOCTEXT("CategoryLabel", "{0}"), FText::FromName(Category.Name)),
+			FText::Format(LOCTEXT("CategoryTooltip", "Add this map to \"{0}\" category."), FText::FromName(Category.Name)),
+			FSlateIcon(), FUIAction(FExecuteAction::CreateRaw(this, &FCommonMapsModule::AddToCommonMapsFromMenu, Category.Name)));
 	}
 }
 
@@ -223,9 +294,6 @@ void FCommonMapsModule::CreateCategorySelectionSubmenu(FMenuBuilder& MenuBuilder
 void FCommonMapsModule::ShutdownModule()
 {
 	UToolMenus::UnRegisterStartupCallback(this);
-
-	// FPropertyEditorModule& PropEd = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	// PropEd.UnregisterCustomPropertyTypeLayout("CommonMapCategory");
 }
 
 #undef LOCTEXT_NAMESPACE
