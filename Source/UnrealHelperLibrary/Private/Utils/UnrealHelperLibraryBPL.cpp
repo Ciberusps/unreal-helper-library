@@ -644,6 +644,23 @@ float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
 
 float UUnrealHelperLibraryBPL::ConvertPercentToMultiplier(float Percent) { return (100.0f - Percent) / 100.0f; }
 
+AActor* UUnrealHelperLibraryBPL::FindAttachedActorByTag(AActor* ActorIn, FName Tag)
+{
+	TArray<AActor*> OutActors;
+	ActorIn->GetAttachedActors(OutActors, true, true);
+
+	AActor** ActorSearchResult = OutActors.FindByPredicate([Tag](const AActor* Actor)
+	{
+		return Actor->ActorHasTag(Tag);
+	});
+
+	if (ActorSearchResult)
+	{
+		return *ActorSearchResult;
+	}
+	return nullptr;
+}
+
 bool UUnrealHelperLibraryBPL::IsPreviewWorld(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->IsPreviewWorld(); }
 
 bool UUnrealHelperLibraryBPL::IsGameWorld(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->IsGameWorld(); }
