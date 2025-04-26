@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
 	int32 SubmenuDepth = 1;
 	
-	UPROPERTY(EditAnywhere, Category="", meta=(AllowedClasses="/Script/Engine.World", TitleProperty="CategoryName"))
+	UPROPERTY(EditAnywhere, Category="", meta=(AllowedClasses="/Script/Engine.World", TitleProperty="Name"))
 	TArray<FSoftObjectPath> Maps = {};
 
 	bool operator==(const FCommonMapCategory& Other) const
