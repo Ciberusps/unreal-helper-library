@@ -1,18 +1,18 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
 
-#include "Animation/Notifies/AN_AttachWithUniqueId.h"
+#include "Animation/Notifies/AN_AttachActorWithUniqueId.h"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(AN_AttachWithUniqueId)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(AN_AttachActorWithUniqueId)
 
 #if WITH_EDITOR
-void UAN_AttachWithUniqueId::PostEditChangeProperty(
+void UAN_AttachActorWithUniqueId::PostEditChangeProperty(
 	struct FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	if (PropertyChangedEvent.Property != nullptr && 
-		PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UAN_AttachWithUniqueId, UniqueId))
+		PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UAN_AttachActorWithUniqueId, UniqueId))
 	{
 		if (UAnimSequenceBase* AnimSeq = Cast<UAnimSequenceBase>(GetOuter()))
 		{
@@ -22,12 +22,12 @@ void UAN_AttachWithUniqueId::PostEditChangeProperty(
 }
 #endif
 
-FString UAN_AttachWithUniqueId::GetNotifyName_Implementation() const
+FString UAN_AttachActorWithUniqueId::GetNotifyName_Implementation() const
 {
 	return FString("Attach With UniqueId -> ") + UniqueId.ToString();
 }
 
-void UAN_AttachWithUniqueId::Notify(
+void UAN_AttachActorWithUniqueId::Notify(
 	USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
@@ -35,8 +35,8 @@ void UAN_AttachWithUniqueId::Notify(
 
 	if (!MeshComp) return;
 	
-	AActor* TargetActor = MeshComp->GetOwner();
-	if (!TargetActor) return;
+	AActor* OwnerActor = MeshComp->GetOwner();
+	if (!OwnerActor) return;
 
 	// 1) Load the class synchronously
 	UClass* ActorClass = ActorToAttach.LoadSynchronous();
@@ -47,7 +47,7 @@ void UAN_AttachWithUniqueId::Notify(
 	}
 
 	FActorSpawnParameters ActorSpawnParameters;
-	ActorSpawnParameters.Owner = TargetActor;
+	ActorSpawnParameters.Owner = OwnerActor;
 	ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	AActor* SpawnedActor = MeshComp->GetWorld()->SpawnActor<AActor>(ActorClass,

@@ -6,7 +6,7 @@
 #include "Animation/Notifies/AN_UHL_Base.h"
 #include "Core/UHLAttachmentRules.h"
 #include "Engine/EngineTypes.h"
-#include "AN_AttachWithUniqueId.generated.h"
+#include "AN_AttachActorWithUniqueId.generated.h"
 
 /**
  * Spawns an actor of the specified class, attaches it to a given component socket,
@@ -15,7 +15,7 @@
  * actors for the matching tag.
  *
  * Typical usage:
- *   1. During an animation or setup phase, call AN_AttachWithUniqueId to
+ *   1. During an animation or setup phase, call AN_AttachActorWithUniqueId to
  *      spawn and attach, for example, a projectile to your character mesh:
  *        - It spawns the projectile actor at the socket transform.
  *        - It adds a tag (e.g. “Projectile_42”) so you can distinguish it.
@@ -29,22 +29,22 @@
  * @param AttachmentTransformRules    Attachment rules
  */
 UCLASS()
-class UNREALHELPERLIBRARY_API UAN_AttachWithUniqueId : public UAN_UHL_Base
+class UNREALHELPERLIBRARY_API UAN_AttachActorWithUniqueId : public UAN_UHL_Base
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category="AttachWithUniqueId")
+	UPROPERTY(EditAnywhere, Category="AttachActorWithUniqueId")
 	TSoftClassPtr<AActor> ActorToAttach;
 
-	UPROPERTY(EditAnywhere, Category="AttachWithUniqueId", meta = (AnimNotifyBoneName = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AttachActorWithUniqueId")
+	FName UniqueId = "Unique_ID";
+	
+	UPROPERTY(EditAnywhere, Category="AttachActorWithUniqueId", meta = (AnimNotifyBoneName = "true"))
 	FName SocketName = "";
 
-	UPROPERTY(EditAnywhere, Category="AttachWithUniqueId")
+	UPROPERTY(EditAnywhere, Category="AttachActorWithUniqueId")
 	FUHLAttachmentRules AttachmentRules;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AttachWithUniqueId")
-	FName UniqueId = "Unique_ID";
 
 protected:
 #if WITH_EDITOR

@@ -25,3 +25,31 @@ struct FUHLAttachmentRules
 		return FAttachmentTransformRules(LocationRule, RotationRule, ScaleRule, bWeldSimulatedBodies);
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FUHLDetachmentRules
+{
+	GENERATED_BODY()
+
+	/** 
+	 * Which transform to preserve when detaching: 
+	 * KeepRelative or KeepWorld 
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Detachment")
+	EDetachmentRule DetachmentRule = EDetachmentRule::KeepWorld;
+
+	/** 
+	 * If true, calls Modify() on the component so that the detach 
+	 * is recorded in the transaction buffer (undo/redo) 
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Detachment")
+	bool bCallModify = false;
+
+	/** 
+	 * Convert to Unreal’s native struct, for use in DetachFromComponent / DetachFromActor 
+	 */
+	FDetachmentTransformRules ToEngineRules() const
+	{
+		return FDetachmentTransformRules(DetachmentRule, bCallModify);
+	}
+};
