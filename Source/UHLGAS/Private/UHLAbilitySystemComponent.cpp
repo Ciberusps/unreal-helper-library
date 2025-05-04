@@ -456,7 +456,7 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 				if (AbilitySpec->Ability)
 				{
 					UUHLGameplayAbility* GameplayAbility = StaticCast<UUHLGameplayAbility*>(AbilitySpec->Ability.Get());
-					if (GameplayAbility->bCacheInput && !bActivated)
+					if (GameplayAbility->bCacheInput && (!bActivated || GameplayAbility->bIgnoreActivatedState))
 					{
 						if (CanAddAbilityToCache(GameplayAbility))
 						{

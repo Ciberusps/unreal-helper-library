@@ -1,6 +1,5 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
-
 #include "Input/AbilityInputCache.h"
 
 #include "UHLAbilitySystemComponent.h"
@@ -94,6 +93,7 @@ void UAbilityInputCache::CheckCache()
 				// TODO should we get another Ability from cache to activate
 				// if failed to activation of last ability failed ??? mb it should be an option
 				UE_LOG(Log_UHL_AbilityInputCache, Log, TEXT("InputCache checked found ability to activate - %s!"), *AbilityTagToActivate.ToString());
+				ASC->TryCancelAbilitiesWithTags({AbilityTagToActivate});
 				bool bActivated = ASC->TryActivateAbilityWithTag(AbilityTagToActivate);
 				UE_LOG(Log_UHL_AbilityInputCache, Log, TEXT("Activation %s - %s!"), bActivated ? TEXT("successful") : TEXT("failed"), *AbilityTagToActivate.ToString());
 

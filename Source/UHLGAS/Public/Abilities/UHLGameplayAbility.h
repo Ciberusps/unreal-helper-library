@@ -64,6 +64,8 @@ public:
     // - Ability should have at least one AbilityTag
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     bool bCacheInput = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
+	bool bIgnoreActivatedState = false;
     // if any of those tags on owner ASC - cache input
     // UPD not required we cache only abilities that can't be activated and have bCachedInput
     // so when CheckCache will be called we will try to activate them all, but latest - first
