@@ -97,7 +97,7 @@ void UAA_TryActivateAbilityAndWait::Activate()
 	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
 	{
 		OnAbilityActivateDelegateHandle = ASC->AbilityActivatedCallbacks.AddUObject(this, &UAA_TryActivateAbilityAndWait::OnAbilityActivate);
-		OnAbilityActivateDelegateHandle = ASC->AbilityEndedCallbacks.AddUObject(this, &UAA_TryActivateAbilityAndWait::OnAbilityActivate);
+		OnAbilityActivateDelegateHandle = ASC->AbilityEndedCallbacks.AddUObject(this, &UAA_TryActivateAbilityAndWait::OnAbilityDeactivate);
 		bool bActivated = UUHLGASBlueprintLibrary::TryActivateAbilityWithTag(ASC, WithTag, bAllowRemoteActivation);
 		if (!bActivated)
 		{
