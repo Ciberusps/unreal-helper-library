@@ -223,7 +223,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Angles", meta = (DefaultToSelf = "Actor", Keywords = "UnrealHelperLibrary angle distance"))
 	static bool IsOtherActorInAngle(AActor* Actor, AActor* OtherActor, TArray<FFloatRange> Ranges);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Angles", meta = (DefaultToSelf = "Character", Keywords = "UnrealHelperLibrary angle distance"))
-	static bool IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
+	static bool InRangeToOtherCharacter(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Angles", meta = (DefaultToSelf = "Character", Keywords = "UnrealHelperLibrary angle distance"))
+	static bool InRangeToLocation(ACharacter* Character, FVector Location, FFloatRange Range, bool bIncludeSelfCapsuleRadius);
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary file path"))
 	static FString GetPathToFile(UObject* Object);

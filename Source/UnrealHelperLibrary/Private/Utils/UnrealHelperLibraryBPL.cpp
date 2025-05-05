@@ -688,10 +688,12 @@ bool UUnrealHelperLibraryBPL::IsOtherActorInAngle(AActor* Actor, AActor* OtherAc
 	return bInAngle;
 }
 
-bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
+bool UUnrealHelperLibraryBPL::InRangeToOtherCharacter(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
 {
 	if (!Character || !OtherCharacter)
+	{
 		return false;
+	}
 
 	float CurrentDistance = Character->GetDistanceTo(OtherCharacter);
 
@@ -702,6 +704,25 @@ bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACh
 	if (bIncludeTargetCapsuleRadius)
 	{
 		CurrentDistance -= OtherCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	}
+
+	bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
+	return bInRange;
+}
+
+bool UUnrealHelperLibraryBPL::InRangeToLocation(
+	ACharacter* Character, FVector Location, FFloatRange Range, bool bIncludeSelfCapsuleRadius)
+{
+	if (!Character)
+	{
+		return false;
+	}
+
+	float CurrentDistance = FVector::Dist2D(Character->GetActorLocation(), Location);
+
+	if (bIncludeSelfCapsuleRadius)
+	{
+		CurrentDistance -= Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
 	}
 
 	bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
