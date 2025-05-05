@@ -780,6 +780,15 @@ EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
 	}
 }
 
+float UUnrealHelperLibraryBPL::RandomValueInInterval(FFloatInterval Range)
+{
+	// Ensure correct ordering
+	const float Lower = FMath::Min(Range.Min, Range.Max);
+	const float Upper = FMath::Max(Range.Min, Range.Max);
+
+	return FMath::FRandRange(Lower, Upper);
+}
+
 FColor UUnrealHelperLibraryBPL::RandomColor(int32 Seed)
 {
 	if (Seed >= 0)

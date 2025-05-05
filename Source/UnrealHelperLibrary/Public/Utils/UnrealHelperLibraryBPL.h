@@ -243,6 +243,9 @@ public:
 	// if real build returns - FApp::GetBuildConfiguration() result, except Debug and DebugGame are same "Debug"
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary build debug test"))
 	static EUHLBuildType GetBuildType();
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Random", meta = (Keywords = "UnrealHelperLibrary random interval"))
+	static float RandomValueInInterval(FFloatInterval Range);
 	/** ~Utils **/
 
 	/** Colors **/
