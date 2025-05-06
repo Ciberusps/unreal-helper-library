@@ -644,6 +644,23 @@ float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
 
 float UUnrealHelperLibraryBPL::ConvertPercentToMultiplier(float Percent) { return (100.0f - Percent) / 100.0f; }
 
+AActor* UUnrealHelperLibraryBPL::FindAttachedActorByTag(AActor* ActorIn, FName Tag)
+{
+	TArray<AActor*> OutActors;
+	ActorIn->GetAttachedActors(OutActors, true, true);
+
+	AActor** ActorSearchResult = OutActors.FindByPredicate([Tag](const AActor* Actor)
+	{
+		return Actor->ActorHasTag(Tag);
+	});
+
+	if (ActorSearchResult)
+	{
+		return *ActorSearchResult;
+	}
+	return nullptr;
+}
+
 bool UUnrealHelperLibraryBPL::IsPreviewWorld(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->IsPreviewWorld(); }
 
 bool UUnrealHelperLibraryBPL::IsGameWorld(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->IsGameWorld(); }
@@ -671,10 +688,12 @@ bool UUnrealHelperLibraryBPL::IsOtherActorInAngle(AActor* Actor, AActor* OtherAc
 	return bInAngle;
 }
 
-bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
+bool UUnrealHelperLibraryBPL::InRangeToOtherCharacter(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
 {
 	if (!Character || !OtherCharacter)
+	{
 		return false;
+	}
 
 	float CurrentDistance = Character->GetDistanceTo(OtherCharacter);
 
@@ -685,6 +704,25 @@ bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACh
 	if (bIncludeTargetCapsuleRadius)
 	{
 		CurrentDistance -= OtherCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	}
+
+	bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
+	return bInRange;
+}
+
+bool UUnrealHelperLibraryBPL::InRangeToLocation(
+	ACharacter* Character, FVector Location, FFloatRange Range, bool bIncludeSelfCapsuleRadius)
+{
+	if (!Character)
+	{
+		return false;
+	}
+
+	float CurrentDistance = FVector::Dist2D(Character->GetActorLocation(), Location);
+
+	if (bIncludeSelfCapsuleRadius)
+	{
+		CurrentDistance -= Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
 	}
 
 	bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
@@ -761,6 +799,15 @@ EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
 			return IsInEditor() ? EUHLBuildType::Editor : EUHLBuildType::None;
 			break;
 	}
+}
+
+float UUnrealHelperLibraryBPL::RandomValueInInterval(FFloatInterval Range)
+{
+	// Ensure correct ordering
+	const float Lower = FMath::Min(Range.Min, Range.Max);
+	const float Upper = FMath::Max(Range.Min, Range.Max);
+
+	return FMath::FRandRange(Lower, Upper);
 }
 
 FColor UUnrealHelperLibraryBPL::RandomColor(int32 Seed)

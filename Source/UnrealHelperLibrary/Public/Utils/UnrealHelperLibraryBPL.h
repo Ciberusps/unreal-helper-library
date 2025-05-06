@@ -199,6 +199,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils")
 	static float ConvertPercentToMultiplier(float Percent);
 
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary", meta = (DefaultToSelf = "ActorIn", Keywords = "UnrealHelperLibrary attach"))
+	static AActor* FindAttachedActorByTag(AActor* ActorIn, FName Tag);
+
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary preview editor"))
 	static bool IsPreviewWorld(UObject* WorldContextObject);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (WorldContext = "WorldContextObject", Keywords = "UnrealHelperLibrary"))
@@ -220,7 +223,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Angles", meta = (DefaultToSelf = "Actor", Keywords = "UnrealHelperLibrary angle distance"))
 	static bool IsOtherActorInAngle(AActor* Actor, AActor* OtherActor, TArray<FFloatRange> Ranges);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Angles", meta = (DefaultToSelf = "Character", Keywords = "UnrealHelperLibrary angle distance"))
-	static bool IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
+	static bool InRangeToOtherCharacter(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius);
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Angles", meta = (DefaultToSelf = "Character", Keywords = "UnrealHelperLibrary angle distance"))
+	static bool InRangeToLocation(ACharacter* Character, FVector Location, FFloatRange Range, bool bIncludeSelfCapsuleRadius);
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary file path"))
 	static FString GetPathToFile(UObject* Object);
@@ -240,6 +245,9 @@ public:
 	// if real build returns - FApp::GetBuildConfiguration() result, except Debug and DebugGame are same "Debug"
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils", meta = (Keywords = "UnrealHelperLibrary build debug test"))
 	static EUHLBuildType GetBuildType();
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Random", meta = (Keywords = "UnrealHelperLibrary random interval"))
+	static float RandomValueInInterval(FFloatInterval Range);
 	/** ~Utils **/
 
 	/** Colors **/
