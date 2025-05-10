@@ -105,6 +105,14 @@
 			"PlatformAllowList": [
 				"Win64"
 			]
+		},
+		{
+			"Name": "UHLStateTree",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
 		}
 	],
 	"Plugins": [
@@ -126,6 +134,16 @@
 		{
 			"Name": "EnhancedInput",
 			"Enabled": true
+		},
+		{
+			"Name": "StateTree",
+			"Enabled": true,
+			"Optional": true
+		},
+		{
+			"Name": "GameplayStateTree",
+			"Enabled": true,
+			"Optional": true
 		}
 	]
 }
