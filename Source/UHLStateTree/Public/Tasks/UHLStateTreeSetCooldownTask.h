@@ -13,6 +13,19 @@ struct UHLSTATETREE_API FUHLStateTreeSetCooldownTaskInstanceData
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, Category = "Parameter")
+	FGameplayTag CooldownTag;
+
+	UPROPERTY(EditAnywhere, Category = "Parameter")
+	float Duration = 0.0f;
+
+	/** True if we are adding to any existing duration, false if we are setting the duration (potentially invalidating an existing end time). */
+	UPROPERTY(EditAnywhere, Category = "Parameter", DisplayName = AddToExistingDuration)
+	bool bAddToExistingDuration;
+
+	UPROPERTY(EditAnywhere, Category = "Parameter")
+	bool bFinishTask = true;
+
 	// /** Optional actor where to draw the text at. */
 	// UPROPERTY(EditAnywhere, Category = "Input", meta=(Optional))
 	// TObjectPtr<AActor> ReferenceActor = nullptr;
@@ -44,14 +57,4 @@ struct UHLSTATETREE_API FUHLStateTreeSetCooldownTask : public FStateTreeTaskComm
 		return UE::StateTree::Colors::Grey;
 	}
 #endif
-	
-	UPROPERTY(EditAnywhere, Category = "Parameter")
-	FGameplayTag CooldownTag;
-
-	UPROPERTY(EditAnywhere, Category = "Parameter")
-	float Duration = 0.0f;
-
-	/** True if we are adding to any existing duration, false if we are setting the duration (potentially invalidating an existing end time). */
-	UPROPERTY(EditAnywhere, Category = "Parameter", DisplayName = AddToExistingDuration)
-	bool bAddToExistingDuration;
 };

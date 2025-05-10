@@ -14,7 +14,7 @@
 
 EStateTreeRunStatus FUHLStateTreeSetCooldownTask::EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
 {
-	// const FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
+	const FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
 	
 	const UWorld* World = Context.GetWorld();
 	// if (World == nullptr && InstanceData.ReferenceActor != nullptr)
@@ -34,24 +34,32 @@ EStateTreeRunStatus FUHLStateTreeSetCooldownTask::EnterState(FStateTreeExecution
 	
 	if (UUHLStateTreeAIComponent* Cmp = Cast<UUHLStateTreeAIComponent>(AIController->GetBrainComponent()))
 	{
-		Cmp->TagCooldowns.AddCooldownTagDuration(Context.GetOwner(), CooldownTag, Duration, bAddToExistingDuration);
-		return EStateTreeRunStatus::Succeeded;
+		Cmp->TagCooldowns.AddCooldownTagDuration(Context.GetOwner(), InstanceData.CooldownTag, InstanceData.Duration, InstanceData.bAddToExistingDuration);
+		if (InstanceData.bFinishTask)
+		{
+			return EStateTreeRunStatus::Succeeded;
+		}
+		else
+		{
+			return EStateTreeRunStatus::Running;
+		}
 	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("[UHLStateTreeSetCooldownTask] using UUHLStateTreeAIComponent required to use SetCooldownTask"));
-	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("[UHLStateTreeSetCooldownTask] using UUHLStateTreeAIComponent required to use SetCooldownTask"));
 	return EStateTreeRunStatus::Failed;
 }
 
 #if WITH_EDITOR
 FText FUHLStateTreeSetCooldownTask::GetDescription(const FGuid& ID, FStateTreeDataView InstanceDataView, const IStateTreeBindingLookup& BindingLookup, EStateTreeNodeFormatting Formatting) const
 {
+	const FInstanceDataType* InstanceData = InstanceDataView.GetPtr<FInstanceDataType>();
+	check(InstanceData);
+	
 	const FText Format = (Formatting == EStateTreeNodeFormatting::RichText)
 		? LOCTEXT("DebugTextRich", "<b>Set Cooldown Tag</> \"{Text}\"")
 		: LOCTEXT("DebugText", "Set Cooldown Tag \"{Text}\"");
 
-	return FText::FormatNamed(Format, TEXT("Text"), FText::FromString(CooldownTag.ToString()));
+	return FText::FormatNamed(Format, TEXT("Text"), FText::FromString(InstanceData->CooldownTag.ToString()));
 }
 #endif
 
