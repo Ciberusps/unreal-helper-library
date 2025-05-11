@@ -8,7 +8,6 @@
 #define LOCTEXT_NAMESPACE "FUnrealHelperLibraryModule"
 
 DEFINE_LOG_CATEGORY(LogUnrealHelperLibrary);
-DEFINE_LOG_CATEGORY(LogUHLAbilitySystem);
 
 void FUnrealHelperLibraryModule::StartupModule()
 {

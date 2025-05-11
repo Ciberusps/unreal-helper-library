@@ -2,21 +2,7 @@
 
 #include "Utils/UnrealHelperLibraryBPL.h"
 
-#include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "GameplayTagsManager.h"
 #include "KismetAnimationLibrary.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Int.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Name.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_NativeEnum.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_String.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
@@ -27,36 +13,17 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
-#include "Core/UHLAbilitySystemInterface.h"
-#include "AbilitySystem/UHLAbilitySystemComponent.h"
+#include "NavigationSystem.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Widget.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
-#include "GameFramework/HUD.h"
-#include "Subsystems/DebugSubsystem/UHLDebugSubsystem.h"
 #include "UI/UHLHUD.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UnrealHelperLibraryBPL)
 
 static const int32 DEPTH_PRIORITY = -1;
-
-UUHLAbilitySystemComponent* UUnrealHelperLibraryBPL::GetUHLAbilitySystemComponent(AActor* Actor)
-{
-	if (Actor == nullptr)
-	{
-		return nullptr;
-	}
-
-	const IUHLAbilitySystemInterface* ASI = Cast<IUHLAbilitySystemInterface>(Actor);
-	if (ASI)
-	{
-		return ASI->GetUHLAbilitySystemComponent();
-	}
-
-	return Actor->FindComponentByClass<UUHLAbilitySystemComponent>();
-}
 
 FString UUnrealHelperLibraryBPL::GetProjectVersion()
 {
@@ -109,157 +76,6 @@ float UUnrealHelperLibraryBPL::GetAnimMontageSectionLengthByName(UAnimMontage* A
 	Result = AnimMontage->GetSectionLength(SectionIdx);
 
 	return Result;
-}
-
-FGameplayEffectSpec UUnrealHelperLibraryBPL::CreateGenericGASGameplayEffectSpec(
-	TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* HitInstigator, AActor* InEffectCauser, const FHitResult& HitResult, const UObject* SourceObject)
-{
-	const UGameplayEffect* GameplayEffect = GameplayEffectClass->GetDefaultObject<UGameplayEffect>();
-	FGameplayEffectContext* GameplayEffectContext = new FGameplayEffectContext(HitInstigator, InEffectCauser);
-	FGameplayEffectContextHandle GameplayEffectContextHandle(GameplayEffectContext);
-	GameplayEffectContextHandle.AddHitResult(HitResult);
-	GameplayEffectContextHandle.AddSourceObject(SourceObject);
-	FGameplayEffectSpec GameplayEffectSpec(GameplayEffect, GameplayEffectContextHandle);
-	return GameplayEffectSpec;
-}
-
-void UUnrealHelperLibraryBPL::UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag)
-{
-	if (!ASC)
-		return;
-
-	if (bCondition)
-	{
-		if (!ASC->HasMatchingGameplayTag(PositiveConditionTag))
-		{
-			ASC->AddLooseGameplayTag(PositiveConditionTag);
-		}
-		if (NegativeConditionTag != FGameplayTag::EmptyTag)
-		{
-			ASC->RemoveLooseGameplayTag(NegativeConditionTag, 999999);
-		}
-	}
-	else
-	{
-		if (NegativeConditionTag == FGameplayTag::EmptyTag)
-		{
-			ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
-		}
-		else
-		{
-			if (!ASC->HasMatchingGameplayTag(NegativeConditionTag))
-			{
-				ASC->AddLooseGameplayTag(NegativeConditionTag);
-			}
-			ASC->RemoveLooseGameplayTag(PositiveConditionTag, 999999);
-		}
-	}
-}
-
-bool UUnrealHelperLibraryBPL::IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
-{
-	if (!IsValid(ASC)) return false;
-
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
-	ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToActivate, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToActivate)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			bResult |= Ability->IsActive();
-		}
-	}
-	return bResult;
-}
-
-bool UUnrealHelperLibraryBPL::TryActivateAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
-{
-	if (!IsValid(ASC)) return false;
-	return ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(GameplayTag), bAllowRemoteActivation);
-}
-
-bool UUnrealHelperLibraryBPL::TryCancelAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag)
-{
-	if (!IsValid(ASC))
-		return false;
-
-	bool bResult = false;
-	TArray<FGameplayAbilitySpec*> AbilitiesToCancel;
-	ASC->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(GameplayTag), AbilitiesToCancel, false);
-
-	for (FGameplayAbilitySpec* AbilitySpec : AbilitiesToCancel)
-	{
-		TArray<UGameplayAbility*> AbilityInstances = AbilitySpec->GetAbilityInstances();
-		for (UGameplayAbility* Ability : AbilityInstances)
-		{
-			if (Ability->IsActive())
-			{
-				Ability->K2_CancelAbility();
-				bResult = true;
-			}
-		}
-	}
-	return bResult;
-}
-
-bool UUnrealHelperLibraryBPL::ToggleAbilityWithTag(UAbilitySystemComponent* ASC, FGameplayTag GameplayTag, bool bAllowRemoteActivation)
-{
-	if (!IsValid(ASC)) return false; 
-
-	bool bResult = false;
-	
-	if (IsAbilityActiveByTag(ASC, GameplayTag))
-	{
-		bResult = TryCancelAbilityWithTag(ASC, GameplayTag);
-	}
-	else
-	{
-		bResult = TryActivateAbilityWithTag(ASC, GameplayTag, bAllowRemoteActivation);
-	}
-
-	return bResult;
-}
-
-TArray<bool> UUnrealHelperLibraryBPL::TryCancelAbilitiesWithTags(UAbilitySystemComponent* ASC, TArray<FGameplayTag> GameplayTags)
-{
-	if (!IsValid(ASC))
-		return {};
-
-	TArray<bool> Result;
-	for (auto GameplayTag : GameplayTags)
-	{
-		Result.Add(TryCancelAbilityWithTag(ASC, GameplayTag));
-	}
-	return Result;
-}
-
-int32 UUnrealHelperLibraryBPL::FireGameplayEvent(UAbilitySystemComponent* ASC, FGameplayTag EventTag, const FGameplayEventData& Payload) { return ASC->HandleGameplayEvent(EventTag, &Payload); }
-
-FGameplayTag UUnrealHelperLibraryBPL::FindTagByString(const FString& TagString, bool bMatchPartialString)
-{
-	const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
-	FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
-
-	if (!Tag.IsValid() && bMatchPartialString)
-	{
-		FGameplayTagContainer AllTags;
-		Manager.RequestAllGameplayTags(AllTags, true);
-
-		for (const FGameplayTag& TestTag : AllTags)
-		{
-			if (TestTag.ToString().Contains(TagString))
-			{
-				// UE_LOG(LogUnrealHelperLibrary, Display, TEXT("Could not find exact match for tag [%s] but found partial match on tag [%s]."), *TagString, *TestTag.ToString());
-				Tag = TestTag;
-				break;
-			}
-		}
-	}
-
-	return Tag;
 }
 
 EUHLDirection UUnrealHelperLibraryBPL::GetOppositeDirection(EUHLDirection Direction_In)
@@ -328,7 +144,7 @@ float UUnrealHelperLibraryBPL::RelativeAngleToActor(
 		FColor DebugCol = DebugColor.ToFColor(true);
 		FVector LineStart = ActorRelativeToWhomAngleCalculated->GetActorLocation();
 		FVector LineEnd = TargetActor->GetActorLocation();
-		FVector TextLocation = (LineEnd - LineStart) / 2 + LineStart;
+		FVector TextLocation = GetCenterPointBetweenVectors(ActorRelativeToWhomAngleCalculated->GetWorld(), LineStart, LineEnd);
 
 		DrawDebugString(DebugWorld, TextLocation, FString::Printf(TEXT("RelativeAngle: %.2f°"), Result), 0, DebugCol, DebugLifetime, true, 1.0f);
 		DrawDebugDirectionalArrow(DebugWorld, LineStart, LineEnd, RELATIVE_POINT_ARROW_SIZE, DebugCol, true, DebugLifetime, DEPTH_PRIORITY, 2);
@@ -456,6 +272,7 @@ AActor* UUnrealHelperLibraryBPL::GetActorClosestToCenterOfScreen(UObject* WorldC
 
 AActor* UUnrealHelperLibraryBPL::GetMostDistantActor(const TArray<AActor*>& Actors, float& MaxDistance_Out, FVector Location, const bool bDebug, const float DebugLifetime)
 {
+	// TODO use GetMostDistantVector if possible
 	AActor* Result = nullptr;
 	float GreatestDistance = -9999999;
 	TMap<AActor*, float> ActorsAndDistances = {};
@@ -483,6 +300,78 @@ AActor* UUnrealHelperLibraryBPL::GetMostDistantActor(const TArray<AActor*>& Acto
 	}
 
 	return Result;
+}
+
+FVector UUnrealHelperLibraryBPL::GetMostDistantVector(
+	const UObject* WorldContextObject,
+	const TArray<FVector> Vectors, FVector Location,
+	float& MaxDistance_Out, int32& Index_Out, bool bUseNavigation,
+	const bool bDebug, const float DebugLifetime)
+{
+	FVector Result = VECTOR_ERROR;
+
+	TArray<float> Distances = {}; 
+	float GreatestDistance = -9999999;
+	
+	for (int32 i = 0; i < Vectors.Num(); i++)
+	{
+		float Distance = FLOAT_ERROR;
+		if (bUseNavigation)
+		{
+			double DistanceInDouble;
+			UNavigationSystemV1::GetPathLength(WorldContextObject->GetWorld(), Vectors[i], Location, DistanceInDouble);
+			Distance = DistanceInDouble;
+		}
+		else
+		{
+			Distance = FVector::Distance(Vectors[i], Location);
+		}
+		
+		Distances[i] = Distance;
+
+		if (Distance > GreatestDistance)
+		{
+			GreatestDistance = Distance;
+			Result = Vectors[i];
+			MaxDistance_Out = Distance;
+			Index_Out = i;
+		}
+	}
+	
+	if (bDebug)
+	{
+		for (int32 i = 0; i < Vectors.Num(); i++)
+		{
+			bool bMostDistant = i == Index_Out;
+			DrawDebugLine(WorldContextObject->GetWorld(), Vectors[i], Location, bMostDistant ? FColor::Green : FColor::Red, false, DebugLifetime, -1, 2.0f);
+			DrawDebugString(WorldContextObject->GetWorld(), FVector::ZeroVector, FString::Printf(TEXT("Distance: %.2f"), Distances[i]), nullptr, bMostDistant ? FColor::Green : FColor::Red, 0, true, 1);
+		}
+	}
+
+	return Result;
+}
+
+FVector UUnrealHelperLibraryBPL::GetMostDistantActorComponent(
+	const UObject* WorldContextObject, const TArray<USceneComponent*> SceneComponents,
+	FVector Location, float& MaxDistance_Out, int32& Index_Out, bool bUseNavigation,
+	const bool bDebug, const float DebugLifetime)
+{
+	TArray<FVector> Vectors = {};
+	for (int32 i = 0; i < SceneComponents.Num(); i++)
+	{
+		if (IsValid(SceneComponents[i]))
+		{
+			Vectors.Add(SceneComponents[i]->GetComponentToWorld().GetLocation());
+		}
+		else
+		{
+			Vectors.Add(VECTOR_ERROR);
+		}
+	}
+	return GetMostDistantVector(WorldContextObject,
+		Vectors, Location, 
+		MaxDistance_Out, Index_Out, bUseNavigation,
+		bDebug, DebugLifetime);
 }
 
 void UUnrealHelperLibraryBPL::DrawDebugLineOnCanvas(UObject* WorldContextObject, const FLineInfo& LineInfo, const bool bRelativeToViewportCenter)
@@ -620,6 +509,21 @@ FBox UUnrealHelperLibraryBPL::GetComponentBox(const USceneComponent* Component)
 	return FBox(BoxMin, BoxMax);
 }
 
+FVector UUnrealHelperLibraryBPL::GetCenterPointBetweenVectors(
+	const UObject* WorldContextObject, const FVector& PointA, const FVector& PointB,
+	const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
+{
+	FVector Result = (PointB - PointA) / 2 + PointA;
+
+	if (bDebug)
+	{
+		UWorld* DebugWorld = WorldContextObject->GetWorld();
+		DrawDebugSphere(DebugWorld, Result, 10.0f, 12, DebugColor.ToFColor(true), true, DebugLifetime, DEPTH_PRIORITY, 1);
+	}
+
+	return Result;
+}
+
 void UUnrealHelperLibraryBPL::GetPointAtRelativeAngle(
 	FVector& Point, FRotator& PointRotation, const AActor* ActorIn, const float Angle, const float Distance, const bool bDebug, const float DebugLifetime, const FLinearColor DebugColor)
 {
@@ -740,6 +644,23 @@ float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
 
 float UUnrealHelperLibraryBPL::ConvertPercentToMultiplier(float Percent) { return (100.0f - Percent) / 100.0f; }
 
+AActor* UUnrealHelperLibraryBPL::FindAttachedActorByTag(AActor* ActorIn, FName Tag)
+{
+	TArray<AActor*> OutActors;
+	ActorIn->GetAttachedActors(OutActors, true, true);
+
+	AActor** ActorSearchResult = OutActors.FindByPredicate([Tag](const AActor* Actor)
+	{
+		return Actor->ActorHasTag(Tag);
+	});
+
+	if (ActorSearchResult)
+	{
+		return *ActorSearchResult;
+	}
+	return nullptr;
+}
+
 bool UUnrealHelperLibraryBPL::IsPreviewWorld(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->IsPreviewWorld(); }
 
 bool UUnrealHelperLibraryBPL::IsGameWorld(UObject* WorldContextObject) { return WorldContextObject->GetWorld()->IsGameWorld(); }
@@ -767,10 +688,12 @@ bool UUnrealHelperLibraryBPL::IsOtherActorInAngle(AActor* Actor, AActor* OtherAc
 	return bInAngle;
 }
 
-bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
+bool UUnrealHelperLibraryBPL::InRangeToOtherCharacter(ACharacter* Character, ACharacter* OtherCharacter, FFloatRange Range, bool bIncludeSelfCapsuleRadius, bool bIncludeTargetCapsuleRadius)
 {
 	if (!Character || !OtherCharacter)
+	{
 		return false;
+	}
 
 	float CurrentDistance = Character->GetDistanceTo(OtherCharacter);
 
@@ -781,6 +704,25 @@ bool UUnrealHelperLibraryBPL::IsOtherCharacterInRange(ACharacter* Character, ACh
 	if (bIncludeTargetCapsuleRadius)
 	{
 		CurrentDistance -= OtherCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	}
+
+	bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
+	return bInRange;
+}
+
+bool UUnrealHelperLibraryBPL::InRangeToLocation(
+	ACharacter* Character, FVector Location, FFloatRange Range, bool bIncludeSelfCapsuleRadius)
+{
+	if (!Character)
+	{
+		return false;
+	}
+
+	float CurrentDistance = FVector::Dist2D(Character->GetActorLocation(), Location);
+
+	if (bIncludeSelfCapsuleRadius)
+	{
+		CurrentDistance -= Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
 	}
 
 	bool bInRange = UKismetMathLibrary::InRange_FloatFloat(CurrentDistance, Range.GetLowerBoundValue(), Range.GetUpperBoundValue());
@@ -859,56 +801,13 @@ EUHLBuildType UUnrealHelperLibraryBPL::GetBuildType()
 	}
 }
 
-EBBValueType UUnrealHelperLibraryBPL::BlackboardKeyToBBValueType(FBlackboardKeySelector BlackboardKey)
+float UUnrealHelperLibraryBPL::RandomValueInInterval(FFloatInterval Range)
 {
-	EBBValueType Result = EBBValueType::None;
+	// Ensure correct ordering
+	const float Lower = FMath::Min(Range.Min, Range.Max);
+	const float Upper = FMath::Max(Range.Min, Range.Max);
 
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
-	{
-		Result = EBBValueType::Bool;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
-	{
-		Result = EBBValueType::Int;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
-	{
-		Result = EBBValueType::Float;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
-	{
-		Result = EBBValueType::String;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Name::StaticClass())
-	{
-		Result = EBBValueType::Name;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-	{
-		Result = EBBValueType::Vector;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
-	{
-		Result = EBBValueType::Rotator;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
-	{
-		Result = EBBValueType::Enum;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_NativeEnum::StaticClass())
-	{
-		Result = EBBValueType::NativeEnum;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
-	{
-		Result = EBBValueType::Object;
-	}
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Class::StaticClass())
-	{
-		Result = EBBValueType::Class;
-	}
-
-	return Result;
+	return FMath::FRandRange(Lower, Upper);
 }
 
 FColor UUnrealHelperLibraryBPL::RandomColor(int32 Seed)
@@ -927,17 +826,4 @@ FLinearColor UUnrealHelperLibraryBPL::RandomLinearColor(int32 Seed)
 		return FLinearColor::MakeRandomSeededColor(Seed);
 	}
 	return FLinearColor::MakeRandomColor();
-}
-
-bool UUnrealHelperLibraryBPL::IsUHLDebugCategoryEnabled(UObject* WorldContextObject, FGameplayTag DebugCategoryGameplayTag)
-{
-	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
-	if (!IsValid(GameInstance))
-		return false;
-
-	UUHLDebugSubsystem* UHLDebugSubsystem = GameInstance->GetSubsystem<UUHLDebugSubsystem>();
-	if (!IsValid(UHLDebugSubsystem))
-		return false;
-
-	return UHLDebugSubsystem->IsCategoryEnabled(DebugCategoryGameplayTag);
 }
