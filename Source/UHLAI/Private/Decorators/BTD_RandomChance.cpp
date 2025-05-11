@@ -20,6 +20,7 @@ UBTD_RandomChance::UBTD_RandomChance(const FObjectInitializer& ObjectInitializer
 
 	ScalableChanceLevelInBB.AddFloatFilter(this, GET_MEMBER_NAME_CHECKED(UBTD_RandomChance, ScalableChanceLevelInBB));
 
+#if WITH_EDITOR
 	FProperty* StructProp = FindFProperty<FProperty>(
 		GetClass(), GET_MEMBER_NAME_CHECKED(UBTD_RandomChance, ChanceChangePerStep));
 
@@ -36,6 +37,7 @@ UBTD_RandomChance::UBTD_RandomChance(const FObjectInitializer& ObjectInitializer
 			FloatProperty->SetMetaData(TEXT("UIMax"), TEXT("1.0"));	
 		}
 	}
+#endif
 }
 
 bool UBTD_RandomChance::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
