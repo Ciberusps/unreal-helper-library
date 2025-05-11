@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "EnemyTickOptimizerSubsystem.generated.h"
 

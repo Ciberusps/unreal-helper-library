@@ -7,7 +7,7 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BehaviorTree/Services/BTService_DefaultFocus.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "UnrealHelperLibraryTypes.h"
 #include "BTT_TurnTo.generated.h"
 
 class AAIController;

@@ -3,6 +3,7 @@
 
 #include "Decorators/BTD_GameplayEffectCooldown.h"
 
+#include "Engine/World.h"
 #include "AIController.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"

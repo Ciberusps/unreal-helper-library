@@ -2,7 +2,10 @@
 
 #pragma once
 
-const FVector VECTOR_ERROR = FVector(404, 404, 404);
+#include "CoreMinimal.h"  // This includes FVector definition
+#include "UnrealHelperLibraryTypes.generated.h"  // Required for UENUM macros
+
+const FVector VECTOR_ERROR = FVector(404.0f, 404.0f, 404.0f);
 const float FLOAT_ERROR = -99999.0f;
 
 

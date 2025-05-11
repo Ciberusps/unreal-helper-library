@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UHLAbilitySystemConfig.h"
 #include "Engine/DeveloperSettings.h"
+#include "Misc/App.h"
 #include "UHLGASSettings.generated.h"
 
 /**

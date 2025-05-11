@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "UnrealHelperLibraryTypes.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"

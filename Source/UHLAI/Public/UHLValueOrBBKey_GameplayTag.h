@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/ValueOrBBKey.h"
-#include "ValueOrBBKey_GameplayTag.generated.h"
+#include "UHLValueOrBBKey_GameplayTag.generated.h"
 
+// TODO: Looks like there is same thing(not sure) in 
+// Experimental/GameplayBehaviors/Source/GameplayBehaviorsModule/Public/AI/ValueOrBBKey_GameplayTag.h
 
 USTRUCT(BlueprintType, Category = "UnrealHelperLibrary")
-struct UHLAI_API FValueOrBBKey_GameplayTag : public FValueOrBlackboardKeyBase
+struct UHLAI_API FUHLValueOrBBKey_GameplayTag : public FValueOrBlackboardKeyBase
 {
 	GENERATED_BODY()
 
-	FValueOrBBKey_GameplayTag(FGameplayTag Default = FGameplayTag::EmptyTag)
+	FUHLValueOrBBKey_GameplayTag(FGameplayTag Default = FGameplayTag::EmptyTag)
 		: DefaultValue(Default) {}
 	FGameplayTag GetValue(const UBehaviorTreeComponent& BehaviorComp) const;
 	FGameplayTag GetValue(const UBehaviorTreeComponent* BehaviorComp) const;
@@ -36,7 +38,7 @@ protected:
 };
 
 template <>
-struct TStructOpsTypeTraits<FValueOrBBKey_GameplayTag> : public TStructOpsTypeTraitsBase2<FValueOrBBKey_GameplayTag>
+struct TStructOpsTypeTraits<FUHLValueOrBBKey_GameplayTag> : public TStructOpsTypeTraitsBase2<FUHLValueOrBBKey_GameplayTag>
 {
 	enum
 	{

@@ -4,7 +4,10 @@
 #include "UHLDebugSystemSubsystem.h"
 
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 #include "Development/UHLDebugSystemSettings.h"
+#include "UnrealHelperLibraryTypes.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugSystemSubsystem)

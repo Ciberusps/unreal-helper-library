@@ -15,19 +15,19 @@ public:
 	explicit FCommonMapCategory(FName CategoryName_In, const TArray<FSoftObjectPath>& InPaths)
 		: Name(CategoryName_In), Maps({ InPaths }) {};
 	
-	UPROPERTY(EditAnywhere, Category="")
+	UPROPERTY(EditAnywhere, Category="CommonMapCategory")
 	FName Name = "";
 
-	UPROPERTY(EditAnywhere, Category="")
+	UPROPERTY(EditAnywhere, Category="CommonMapCategory")
 	bool bAutoSearchMapsInFolder = false;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ContentDir, EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CommonMapCategory", meta=(ContentDir, EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
 	FDirectoryPath SearchFolder;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CommonMapCategory", meta=(EditCondition="bAutoSearchMapsInFolder", EditConditionHides))
 	int32 SubmenuDepth = 1;
 	
-	UPROPERTY(EditAnywhere, Category="", meta=(AllowedClasses="/Script/Engine.World", TitleProperty="Name"))
+	UPROPERTY(EditAnywhere, Category="CommonMapCategory", meta=(AllowedClasses="/Script/Engine.World", TitleProperty="Name"))
 	TArray<FSoftObjectPath> Maps = {};
 
 	bool operator==(const FCommonMapCategory& Other) const

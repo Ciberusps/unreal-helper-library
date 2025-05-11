@@ -3,9 +3,11 @@
 
 #include "Subsystems/EnemyTickManager/EnemyTickOptimizerSubsystem.h"
 
-#include "Development/UHLSettings.h"
 #include "GameFramework/Character.h"
+#include "Development/UHLSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 void UEnemyTickOptimizerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {

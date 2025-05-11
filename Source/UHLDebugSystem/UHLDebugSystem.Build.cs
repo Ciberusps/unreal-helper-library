@@ -28,11 +28,17 @@ public class UHLDebugSystem : ModuleRules
 			new string[]
 			{
 				"Core",
+				"CoreUObject",
+				"Engine",
+				
 				// ... add other public dependencies that you statically link with here ...
 				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
-				"EnhancedInput",
+				"EnhancedInput", 
+				
+				// TODO remove if possible used only for DebugPrints and EUHLBuildType
+				"UnrealHelperLibrary",
 			}
 			);
 
@@ -40,8 +46,6 @@ public class UHLDebugSystem : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"CoreUObject",
-				"Engine",
 				"Slate",
 				"SlateCore",
 				"UMG",
@@ -49,11 +53,6 @@ public class UHLDebugSystem : ModuleRules
 				"DeveloperSettings", 
 				
 				// Should not use any other UHL modules
-				
-				// TODO remove if possible used only for DebugPrints
-				// what if UHL debugging functions should be here in this module
-				// or in separate module UHLDebugLibrary?
-				"UnrealHelperLibrary",
 				
 				"UHLModulesHelper",
 				// ... add private dependencies that you statically link with here ...

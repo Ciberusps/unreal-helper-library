@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UHLDebugCategoryComponent.h"
 #include "GameplayTagContainer.h"
-#include "UnrealHelperLibrary/UnrealHelperLibraryTypes.h"
+#include "UnrealHelperLibraryTypes.h"
 #include "UHLDebugCategory.generated.h"
 
-
-class UUHLDebugCategoryComponent;
 
 USTRUCT(BlueprintType)
 struct FUHLDebugCategory

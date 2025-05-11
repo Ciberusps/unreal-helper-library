@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ValueOrBBKey_GameplayTag.h"
+#include "UHLValueOrBBKey_GameplayTag.h"
 #include "Abilities/GameplayAbilityTypes.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_InvokeGameplayAbility.generated.h"
@@ -32,7 +32,7 @@ public:
     UBTT_InvokeGameplayAbility(const FObjectInitializer& ObjectInitializer);
 
     UPROPERTY(Category="Blackboard", EditAnywhere)
-    FValueOrBBKey_GameplayTag GameplayTag;
+    FUHLValueOrBBKey_GameplayTag GameplayTag;
 
 	UPROPERTY(Category="Blackboard", EditAnywhere, DisplayName = "Activate")
     FValueOrBBKey_Bool bActivate = true;

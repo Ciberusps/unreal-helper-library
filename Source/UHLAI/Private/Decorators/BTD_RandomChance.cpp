@@ -4,6 +4,7 @@
 #include "Decorators/BTD_RandomChance.h"
 
 #include "BehaviorTree/BTCompositeNode.h"
+#include "Engine/Engine.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/UnrealType.h"
 #include "BehaviorTree/BlackboardData.h"
