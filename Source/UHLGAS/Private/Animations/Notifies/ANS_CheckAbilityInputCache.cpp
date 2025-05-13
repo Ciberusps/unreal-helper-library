@@ -37,34 +37,34 @@ void UANS_CheckAbilityInputCache::NotifyTick(USkeletalMeshComponent* MeshComp, U
 		return;
 	}
 
-	if (bUseCheckCacheOnlyWithThisTags)
-	{
-		if (SavedTargetTags.IsEmpty())
-		{
-			NotifyEnd(MeshComp, Animation, EventReference);
-			return;
-		}
-
-		TArray<FGameplayTag> RemovedTags {};
-		for (const FGameplayTag& Tag : SavedTargetTags)
-		{
-			if (!ASC->GetAbilityInputCache()->GetAbilityInputCache().Contains(Tag)) continue;
-			ASC->GetAbilityInputCache()->CheckCache();
-			if (bCacheOnce)
-			{
-				RemovedTags.Add(Tag);
-			}
-		}
-
-		for (const FGameplayTag& Tag : RemovedTags)
-		{
-			SavedTargetTags.RemoveTag(Tag);
-		}
-	}
-	else
-	{
+	// if (bUseCheckCacheOnlyWithThisTags)
+	// {
+	// 	if (SavedTargetTags.IsEmpty())
+	// 	{
+	// 		NotifyEnd(MeshComp, Animation, EventReference);
+	// 		return;
+	// 	}
+	//
+	// 	TArray<FGameplayTag> RemovedTags {};
+	// 	for (const FGameplayTag& Tag : SavedTargetTags)
+	// 	{
+	// 		if (!ASC->GetAbilityInputCache()->GetAbilityInputCache().Contains(Tag)) continue;
+	// 		ASC->GetAbilityInputCache()->CheckCache();
+	// 		if (bCacheOnce)
+	// 		{
+	// 			RemovedTags.Add(Tag);
+	// 		}
+	// 	}
+	//
+	// 	for (const FGameplayTag& Tag : RemovedTags)
+	// 	{
+	// 		SavedTargetTags.RemoveTag(Tag);
+	// 	}
+	// }
+	// else
+	// {
 		ASC->GetAbilityInputCache()->CheckCache();
-	}
+	// }
 }
 
 void UANS_CheckAbilityInputCache::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
