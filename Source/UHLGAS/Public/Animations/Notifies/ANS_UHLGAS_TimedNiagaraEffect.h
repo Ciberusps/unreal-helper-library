@@ -17,13 +17,13 @@ class UHLGAS_API UANS_UHLGAS_TimedNiagaraEffect : public UAnimNotifyState_TimedN
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Niagara System")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL GAS")
 	FGameplayTagContainer ActivationRequiredTags = {};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Niagara System")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL GAS")
 	FGameplayTagContainer ActivationBlockedTags = {};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Niagara System")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL GAS")
 	bool bIgnoreTagRequirementsInPreview = true;
 	
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
