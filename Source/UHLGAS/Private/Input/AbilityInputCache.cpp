@@ -1,9 +1,10 @@
 // Pavel Penkov 2025 All Rights Reserved.
 
-
 #include "Input/AbilityInputCache.h"
 
 #include "UHLAbilitySystemComponent.h"
+#include "UHLGASBlueprintLibrary.h"
+#include "Abilities/UHLGameplayAbility.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AbilityInputCache)
 
@@ -94,6 +95,20 @@ void UAbilityInputCache::CheckCache()
 				// TODO should we get another Ability from cache to activate
 				// if failed to activation of last ability failed ??? mb it should be an option
 				UE_LOG(Log_UHL_AbilityInputCache, Log, TEXT("InputCache checked found ability to activate - %s!"), *AbilityTagToActivate.ToString());
+
+				// FGameplayAbilitySpec AbilitySpec;
+				// UUHLGASBlueprintLibrary::FindAbilitySpecByTagUsingASC(ASC.Get(), AbilityTagToActivate, AbilitySpec);
+				// if (AbilitySpec.IsActive())
+				// {
+				// 	const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec.Ability);
+				// 	if (AbilityCDO->bIgnoreActivatedState)
+				// 	{
+				// 		// ASC->CancelAbilityHandle(AbilitySpec.Handle);
+				// 		// bool bCanceledSuccessfully = ASC->TryCancelAbilityWithTag(AbilityTagToActivate);
+				// 		// bCanceledSuccessfully;
+				// 	}
+				// }
+				
 				bool bActivated = ASC->TryActivateAbilityWithTag(AbilityTagToActivate);
 				UE_LOG(Log_UHL_AbilityInputCache, Log, TEXT("Activation %s - %s!"), bActivated ? TEXT("successful") : TEXT("failed"), *AbilityTagToActivate.ToString());
 

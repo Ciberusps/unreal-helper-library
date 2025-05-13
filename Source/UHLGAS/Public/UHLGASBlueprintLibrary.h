@@ -58,7 +58,7 @@ public:
 		bCondition = true ? TAG_Character_State_HasMoveInput : NONE
 	 */
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
-	static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag);
+	static void UpdateStateGameplayTags(UAbilitySystemComponent* ASC, bool bCondition, FGameplayTag PositiveConditionTag, FGameplayTag NegativeConditionTag, bool bShouldReplicate = false);
 
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary ability"))
 	static bool IsAbilityActiveByTag(const UAbilitySystemComponent* ASC, FGameplayTag GameplayTag);
@@ -82,4 +82,10 @@ public:
 	// function from Lyra
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary gameplaytag tag"))
 	static FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
+
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary gameplaytag tag"))
+	static void FindAbilitySpecByTag(const TArray<FGameplayAbilitySpec>& AbilitiesSpecsContainer, FGameplayTag TagToFind, FGameplayAbilitySpec& AbilitySpec_Out);
+
+	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|GAS", meta = (Keywords = "UnrealHelperLibrary gameplaytag tag"))
+	static void FindAbilitySpecByTagUsingASC(UAbilitySystemComponent* ASC, FGameplayTag TagToFind, FGameplayAbilitySpec& AbilitySpec_Out);
 };
