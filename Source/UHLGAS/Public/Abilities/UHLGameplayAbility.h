@@ -65,8 +65,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     bool bCacheInput = false;
 
-	// ignore that ability already activated and add it to InputCache
-	// bRetriggerInstancedAbility probably should be disabled
+	// ignore fact that ability already activated while checking cache
+	// it means
+	// - ability should be added to InputCache even if its already activated
+	// - "bRetriggerInstancedAbility" setting should be disabled to work because during
+	//    AbilityInputCache->CheckCache() we cancel previous ability and start it again
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
 	bool bIgnoreActivatedState = false;
 

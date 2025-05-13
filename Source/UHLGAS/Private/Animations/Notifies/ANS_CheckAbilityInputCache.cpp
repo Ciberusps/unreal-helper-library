@@ -33,7 +33,6 @@ void UANS_CheckAbilityInputCache::NotifyTick(USkeletalMeshComponent* MeshComp, U
 
 	if (!IsValid(ASC))
 	{
-		NotifyEnd(MeshComp, Animation, EventReference);
 		return;
 	}
 
