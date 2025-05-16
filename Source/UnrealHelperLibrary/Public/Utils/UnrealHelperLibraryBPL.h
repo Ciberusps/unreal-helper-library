@@ -6,6 +6,7 @@
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Math/UnrealMathUtility.h"
 #include "UI/UHLHUD.h"
 #include "UnrealHelperLibraryBPL.generated.h"
 
@@ -195,6 +196,48 @@ public:
 		const bool bTakeZFromActor1 = true, const bool bDebug = false, const float DebugLifetime = -1, const FLinearColor DebugColor = FLinearColor::White);
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils")
 	static float DirectionToAngle(const EUHLDirection DirectionIn);
+
+	// TODO test not sure that it works like i wanted
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Directions")
+	static EUHLDirection ConvertMovementInputVectorToDirection(const FVector& Vector);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Directions")
+	static EUHLDirection GetMovementDirection(const FVector& Velocity, const FRotator& ActorRotation, float DeadZone);
+
+	/**
+	 * Determines the enemy's movement direction relative to your character's facing,
+	 * compensating for your own movement velocity. Supports both 8-way and 4-way output,
+	 * and can draw debug visualization in world space.
+	 *
+	 * @param WorldContextObject      Context for drawing (usually 'self' in Blueprint)
+	 * @param EnemyVelocity           World-space velocity of the enemy pawn
+	 * @param MyVelocity              World-space velocity of your pawn
+	 * @param ActorLocation           Your pawn’s world location (for debug drawing)
+	 * @param ActorRotation           Your pawn’s world rotation (defines forward)
+	 * @param DeadZone                Speed threshold below which returns None (<=0 uses KINDA_SMALL_NUMBER)
+	 * @param AngleToleranceDeg       Degrees tolerance around boundaries to snap
+	 * @param bFourWay                If true, collapse diagonals into nearest cardinal (4-way)
+	 * @param bDebug                  If true, draw debug arrows, lines, and labels in world
+	 * @param DebugDuration           Lifetime for debug drawings (0 = single frame)
+	 * @param DebugThickness          Line thickness for debug drawings
+	 * @return                        The calculated direction enum (EUHLDirection)
+	 */
+	UFUNCTION(BlueprintCallable, Category="Movement|Direction", meta=(WorldContext="WorldContextObject"))
+	static EUHLDirection GetEnemyMovementDirectionRelativeToCharacter(
+		UObject* WorldContextObject,
+		const FVector& EnemyVelocity,
+		const FVector& MyVelocity,
+		const FVector& ActorLocation,
+		const FRotator& ActorRotation,
+		float DeadZone,
+		float AngleToleranceDeg = 5.f,
+		bool bFourWay = false,
+		bool bDebug = false,
+		float DebugDuration = 0.f,
+		float DebugThickness = 2.f
+	);
+	
+	
 	// e.g. 60% -> x0.4, 40% -> x0.6, 100% -> x0.0, 0% -> x1.0
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Utils")
 	static float ConvertPercentToMultiplier(float Percent);

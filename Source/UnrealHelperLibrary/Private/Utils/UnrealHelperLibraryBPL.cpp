@@ -642,6 +642,212 @@ float UUnrealHelperLibraryBPL::DirectionToAngle(const EUHLDirection DirectionIn)
 	return 0.0f;
 }
 
+EUHLDirection UUnrealHelperLibraryBPL::ConvertMovementInputVectorToDirection(const FVector& InputVector)
+{
+	// Project to 2D
+	float X = InputVector.X;
+	float Y = InputVector.Y;
+    
+	// atan2 returns radians from -π to +π
+	float Radians = FMath::Atan2(Y, X);
+	float Degrees = FMath::RadiansToDegrees(Radians);
+    
+	// Normalize into [0, 360)
+	if (Degrees < 0.f)
+	{
+		Degrees += 360.f;
+	}
+
+	// Divide into 8 slices, round to nearest integer [0..7]
+	int32 Slice = FMath::RoundToInt(Degrees / 45.f) % 8;
+
+	switch (Slice)
+	{
+		case 0: return EUHLDirection::Right;
+		case 1: return EUHLDirection::FrontRight;
+		case 2: return EUHLDirection::Front;
+		case 3: return EUHLDirection::FrontLeft;
+		case 4: return EUHLDirection::Left;
+		case 5: return EUHLDirection::BackLeft;
+		case 6: return EUHLDirection::Back;
+		case 7: return EUHLDirection::BackRight;
+		default: return EUHLDirection::Front;  // fall-back
+	}
+}
+
+EUHLDirection UUnrealHelperLibraryBPL::GetMovementDirection(
+	const FVector& Velocity, const FRotator& ActorRotation, float DeadZone)
+{
+	// 1) Flatten to horizontal plane
+	FVector FlatVel = Velocity;
+	FlatVel.Z = 0.f;
+
+	// 2) Early-out if below threshold
+	if (FlatVel.SizeSquared() <= FMath::Square(DeadZone))
+	{
+		return EUHLDirection::None;
+	}
+
+	// 3) Compute world-space yaw of movement
+	const float MovementYaw = FlatVel.Rotation().Yaw;
+
+	// 4) Your actor’s facing yaw
+	const float ForwardYaw = ActorRotation.Yaw;
+
+	// 5) Signed difference in [-180, +180]
+	float DeltaYaw = FMath::UnwindDegrees(MovementYaw - ForwardYaw);
+
+	// 6) Snap into 8 slices of 45° each
+	float SliceF = DeltaYaw / 45.f;
+	int32 SliceI = FMath::RoundToInt(SliceF);
+
+	// 7) Wrap the exact 180° case: -4 → +4
+	if (SliceI == -4) SliceI = 4;
+
+	// 8) Ensure index in [0..7]
+	SliceI = (SliceI + 8) % 8;
+
+	// 9) Map to your enum
+	switch (SliceI)
+	{
+		case 0:  return EUHLDirection::Front;
+		case 1:  return EUHLDirection::FrontRight;
+		case 2:  return EUHLDirection::Right;
+		case 3:  return EUHLDirection::BackRight;
+		case 4:  return EUHLDirection::Back;
+		case 5:  return EUHLDirection::BackLeft;
+		case 6:  return EUHLDirection::Left;
+		case 7:  return EUHLDirection::FrontLeft;
+		default: return EUHLDirection::None; // should never hit this
+	}
+}
+
+EUHLDirection UUnrealHelperLibraryBPL::GetEnemyMovementDirectionRelativeToCharacter(
+    UObject* WorldContextObject,
+    const FVector& EnemyVelocity,
+    const FVector& MyVelocity,
+    const FVector& ActorLocation,
+    const FRotator& ActorRotation,
+    float DeadZone,
+    float AngleToleranceDeg,
+    bool bFourWay,
+    bool bDebug,
+    float DebugDuration,
+    float DebugThickness
+)
+{
+    // If enemy isn't moving, return None immediately
+    if (EnemyVelocity.IsNearlyZero(KINDA_SMALL_NUMBER))
+    {
+        if (bDebug && WorldContextObject)
+        {
+            UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
+            DrawDebugString(World, ActorLocation + FVector(0,0,50), TEXT("None"), nullptr, FColor::White, DebugDuration, true);
+        }
+        return EUHLDirection::None;
+    }
+
+    // Compute relative movement and flatten to XY
+    FVector RelVel = EnemyVelocity - MyVelocity;
+    RelVel.Z = 0.f;
+
+    // Effective dead zone threshold
+    const float EffectiveDeadZone = (DeadZone > 0.f) ? DeadZone : KINDA_SMALL_NUMBER;
+    if (RelVel.SizeSquared() <= FMath::Square(EffectiveDeadZone))
+    {
+        if (bDebug && WorldContextObject)
+        {
+            UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
+            DrawDebugString(World, ActorLocation + FVector(0,0,50), TEXT("None"), nullptr, FColor::White, DebugDuration, true);
+        }
+        return EUHLDirection::None;
+    }
+
+    // Compute yaw difference
+    const float MovementYaw = RelVel.Rotation().Yaw;
+    const float ForwardYaw  = ActorRotation.Yaw;
+    float DeltaYaw = FMath::UnwindDegrees(MovementYaw - ForwardYaw);
+
+    // Determine octant index with tolerance
+    const float SliceF = DeltaYaw / 45.f;
+    const float TolSlice = AngleToleranceDeg / 45.f;
+    int32 SliceI = INDEX_NONE;
+    for (int32 i = 0; i < 8; ++i)
+    {
+        if (FMath::Abs(SliceF - i) <= TolSlice)
+        {
+            SliceI = i;
+            break;
+        }
+    }
+    if (SliceI == INDEX_NONE)
+    {
+        SliceI = FMath::RoundToInt(SliceF);
+    }
+    if (SliceI == -4) SliceI = 4;
+    SliceI = (SliceI + 8) % 8;
+
+    // Map index to enum
+    EUHLDirection DirEnum;
+    switch (SliceI)
+    {
+        case 0:  DirEnum = EUHLDirection::Front;      break;
+        case 1:  DirEnum = EUHLDirection::FrontRight; break;
+        case 2:  DirEnum = EUHLDirection::Right;      break;
+        case 3:  DirEnum = EUHLDirection::BackRight;  break;
+        case 4:  DirEnum = EUHLDirection::Back;       break;
+        case 5:  DirEnum = EUHLDirection::BackLeft;   break;
+        case 6:  DirEnum = EUHLDirection::Left;       break;
+        case 7:  DirEnum = EUHLDirection::FrontLeft;  break;
+        default: DirEnum = EUHLDirection::None;       break;
+    }
+
+    // Collapse to 4-way if requested
+    if (bFourWay)
+    {
+        if (DirEnum == EUHLDirection::FrontLeft || DirEnum == EUHLDirection::FrontRight)
+            DirEnum = EUHLDirection::Front;
+        else if (DirEnum == EUHLDirection::BackLeft || DirEnum == EUHLDirection::BackRight)
+            DirEnum = EUHLDirection::Back;
+    }
+
+    // Debug visuals
+    if (bDebug && WorldContextObject)
+    {
+        UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
+        const float DebugLen = 200.f;
+
+        // Draw octant boundaries
+        for (int32 i = 0; i < 8; ++i)
+        {
+            float Yaw = ForwardYaw + i * 45.f;
+            FVector DirVec = FRotator(0.f, Yaw, 0.f).Vector() * DebugLen;
+            DrawDebugLine(World, ActorLocation, ActorLocation + DirVec, FColor::Silver, false, DebugDuration, 0, DebugThickness * 0.5f);
+        }
+
+        // Draw relative movement arrow (cyan)
+        DrawDebugDirectionalArrow(World, ActorLocation, ActorLocation + RelVel.GetSafeNormal() * DebugLen,
+            50.f, FColor::Cyan, false, DebugDuration, 0, DebugThickness);
+
+        // Draw forward axis (green)
+        FVector FwdVec = ActorRotation.Vector() * DebugLen;
+        DrawDebugLine(World, ActorLocation, ActorLocation + FwdVec, FColor::Green, false, DebugDuration, 0, DebugThickness);
+
+        // Draw chosen direction arrow (red)
+        float ChosenYaw = ForwardYaw + SliceI * 45.f;
+        FVector ChosenVec = FRotator(0.f, ChosenYaw, 0.f).Vector() * DebugLen;
+        DrawDebugLine(World, ActorLocation, ActorLocation + ChosenVec, FColor::Red, false, DebugDuration, 0, DebugThickness);
+
+        // Label result using clean name
+        UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUHLDirection"), true);
+        FString Name = EnumPtr ? EnumPtr->GetNameStringByValue((int64)DirEnum) : TEXT("None");
+        DrawDebugString(World, ActorLocation + FVector(0,0,50), Name, nullptr, FColor::White, DebugDuration, true);
+    }
+
+    return DirEnum;
+}
+
+
 float UUnrealHelperLibraryBPL::ConvertPercentToMultiplier(float Percent) { return (100.0f - Percent) / 100.0f; }
 
 AActor* UUnrealHelperLibraryBPL::FindAttachedActorByTag(AActor* ActorIn, FName Tag)
