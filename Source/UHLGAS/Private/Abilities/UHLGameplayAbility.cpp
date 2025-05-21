@@ -52,6 +52,77 @@ void UUHLGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorI
 	}
 }
 
+void UUHLGameplayAbility::CancelAbility(
+	const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	bool bReplicateCancelAbility)
+{
+	if (!bCancelManually)
+	{
+		Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
+		return;
+	}
+
+	// Intercept and mark cancel requested
+	bCancelRequested = true;
+
+	// Blueprint hook for custom cancel handling
+	ReceiveCancelRequested();
+
+#if WITH_EDITOR
+	// Schedule an editor-only reminder if ReleaseCancellation() isn't called within 60 seconds
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			EditorWarningHandle,
+			this,
+			&ThisClass::CheckCancelReminder,
+			60.0f,
+			false
+		);
+	}
+#endif
+}
+
+#if WITH_EDITOR
+void UUHLGameplayAbility::CheckCancelReminder()
+{
+	if (bCancelRequested && IsActive())
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				5.0f,
+				FColor::Yellow,
+				TEXT("Warning: ReleaseCancellation() was not called for this ability within 60 seconds.")
+			);
+		}
+	}
+}
+#endif
+
+void UUHLGameplayAbility::ReleaseCancellation()
+{
+	if (bCancelManually && bCancelRequested && IsActive())
+	{
+#if WITH_EDITOR
+		// Clear any pending editor warning
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(EditorWarningHandle);
+		}
+#endif
+		// Perform actual cancel
+		Super::CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
+		bCancelRequested = false;
+
+		// Blueprint hook after cancel completed
+		ReceiveCancelCompleted();
+	}
+}
+
 void UUHLGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
     Super::OnGiveAbility(ActorInfo, Spec);

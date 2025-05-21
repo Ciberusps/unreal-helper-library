@@ -81,11 +81,23 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
     FGameplayTagContainer AddingToCacheInputBlockedTags;
 
+	/**
+	* When true, external CancelAbility calls are intercepted and must be completed manually via ReleaseCancellation().
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHL GameplayAbility")
+	bool bCancelManually = false;
+	
     UFUNCTION(BlueprintCallable, Category="UHL GameplayAbility")
     UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
+	/**
+	* Completes a pending cancel request immediately. Call this to actually end the ability when bCancelManually is true.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "UHL GameplayAbility")
+	void ReleaseCancellation();
+	
 protected:
     // Defines how this ability is meant to activate.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UHL GameplayAbility")
@@ -93,6 +105,44 @@ protected:
 	
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="ActivationPolicy == EUHLAbilityActivationPolicy::WhileInputActive", EditConditionHides))
 	// FUHLWhileInputActiveSettings WhileInputActiveSettings;
+
+	
+	/** Tracks whether a cancel request has been received */
+	bool bCancelRequested = false;
+
+#if WITH_EDITORONLY_DATA
+	/** Timer handle for editor warning if ReleaseCancellation isn't called in time */
+	FTimerHandle EditorWarningHandle;
+#endif
+
+	/**
+	 * Override external cancel: either intercept or pass through.
+	 */
+	virtual void CancelAbility(
+		const FGameplayAbilitySpecHandle Handle,
+		const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo,
+		bool bReplicateCancelAbility = true) override;
+
+	/**
+	 * Called when a manual cancel request is intercepted.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Cancellation", meta = (DisplayName = "OnCancelRequested"))
+	void ReceiveCancelRequested();
+
+	/**
+	 * Called when cancellation is completed (after manual release).
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Cancellation", meta = (DisplayName = "OnCancelCompleted"))
+	void ReceiveCancelCompleted();
+	
+#if WITH_EDITORONLY_DATA
+	/**
+	 * Editor-only: checks if cancellation was never released and draws a warning.
+	 */
+	void CheckCancelReminder();
+#endif
+	
 
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
@@ -107,4 +157,5 @@ protected:
 	/** Called when the ability system is initialized with a pawn avatar. */
 	UFUNCTION(BlueprintImplementableEvent, Category="UHL GameplayAbility", DisplayName = "OnPawnAvatarSet")
 	void K2_OnPawnAvatarSet();
+
 };
