@@ -65,7 +65,7 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
           }
       }
   ```
-  
+
   - to use specific engine version specify branch e.g. `-b UE5.4`
 
     ```bash
@@ -77,7 +77,7 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 
   > [!NOTE]
   > Add `Editor Preferences -> Force Compilation on Startup` in `Config/EditorPerProjectUserSettings.ini` your team don't want to recompile plugin manually 😉
-  
+
 </details>
 
 #### From marketplace:
@@ -786,7 +786,7 @@ if you don't want to copy paste your `AttributeSets`
 
 ![image](https://github.com/user-attachments/assets/c24fd8bb-0ffe-4666-afd5-8800df650c35)
 
-**Custom thumnails** - to override thumbnail by your own, just implement `IUHECustomThumbnail` interface and define your own icon using `GetCustomThumbnailIcon()`
+**Custom thumnails** - to override thumbnail by your own, just implement `IUHLEditorCustomThumbnail` interface and define your own icon using `GetCustomThumbnailIcon()`
 
 > [!WARNING]
 > ⚠️ NOT sure that blueprints supported for now
@@ -794,22 +794,22 @@ if you don't want to copy paste your `AttributeSets`
 ```C++
 // UInventoryItem.h
 #if WITH_EDITOR
-#include "UHECustomThumbnail.h"
+#include "UHLEditorCustomThumbnail.h"
 #endif
 
-// IUHECustomThumbnail not available in production build
+// IUHLEditorCustomThumbnail not available in production build
 #if !WITH_EDITOR
-class IUHECustomThumbnail {};
+class IUHLEditorCustomThumbnail {};
 #endif
 
 class GAMECODE_API UInventoryItem : public UObject,
-    public IUHECustomThumbnail
+    public IUHLEditorCustomThumbnail
 {
-/** IUHECustomThumbnail **/
+/** IUHLEditorCustomThumbnail **/
 #if WITH_EDITOR
     virtual UTexture2D* GetCustomThumbnailIcon_Implementation() const override;
 #endif
-/** ~IUHECustomThumbnail **/
+/** ~IUHLEditorCustomThumbnail **/
 }
 
 ------------------------------------------------------------------
