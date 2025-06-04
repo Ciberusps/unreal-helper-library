@@ -5,6 +5,7 @@
 
 #include "GameFramework/Pawn.h"
 #include "AbilitySystemInterface.h"
+#include "UnrealHelperLibrary.h"
 #include "AbilitySystem/UHLAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Core/UHLGameplayTags.h"
@@ -43,6 +44,7 @@ void UUHLDebugSubsystem::Deinitialize()
 void UUHLDebugSubsystem::SetUp()
 {
     if (bSetupped) return;
+    UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUp] Start"));
     bSetupped = true;
 
     const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
@@ -65,19 +67,23 @@ void UUHLDebugSubsystem::SetUp()
     EUHLBuildType BuildType = UUnrealHelperLibraryBPL::GetBuildType();
     if (BuildType != EUHLBuildType::Editor)
     {
+        UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUp] BuildType not editor so check DebugCategories that should be enabled"));
         for (const FUHLDebugCategory& DebugCategory : DebugCategories)
         {
             if (DebugCategory.ByDefaultEnabledInBuildTypes.Contains(BuildType))
             {
+				UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUp] EnableDebugCategory %s"), *DebugCategory.Tags.First().ToString());
                 EnableDebugCategory(DebugCategory.Tags.First(), true);
             }
         }
     }
+    UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUp] Finish"));
 }
 
 void UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController()
 {
     if (bSetUpCategoriesThatRequiresPlayerController) return;
+    UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController] Start"));
     bSetUpCategoriesThatRequiresPlayerController = true;
 
     const UUHLDebugSubsystemSettings* DeveloperSettings = GetDefault<UUHLDebugSubsystemSettings>();
@@ -93,7 +99,24 @@ void UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController()
             EnableDebugCategory(EnabledDebugCategory.Key, EnabledDebugCategory.Value);
         }
     };
+
+    // activate debug categories that "bSetUpCategoriesThatRequiresPlayerController" and should be enabled in BuildType
+    EUHLBuildType BuildType = UUnrealHelperLibraryBPL::GetBuildType();
+    if (BuildType != EUHLBuildType::Editor)
+    {
+        UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController] BuildType not editor so check DebugCategories that should be enabled"));
+        for (const FUHLDebugCategory& DebugCategory : DebugCategories)
+        {
+            if (DebugCategory.ByDefaultEnabledInBuildTypes.Contains(BuildType))
+            {
+                UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController] EnableDebugCategory %s"), *DebugCategory.Tags.First().ToString());
+                EnableDebugCategory(DebugCategory.Tags.First(), true);
+            }
+        }
+    }
+
     bIsSetuping = false;
+    UE_LOG(LogUnrealHelperLibrary, Warning, TEXT("[UUHLDebugSubsystem::SetUpCategoriesThatRequiresPlayerController] Finish"));
 }
 
 bool UUHLDebugSubsystem::IsCategoryEnabled(const FGameplayTag DebugCategoryTag) const
