@@ -92,8 +92,37 @@ public:
     UFUNCTION(BlueprintCallable, Category="UHL GameplayAbility")
     UUHLAbilitySystemComponent* GetUHLAbilitySystemComponentFromActorInfo() const;
 
+	UFUNCTION(BlueprintCallable, Category="Ability", DisplayName = "CommitAbilityDuration")
+	bool K2_CommitAbilityDuration(bool BroadcastCommitEvent);
+	
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
+	// Commit Ability
+	virtual bool CommitAbility(
+		const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo,
+		FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
+	virtual bool CommitAbilityDuration(
+		const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo,
+		FGameplayTagContainer* OptionalRelevantTags = nullptr);
+
+	void ApplyDuration(
+		const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo);
+	bool CheckAbilityDuration(
+		FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		FGameplayTagContainer* OptionalRelevantTags) const;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UHL GameplayAbility")
+	void OnDurationEnd(const FGameplayEffectRemovalInfo& GameplayEffectRemovalInfo);
+
+	const FGameplayTagContainer* GetAbilityDurationTags() const;
+	virtual UGameplayEffect* GetAbilityDurationGameplayEffect() const;
+
+	virtual bool CommitCheck(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
+	// ~Commit Ability
+	
 	/**
 	* Completes a pending cancel request immediately. Call this to actually end the ability when bCancelManually is true.
 	*/
@@ -160,4 +189,10 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category="UHL GameplayAbility", DisplayName = "OnPawnAvatarSet")
 	void K2_OnPawnAvatarSet();
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category="Ability Duration")
+	TSubclassOf<class UGameplayEffect> AbilityDurationGameplayEffectClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Ability Duration")
+	bool bEndAbilityOnDurationExpired = true;
 };

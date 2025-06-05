@@ -4,6 +4,7 @@
 #include "Abilities/UHLGameplayAbility.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
 #include "UHLAbilitySystemComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLGameplayAbility)
@@ -25,6 +26,20 @@ UUHLAbilitySystemComponent* UUHLGameplayAbility::GetUHLAbilitySystemComponentFro
     }
     checkf(CastChecked<UUHLAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get()), TEXT("UUHLGameplayAbility::GetUHLAbilitySystemComponentFromActorInfo can be used only on characters with UHLAbilitySystemComponent"));
     return StaticCast<UUHLAbilitySystemComponent*>(CurrentActorInfo->AbilitySystemComponent.Get());
+}
+
+bool UUHLGameplayAbility::K2_CommitAbilityDuration(bool BroadcastCommitEvent)
+{
+	ensure(CurrentActorInfo);
+	if (BroadcastCommitEvent)
+	{
+		if (UAbilitySystemComponent* AbilitySystemComponent =
+			GetAbilitySystemComponentFromActorInfo_Ensured())
+		{
+			AbilitySystemComponent->NotifyAbilityCommit(this);
+		}
+	}
+	return CommitAbilityDuration(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 }
 
 void UUHLGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const
@@ -50,6 +65,124 @@ void UUHLGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorI
 			}
 		}
 	}
+}
+
+bool UUHLGameplayAbility::CommitAbility(
+	const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	FGameplayTagContainer* OptionalRelevantTags)
+{
+	return CommitAbilityDuration(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags) &&
+		Super::CommitAbility(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags);
+}
+
+bool UUHLGameplayAbility::CommitAbilityDuration(
+	const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	FGameplayTagContainer* OptionalRelevantTags)
+{
+	if (!CheckAbilityDuration(Handle, ActorInfo, OptionalRelevantTags))
+	{
+		return false;
+	}
+	ApplyDuration(Handle, ActorInfo, ActivationInfo);
+	return true;
+}
+
+void UUHLGameplayAbility::ApplyDuration(
+	const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo)
+{
+	UGameplayEffect* AbilityDurationGE = GetAbilityDurationGameplayEffect();
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (AbilityDurationGE && ASC)
+	{
+		FActiveGameplayEffectHandle EffectHandle = ApplyGameplayEffectToOwner(
+			Handle,
+			ActorInfo,
+			ActivationInfo,
+			AbilityDurationGE,
+			GetAbilityLevel(Handle, ActorInfo));
+
+		ASC->OnGameplayEffectRemoved_InfoDelegate(EffectHandle)->AddUObject(
+			this,
+			&UUHLGameplayAbility::OnDurationEnd);
+	}
+}
+
+bool UUHLGameplayAbility::CheckAbilityDuration(
+	const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	OUT FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!ensure(ActorInfo))
+	{
+		return true;
+	}
+
+	const FGameplayTagContainer* AbilityDurationTag = GetAbilityDurationTags();
+	if (AbilityDurationTag && !AbilityDurationTag->IsEmpty())
+	{
+		if (UAbilitySystemComponent* AbilitySystemComponent = ActorInfo->AbilitySystemComponent.
+			Get())
+		{
+			if (AbilitySystemComponent->HasAnyMatchingGameplayTags(*AbilityDurationTag))
+			{
+				if (OptionalRelevantTags)
+				{
+					const FGameplayTag& FailAbilityDurationTag = UAbilitySystemGlobals::Get().
+						ActivateFailCooldownTag;
+					if (FailAbilityDurationTag.IsValid())
+					{
+						OptionalRelevantTags->AddTag(FailAbilityDurationTag);
+					}
+
+					// Let the caller know which tags were blocking
+					OptionalRelevantTags->AppendMatchingTags(
+						AbilitySystemComponent->GetOwnedGameplayTags(),
+						*AbilityDurationTag);
+				}
+
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void UUHLGameplayAbility::OnDurationEnd_Implementation(
+	const FGameplayEffectRemovalInfo& GameplayEffectRemovalInfo)
+{
+	if (bEndAbilityOnDurationExpired)
+	{
+		K2_EndAbility();
+	}
+}
+
+const FGameplayTagContainer* UUHLGameplayAbility::GetAbilityDurationTags() const
+{
+	UGameplayEffect* CDGE = GetAbilityDurationGameplayEffect();
+	return CDGE ? &CDGE->GetGrantedTags() : nullptr;
+}
+
+UGameplayEffect* UUHLGameplayAbility::GetAbilityDurationGameplayEffect() const
+{
+	if (AbilityDurationGameplayEffectClass)
+	{
+		return AbilityDurationGameplayEffectClass->GetDefaultObject<UGameplayEffect>();
+	}
+	return nullptr;
+}
+
+bool UUHLGameplayAbility::CommitCheck(
+	const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	FGameplayTagContainer* OptionalRelevantTags)
+{
+	if (!CheckAbilityDuration(Handle, ActorInfo, OptionalRelevantTags))
+	{
+		return false;
+	}
+	return Super::CommitCheck(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags);
 }
 
 void UUHLGameplayAbility::CancelAbility(
