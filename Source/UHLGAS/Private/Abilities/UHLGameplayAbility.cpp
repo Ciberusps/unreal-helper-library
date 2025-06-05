@@ -129,13 +129,13 @@ bool UUHLGameplayAbility::CheckAbilityDuration(
 			{
 				if (OptionalRelevantTags)
 				{
-					const FGameplayTag& FailAbilityDurationTag = UAbilitySystemGlobals::Get().
-						ActivateFailCooldownTag;
-					if (FailAbilityDurationTag.IsValid())
-					{
-						OptionalRelevantTags->AddTag(FailAbilityDurationTag);
-					}
-
+					// const FGameplayTag& FailAbilityDurationTag = UAbilitySystemGlobals::Get().
+					// 	ActivateFailCooldownTag;
+					// if (FailAbilityDurationTag.IsValid())
+					// {
+					// 	OptionalRelevantTags->AddTag(FailAbilityDurationTag);
+					// }
+				
 					// Let the caller know which tags were blocking
 					OptionalRelevantTags->AppendMatchingTags(
 						AbilitySystemComponent->GetOwnedGameplayTags(),
