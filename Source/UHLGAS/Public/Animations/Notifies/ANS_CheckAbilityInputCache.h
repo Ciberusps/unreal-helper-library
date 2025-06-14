@@ -12,13 +12,24 @@
  * by default clears AbilityInputCache on end
  */
 UCLASS(Category="UnrealHelperLibrary")
-class UHLGAS_API UANS_CheckAbilityInputCache : public UAnimNotifyState
+class UHLGAS_API UANS_CheckAbilityInputCache final : public UAnimNotifyState
 {
 	GENERATED_BODY()
+	
+	FGameplayTagContainer SavedTargetTags = {};
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CheckAbilityInputCache")
     bool bClearCacheOnEnd = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CheckAbilityInputCache")
+	bool bCacheOnce = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CheckAbilityInputCache")
+	bool bUseCheckCacheOnlyWithThisTags = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CheckAbilityInputCache", meta = (EditCondition = "bUseCheckCacheOnlyWithThisTags"))
+	FGameplayTagContainer TargetTags = {};
 
 #if WITH_EDITOR
     /** Override this to prevent firing this notify state type in animation editors */

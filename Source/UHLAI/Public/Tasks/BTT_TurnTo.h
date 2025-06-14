@@ -8,10 +8,51 @@
 #include "BehaviorTree/Services/BTService_DefaultFocus.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "UnrealHelperLibraryTypes.h"
+#include "GameFramework/Character.h"
 #include "BTT_TurnTo.generated.h"
 
 class AAIController;
 class ACharacter;
+
+namespace TurnToStatics
+{
+	static bool IsTurnWithAnimationRequired(ACharacter* Character)
+	{
+		if (!Character) return false;
+		if (Character->IsPlayingRootMotion()) return false;
+		return true;
+	}
+
+	static FTurnRange GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet, FTurnSettings TurnSettings_In)
+	{
+		FTurnRange Result;
+		bCurrentTurnRangeSet = false;
+		for (TTuple<FString, FTurnRanges> TurnToRange : TurnSettings_In.TurnRangesGroups)
+		{
+			for (FTurnRange Range : TurnToRange.Value.TurnRanges)
+			{
+				if (Range.Range.Contains(DeltaAngle))
+				{
+					Result = Range;
+					bCurrentTurnRangeSet = true;
+					break;
+				}
+			}
+			if (bCurrentTurnRangeSet)
+			{
+				break;
+			}
+		}
+		return Result;
+	}
+
+	FORCEINLINE_DEBUGGABLE FVector::FReal CalculateAngleDifferenceDot(const FVector& VectorA, const FVector& VectorB)
+	{
+		return (VectorA.IsNearlyZero() || VectorB.IsNearlyZero())
+			? 1.f
+			: VectorA.CosineAngle2D(VectorB);
+	}
+}
 
 struct FBTTurnToMemory : FBTFocusMemory
 {
@@ -98,7 +139,5 @@ protected:
     void CleanUp(AAIController& AIController, uint8* NodeMemory);
 
 private:
-    bool IsTurnWithAnimationRequired(ACharacter* Character) const;
-    FTurnRange GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet, FTurnSettings TurnSettings_In);
     FTurnSettings GetTurnSettings(AActor* Actor, bool& bCurrentTurnSettingsSet);
 };

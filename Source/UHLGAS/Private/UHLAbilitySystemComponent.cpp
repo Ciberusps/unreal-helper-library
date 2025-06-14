@@ -278,8 +278,8 @@ int32 UUHLAbilitySystemComponent::FireGameplayEvent(FGameplayTag EventTag, const
 
 bool UUHLAbilitySystemComponent::CanAddAbilityToCache(UUHLGameplayAbility* GameplayAbility_In) const
 {
-    bool bHasRequiredTags = HasAllMatchingGameplayTags(GameplayAbility_In->AddingToCacheInputRequiredTags);
-    bool bDontHaveBlockedTags = !HasAnyMatchingGameplayTags(GameplayAbility_In->AddingToCacheInputBlockedTags);
+    bool bHasRequiredTags = HasAllMatchingGameplayTags(GameplayAbility_In->AddToCacheRequiredTags);
+    bool bDontHaveBlockedTags = !HasAnyMatchingGameplayTags(GameplayAbility_In->AddToCacheBlockedTags);
 
     return bHasRequiredTags && bDontHaveBlockedTags;
 }
@@ -456,7 +456,7 @@ void UUHLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 				if (AbilitySpec->Ability)
 				{
 					UUHLGameplayAbility* GameplayAbility = StaticCast<UUHLGameplayAbility*>(AbilitySpec->Ability.Get());
-					if (GameplayAbility->bCacheInput && !bActivated)
+					if (GameplayAbility->bCacheInput && (!bActivated || GameplayAbility->bIgnoreActivatedState))
 					{
 						if (CanAddAbilityToCache(GameplayAbility))
 						{

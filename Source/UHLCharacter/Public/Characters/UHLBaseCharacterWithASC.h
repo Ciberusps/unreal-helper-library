@@ -26,7 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL BaseCharacter with ASC")
 	bool bInitUHLAbilitySystemOnPosses = true;
-	
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL BaseCharacter with ASC")
+    bool bDontInitOnSameControllerTwice = true;
+
 	/** IAbilitySystemInterface **/
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
 	/** ~IAbilitySystemInterface **/
@@ -37,7 +39,7 @@ public:
 		return AbilitySystemComponent;
 	};
 	/** ~IUHLAbilitySystemInterface */
-	
+
 protected:
 	/** GameplayAbilities */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="UHL BaseCharacter with ASC")
@@ -45,4 +47,7 @@ protected:
 	/** ~GameplayAbilities */
 
 	virtual void PossessedBy(AController* NewController) override;
+
+private:
+    TWeakObjectPtr<AController> PreviousController;
 };

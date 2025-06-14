@@ -3,9 +3,11 @@
 
 #include "Tasks/AA_TryActivateAbilityAndWait.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "UHLGASBlueprintLibrary.h"
 #include "Abilities/GameplayAbility.h"
+#include "Data/PayloadWithInstancedStructs.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AA_TryActivateAbilityAndWait)
@@ -56,14 +58,16 @@ void UAA_TryActivateAbilityAndWait::OnAbilityDeactivate(UGameplayAbility* Activa
 }
 
 UAA_TryActivateAbilityAndWait* UAA_TryActivateAbilityAndWait::TryActivateAbilityAndWait(AActor* TargetActor,
-                                                                      FGameplayTag InWithTag, bool InIncludeTriggeredAbilities, bool bAllowRemoteActivation, bool InTriggerOnce)
+	FGameplayTag InWithTag, bool bUsingEvent_In, const TArray<FInstancedStruct>& PayloadInfo, bool InIncludeTriggeredAbilities, bool bAllowRemoteActivation, bool InTriggerOnce)
 {
 	UAA_TryActivateAbilityAndWait* MyObj = NewObject<UAA_TryActivateAbilityAndWait>();
 	MyObj->SetAbilityActor(TargetActor);
 	MyObj->WithTag = InWithTag;
+	MyObj->bUsingEvent = bUsingEvent_In;
 	MyObj->IncludeTriggeredAbilities = InIncludeTriggeredAbilities;
 	MyObj->TriggerOnce = InTriggerOnce;
 	MyObj->bAllowRemoteActivation = bAllowRemoteActivation;
+	MyObj->PayloadInfo = PayloadInfo;
 	return MyObj;
 }
 
@@ -98,7 +102,21 @@ void UAA_TryActivateAbilityAndWait::Activate()
 	{
 		OnAbilityActivateDelegateHandle = ASC->AbilityActivatedCallbacks.AddUObject(this, &UAA_TryActivateAbilityAndWait::OnAbilityActivate);
 		OnAbilityActivateDelegateHandle = ASC->AbilityEndedCallbacks.AddUObject(this, &UAA_TryActivateAbilityAndWait::OnAbilityDeactivate);
-		bool bActivated = UUHLGASBlueprintLibrary::TryActivateAbilityWithTag(ASC, WithTag, bAllowRemoteActivation);
+
+		bool bActivated = false;
+		if (bUsingEvent)
+		{
+			UPayloadWithInstancedStructs* Payload = NewObject<UPayloadWithInstancedStructs>();
+			Payload->InstancedStructs = PayloadInfo;
+			FGameplayEventData EventData;
+			EventData.OptionalObject = Payload;
+			int32 ActivatedAbilitiesCount = ASC->HandleGameplayEvent(WithTag, &EventData);
+			bActivated = (ActivatedAbilitiesCount > 0);
+		}
+		else
+		{
+			bActivated = UUHLGASBlueprintLibrary::TryActivateAbilityWithTag(ASC, WithTag, bAllowRemoteActivation);
+		}
 		if (!bActivated)
 		{
 			EndAction();

@@ -67,6 +67,7 @@ TSharedRef< FSlateStyleSet > FUHLEditorStyle::Create()
         	}
         	for (const TSubclassOf<UObject> Class : AllClasses)
         	{
+        		if (!Class) continue;
         		FString ClassName = Class->GetName();
         		// Modify the class icons to use our new awesome icons
         		FString IconStyleName = FString::Printf(TEXT("ClassIcon.%s"), *ClassName);

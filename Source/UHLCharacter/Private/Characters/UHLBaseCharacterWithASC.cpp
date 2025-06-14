@@ -25,7 +25,18 @@ void AUHLBaseCharacterWithASC::PossessedBy(AController* NewController)
 
 	if (bInitUHLAbilitySystemOnPosses)
 	{
-	    AbilitySystemComponent->InitAbilitySystem(NewController, this);
+	    if (bDontInitOnSameControllerTwice)
+	    {
+	        if (NewController != PreviousController.Get())
+	        {
+	            AbilitySystemComponent->InitAbilitySystem(NewController, this);
+	            PreviousController = NewController;
+	        }
+	    }
+	    else
+	    {
+	        AbilitySystemComponent->InitAbilitySystem(NewController, this);
+	    }
 
 	    // Advanced setup if you want to make something after attributes set, but before abilities activated
 	    // AbilitySystemComponent->InitAbilitySystem(NewController, this, false);

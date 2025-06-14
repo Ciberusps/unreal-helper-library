@@ -30,7 +30,12 @@ public class UHLCharacter : ModuleRules
 				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
-				"EnhancedInput",  
+				"EnhancedInput",
+
+				"UnrealHelperLibrary",
+				"UHLDebugSystem",
+				"UHLAI",
+				"UHLGAS",
 			}
 			);
 
@@ -40,11 +45,6 @@ public class UHLCharacter : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-
-				"UnrealHelperLibrary",
-				"UHLDebugSystem",
-				"UHLAI",
-				"UHLGAS",
 			}
 			);
 

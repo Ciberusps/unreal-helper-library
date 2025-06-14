@@ -5,9 +5,7 @@
 
 #include "Engine/GameInstance.h"
 #include "Blueprint/WidgetTree.h"
-#include "Components/Button.h"
 #include "Components/ButtonSlot.h"
-#include "Components/CanvasPanel.h"
 #include "Components/ScrollBoxSlot.h"
 #include "Development/UHLDebugSystemSettings.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,7 +22,8 @@ bool UUHLDebugCategoriesListWidget::Initialize()
     {
         // root have to be initialized in Initialize function, otherwise it will not work, donno exactly why.
         ScrollBox = WidgetTree->ConstructWidget<UScrollBox>();
-        ScrollBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+        ScrollBox->SetConsumeMouseWheel(EConsumeMouseWheel::Always);
+        ScrollBox->SetVisibility(ESlateVisibility::Visible);
         WidgetTree->RootWidget = ScrollBox;
     }
 
@@ -44,10 +43,11 @@ void UUHLDebugCategoriesListWidget::NativeConstruct()
     {
         UDebugCategoryButtonWidget* UHLDebugCategoryButton = WidgetTree->ConstructWidget<UDebugCategoryButtonWidget>();
         UScrollBoxSlot* ScrollBoxSlot = Cast<UScrollBoxSlot>(ScrollBox->AddChild(UHLDebugCategoryButton));
-		UHLDebugCategoryButton->SetUp(UHLDebugCategory);
+        UHLDebugCategoryButton->SetUp(UHLDebugCategory);
         UHLDebugCategoryButton->OnMadeClick.AddUniqueDynamic(this, &UUHLDebugCategoriesListWidget::OnButtonClicked);
 
-		ScrollBoxSlot->SetPadding(FMargin(0, 0, 0, 10));
+        ScrollBoxSlot->SetPadding(FMargin(0, 0, 0, 10));
+        ScrollBoxSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
     }
 }
 

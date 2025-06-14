@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Async/AbilityAsync.h"
+#include "StructUtils/InstancedStruct.h"
 #include "AA_TryActivateAbilityAndWait.generated.h"
 
 /**
@@ -24,10 +25,15 @@ public:
 	 * Wait until the specified gameplay attribute is changed on a target ability system component
 	 * It will keep listening as long as OnlyTriggerOnce = false
 	 * If used in an ability graph, this async action will wait even after activation ends. It's recommended to use WaitForAttributeChange instead.
+	 *
+	 * If InstancedStructs specified will "SendGameplayEventToActor" with "UPayloadWithInstancedStructs" in "OptionalObject1"
+	 * you should fill "AbilityTriggers" in GameplayAbility to activate it with this Event,
+	 * also to wait for activate/endability "WithTag" should be GameplayAbility "AbilityTags"(not strict tag check)
+	 * TODO: "PayloadInfo" not great solution probably better to check AN_FireGameplayEvent with its OptionalObject1/2
 	 */
 	UFUNCTION(BlueprintCallable, Category = "UnrealHelperLibrary|Ability|Tasks", meta = (DefaultToSelf = "TargetActor", BlueprintInternalUseOnly = "TRUE"))
 	static UAA_TryActivateAbilityAndWait* TryActivateAbilityAndWait(AActor* TargetActor, FGameplayTag WithTag,
-		bool IncludeTriggeredAbilities=false, bool bAllowRemoteActivation=true, bool TriggerOnce=true);
+		bool bUsingEvent, const TArray<FInstancedStruct>& PayloadInfo, bool IncludeTriggeredAbilities=false, bool bAllowRemoteActivation=true, bool TriggerOnce=true);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitAbilityActivateDelegate, UGameplayAbility*, ActivatedAbility);
 	UPROPERTY(BlueprintAssignable)
@@ -43,6 +49,8 @@ protected:
 
 	FGameplayTag WithTag;
 	FGameplayTag WithoutTag;
+	TArray<FInstancedStruct> PayloadInfo;
+	bool bUsingEvent = false;
 	bool IncludeTriggeredAbilities = false;
 	bool TriggerOnce;
 	bool bAllowRemoteActivation = true;

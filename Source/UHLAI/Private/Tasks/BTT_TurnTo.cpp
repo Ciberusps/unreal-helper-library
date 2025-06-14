@@ -75,16 +75,6 @@ void UBTT_TurnTo::PostLoad()
 	PrecisionDot = FMath::Cos(FMath::DegreesToRadians(Precision));
 }
 
-namespace
-{
-	FORCEINLINE_DEBUGGABLE FVector::FReal CalculateAngleDifferenceDot(const FVector& VectorA, const FVector& VectorB)
-	{
-		return (VectorA.IsNearlyZero() || VectorB.IsNearlyZero())
-            ? 1.f
-            : VectorA.CosineAngle2D(VectorB);
-	}
-}
-
 EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
@@ -112,7 +102,7 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 		if (ActorValue != NULL)
 		{
-			const FVector::FReal AngleDifference = CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
+			const FVector::FReal AngleDifference = TurnToStatics::CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
 				, (ActorValue->GetActorLocation() - PawnLocation));
 
 			if (AngleDifference >= PrecisionDot)
@@ -139,7 +129,7 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	
 		if (FAISystem::IsValidLocation(KeyValue))
 		{
-			const FVector::FReal AngleDifference = CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
+			const FVector::FReal AngleDifference = TurnToStatics::CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
 				, (KeyValue - PawnLocation));
 	
 			if (AngleDifference >= PrecisionDot)
@@ -205,7 +195,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
 		if (FocalPoint != FAISystem::InvalidLocation)
 		{
-		    float DeltaAngleRad = CalculateAngleDifferenceDot(PawnDirection, FocalPoint - AIController->GetPawn()->GetActorLocation());
+		    float DeltaAngleRad = TurnToStatics::CalculateAngleDifferenceDot(PawnDirection, FocalPoint - AIController->GetPawn()->GetActorLocation());
 		    // float DeltaAngle = FMath::RadiansToDegrees(FMath::Acos(DeltaAngleRad));
 		    float DeltaAngle = MyMemory->bActorSet
 				? UUnrealHelperLibraryBPL::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet)
@@ -248,9 +238,9 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 			}
 		    else
 		    {
-		        if (IsTurnWithAnimationRequired(AICharacter))
+		        if (TurnToStatics::IsTurnWithAnimationRequired(AICharacter))
 		        {
-		            MyMemory->CurrentTurnRange = GetTurnRange(DeltaAngle, MyMemory->bCurrentTurnRangeSet, MyMemory->TurnSettings);
+		            MyMemory->CurrentTurnRange = TurnToStatics::GetTurnRange(DeltaAngle, MyMemory->bCurrentTurnRangeSet, MyMemory->TurnSettings);
 		            if (MyMemory->bCurrentTurnRangeSet && MyMemory->CurrentTurnRange.AnimMontage)
 		            {
 		                AICharacter->PlayAnimMontage(MyMemory->CurrentTurnRange.AnimMontage);
@@ -293,36 +283,6 @@ void UBTT_TurnTo::CleanUp(AAIController& AIController, uint8* NodeMemory)
 	{
 		AIController.ClearFocus(EAIFocusPriority::Gameplay);
 	}
-}
-
-bool UBTT_TurnTo::IsTurnWithAnimationRequired(ACharacter* Character) const
-{
-    if (!Character) return false;
-    if (Character->IsPlayingRootMotion()) return false;
-    return true;
-}
-
-FTurnRange UBTT_TurnTo::GetTurnRange(float DeltaAngle, bool& bCurrentTurnRangeSet, FTurnSettings TurnSettings_In)
-{
-    FTurnRange Result;
-    bCurrentTurnRangeSet = false;
-    for (TTuple<FString, FTurnRanges> TurnToRange : TurnSettings_In.TurnRangesGroups)
-    {
-        for (FTurnRange Range : TurnToRange.Value.TurnRanges)
-        {
-            if (Range.Range.Contains(DeltaAngle))
-            {
-                Result = Range;
-                bCurrentTurnRangeSet = true;
-                break;
-            }
-        }
-        if (bCurrentTurnRangeSet)
-        {
-            break;
-        }
-    }
-    return Result;
 }
 
 FTurnSettings UBTT_TurnTo::GetTurnSettings(AActor* Actor, bool& bCurrentTurnSettingsSet)
@@ -373,7 +333,7 @@ void UBTT_TurnTo::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp,
 
 		if (FocalPoint != FAISystem::InvalidLocation)
 		{
-			const FVector::FReal CurrentAngleRadians = CalculateAngleDifferenceDot(PawnDirection, (FocalPoint - AIController->GetPawn()->GetActorLocation()));
+			const FVector::FReal CurrentAngleRadians = TurnToStatics::CalculateAngleDifferenceDot(PawnDirection, (FocalPoint - AIController->GetPawn()->GetActorLocation()));
 			Values.Add(FString::Printf(TEXT("Current angle: %.2f"), FMath::RadiansToDegrees(FMath::Acos(CurrentAngleRadians))));
 		}
 		else

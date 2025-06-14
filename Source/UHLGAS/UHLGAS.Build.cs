@@ -31,6 +31,8 @@ public class UHLGAS : ModuleRules
 				"GameplayTags",
 				"GameplayTasks",
 				"EnhancedInput", 
+				
+				"NiagaraAnimNotifies", 
 			}
 			);
 

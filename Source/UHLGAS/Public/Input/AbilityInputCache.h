@@ -6,7 +6,6 @@
 #include "GameplayTagContainer.h"
 #include "AbilityInputCache.generated.h"
 
-
 class UUHLAbilitySystemComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(Log_UHL_AbilityInputCache, Log, All);
@@ -25,7 +24,7 @@ public:
  * TODO clear cache on successfully activated ability? is it option?
  */
 UCLASS()
-class UHLGAS_API UAbilityInputCache : public UObject
+class UHLGAS_API UAbilityInputCache final : public UObject
 {
 	GENERATED_BODY()
 
@@ -42,7 +41,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
     void ClearCache();
     UFUNCTION(BlueprintCallable, Category = "AbilityInputCache")
-    TArray<FGameplayTag> GetAbilityInputCache() const { return AbilityInputCache; };
+    const TArray<FGameplayTag>& GetAbilityInputCache() const { return AbilityInputCache; };
     // TODO: remove tags from cache explicitly (probably bad practice, dont give option to do so?)
     // UFUNCTION(BlueprintCallable)
     // void RemoveTagFromCache(FGameplayTag AbilityTag_In);

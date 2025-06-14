@@ -18,7 +18,8 @@ class UHLGAS_API UAN_FireGameplayEvent : public UAN_UHL_Base
 public:
 	UPROPERTY(EditAnywhere, Category="FireGameplayEvent")
 	FGameplayTag EventTag = FGameplayTag::EmptyTag;
-	
+
+	// TODO use "UPayloadWithInstancedStructs" from "UAA_TryActivateAbilityAndWait"
 	UPROPERTY(EditAnywhere, Category="FireGameplayEvent", Instanced)
 	UObject* OptionalObject = nullptr;
 
