@@ -4,12 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Async/AbilityAsync.h"
-#include "Abilities/Tasks/AbilityTask_WaitAttributeChange.h"
+#include "Abilities/Tasks/AbilityTask_WaitAttributeChangeRatioThreshold.h"
 #include "AA_WaitAttributeChangeRatioThreshold.generated.h"
 
 struct FGameplayEffectModCallbackData;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWaitAttributeChangeRatioThresholdDelegate, bool, bMatchesComparison, float, CurrentRatio);
 
 /**
  * 

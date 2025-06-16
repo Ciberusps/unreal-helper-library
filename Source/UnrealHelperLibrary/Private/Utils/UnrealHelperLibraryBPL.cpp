@@ -1016,6 +1016,22 @@ float UUnrealHelperLibraryBPL::RandomValueInInterval(FFloatInterval Range)
 	return FMath::FRandRange(Lower, Upper);
 }
 
+bool UUnrealHelperLibraryBPL::IsWorldPartitionEnabled(UObject* WorldContextObject)
+{
+	if (!WorldContextObject) return false;
+
+	UWorld* World = WorldContextObject->GetWorld();
+	return World && World->GetWorldPartition() != nullptr;
+}
+
+bool UUnrealHelperLibraryBPL::IsLevelHasSublevels(UObject* WorldContextObject)
+{	
+	UWorld* World = WorldContextObject->GetWorld();
+	const TArray<ULevelStreaming*>& StreamingLevels = World->GetStreamingLevels();
+
+	return StreamingLevels.Num() > 0;
+}
+
 FColor UUnrealHelperLibraryBPL::RandomColor(int32 Seed)
 {
 	if (Seed >= 0)

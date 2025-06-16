@@ -291,6 +291,13 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|Random", meta = (Keywords = "UnrealHelperLibrary random interval"))
 	static float RandomValueInInterval(FFloatInterval Range);
+
+	
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|World", meta = (Keywords = "UnrealHelperLibrary world map level"))
+	static bool IsWorldPartitionEnabled(UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "UnrealHelperLibrary|World", meta = (Keywords = "UnrealHelperLibrary world map level"))
+	static bool IsLevelHasSublevels(UObject* WorldContextObject);
 	/** ~Utils **/
 
 	/** Colors **/

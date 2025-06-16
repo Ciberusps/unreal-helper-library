@@ -65,6 +65,12 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
           }
       }
   ```
+  
+  - to use specific engine version specify branch e.g. `-b UE5.4`
+
+    ```bash
+    git submodule add -b UE5.4 https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
+    ```
 
   - to use specific engine version specify branch e.g. `-b UE5.4`
 
