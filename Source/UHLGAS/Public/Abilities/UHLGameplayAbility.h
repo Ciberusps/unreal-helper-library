@@ -98,10 +98,9 @@ public:
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
 	// Commit Ability
-	virtual bool CommitAbility(
+	virtual void CommitExecute(
 		const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-		const FGameplayAbilityActivationInfo ActivationInfo,
-		FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
+		const FGameplayAbilityActivationInfo ActivationInfo) override;
 	virtual bool CommitAbilityDuration(
 		const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo,

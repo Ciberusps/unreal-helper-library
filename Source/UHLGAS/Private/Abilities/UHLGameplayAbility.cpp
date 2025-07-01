@@ -67,13 +67,12 @@ void UUHLGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorI
 	}
 }
 
-bool UUHLGameplayAbility::CommitAbility(
+void UUHLGameplayAbility::CommitExecute(
 	const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo,
-	FGameplayTagContainer* OptionalRelevantTags)
+	const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	return CommitAbilityDuration(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags) &&
-		Super::CommitAbility(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags);
+	Super::CommitExecute(Handle, ActorInfo, ActivationInfo);
+	CommitAbilityDuration(Handle, ActorInfo, ActivationInfo);
 }
 
 bool UUHLGameplayAbility::CommitAbilityDuration(
