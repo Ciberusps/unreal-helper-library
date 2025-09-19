@@ -41,7 +41,8 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 - add git submodule to your plugins folder
 
     ```bash
-    git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
+    git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary // adds UnrealHelperLibrary to your project
+    git submodule update --init --recursive // downloads submodules of UnrealHelperLibrary
     ```
 
 - <details>
