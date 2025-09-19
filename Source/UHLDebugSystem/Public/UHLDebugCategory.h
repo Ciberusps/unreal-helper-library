@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UHLDebugCategoryComponent.h"
 #include "GameplayTagContainer.h"
-#include "UnrealHelperLibraryTypes.h"
+#include "UHLDebugSystemTypes.h"
 #include "UHLDebugCategory.generated.h"
 
 
@@ -64,7 +64,7 @@ struct FUHLDebugCategory
     // "Editor" will mean that its will be enabled in "EnabledDebugCategories" by default for all devs on EditorStartup
     // Others means that DebugCategory will be enabled on start
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UHLDebugCategory", AdvancedDisplay)
-    TArray<EUHLBuildType> ByDefaultEnabledInBuildTypes = {};
+    TArray<EUHLDebugSystemBuildType> ByDefaultEnabledInBuildTypes = {};
 
     bool TryEnable(UObject* ContextObj);
     void TryDisable(UObject* ContextObj);

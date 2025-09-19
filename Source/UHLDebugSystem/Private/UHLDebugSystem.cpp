@@ -4,17 +4,13 @@
 
 #include "Misc/Paths.h"
 #include "GameplayTagsManager.h"
-#include "UHLConfigMigrationUtils.h"
+#include "Misc/ConfigCacheIni.h"
 #include "Development/UHLDebugSystemSettings.h"
 
 #define LOCTEXT_NAMESPACE "FUHLDebugSystemModule"
 
 void FUHLDebugSystemModule::StartupModule()
 {
-	UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	TagsManager.AddTagIniSearchPath(FPaths::ProjectPluginsDir() / TEXT("UnrealHelperLibrary/Config/Tags"));
-
 	MigrateOldSettingsFromMainModule();
 }
 
@@ -26,13 +22,27 @@ void FUHLDebugSystemModule::ShutdownModule()
 
 void FUHLDebugSystemModule::MigrateOldSettingsFromMainModule()
 {
-	UHLConfigMigrationUtils::MigrateConfigSectionIfNeeded(
-		TEXT("/Script/UnrealHelperLibrary.UHLDebugSubsystemSettings"),
-		TEXT("/Script/UHLDebugSystem.UHLDebugSystemSettings"),
-		TEXT("bMigrationFromOldSettingsDone"),
-		GGameIni,
-		GGameIni
-	);
+    bool bMigrationDone = false;
+    GConfig->GetBool(TEXT("/Script/UHLDebugSystem.UHLDebugSystemSettings"), TEXT("bMigrationFromOldSettingsDone"), bMigrationDone, GGameIni);
+    if (!bMigrationDone)
+    {
+        // Copy all keys from old section if it exists
+        if (GConfig->DoesSectionExist(TEXT("/Script/UnrealHelperLibrary.UHLDebugSubsystemSettings"), GGameIni))
+        {
+            TArray<FString> Keys;
+            GConfig->GetSection(TEXT("/Script/UnrealHelperLibrary.UHLDebugSubsystemSettings"), Keys, GGameIni);
+            for (const FString& KeyLine : Keys)
+            {
+                FString Key, Value;
+                if (KeyLine.Split(TEXT("="), &Key, &Value))
+                {
+                    GConfig->SetString(TEXT("/Script/UHLDebugSystem.UHLDebugSystemSettings"), *Key, *Value, GGameIni);
+                }
+            }
+        }
+        GConfig->SetBool(TEXT("/Script/UHLDebugSystem.UHLDebugSystemSettings"), TEXT("bMigrationFromOldSettingsDone"), true, GGameIni);
+        GConfig->Flush(false, GGameIni);
+    }
 
     UUHLDebugSystemSettings* Settings = GetMutableDefault<UUHLDebugSystemSettings>();
     if (Settings)

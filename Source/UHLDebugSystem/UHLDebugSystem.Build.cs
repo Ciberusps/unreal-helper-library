@@ -37,8 +37,6 @@ public class UHLDebugSystem : ModuleRules
 				"GameplayTasks",
 				"EnhancedInput", 
 				
-				// TODO remove if possible used only for DebugPrints and EUHLBuildType
-				"UnrealHelperLibrary",
 			}
 			);
 
@@ -53,8 +51,6 @@ public class UHLDebugSystem : ModuleRules
 				"DeveloperSettings", 
 				
 				// Should not use any other UHL modules
-				
-				"UHLModulesHelper",
 				// ... add private dependencies that you statically link with here ...
 			}
 			);
