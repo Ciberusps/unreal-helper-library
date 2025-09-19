@@ -1,0 +1,3 @@
+[submodule "UHLDebugSystem"]
+	path = UHLDebugSystem
+	url = https://github.com/Ciberusps/UHLDebugSystem
