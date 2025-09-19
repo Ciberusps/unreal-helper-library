@@ -49,22 +49,7 @@
 				"Win64"
 			]
 		},
-		{
-			"Name": "UHLDebugSystem",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"PlatformAllowList": [
-				"Win64"
-			]
-		},
-		{
-			"Name": "UHLDebugSystemEditor",
-			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit",
-			"PlatformAllowList": [
-				"Win64"
-			]
-		},
+
 		{
 			"Name": "UHLDebug",
 			"Type": "Runtime",
@@ -107,6 +92,10 @@
 		}
 	],
 	"Plugins": [
+		{
+			"Name": "UHLDebugSystem",
+			"Enabled": true
+		},
 		{
 			"Name": "GameplayAbilities",
 			"Enabled": true
