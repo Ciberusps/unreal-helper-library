@@ -44,9 +44,8 @@ public class UHLGAS : ModuleRules
 				"Engine",
 				
 				"DeveloperSettings",
-
+				
 				"UnrealHelperLibrary",
-				"UHLDebugSystem",
 				"UHLAI",
 			}
 			);

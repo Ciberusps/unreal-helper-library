@@ -33,7 +33,6 @@ public class UHLCharacter : ModuleRules
 				"EnhancedInput",
 
 				"UnrealHelperLibrary",
-				"UHLDebugSystem",
 				"UHLAI",
 				"UHLGAS",
 			}

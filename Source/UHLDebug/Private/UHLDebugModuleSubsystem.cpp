@@ -5,12 +5,13 @@
 
 #include "GameFramework/Pawn.h"
 #include "AbilitySystemInterface.h"
-#include "UHLGASBlueprintLibrary.h"
 #include "Blueprint/UserWidget.h"
-#include "Core/UHLGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/UHLDebugWidget.h"
-#include "AA_WaitDebugCategoryChange.h"
+#include "GameFramework/PlayerController.h"
+#include "AbilitySystemComponent.h"
+#include "HAL/IConsoleManager.h"
+#include "Engine/Engine.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugModuleSubsystem)
 
@@ -23,20 +24,26 @@ void UUHLDebugModuleSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
 
-	UAA_WaitDebugCategoryChange* WaitEncounterDebugCategoryChangeTask =
-		UAA_WaitDebugCategoryChange::WaitDebugCategoryChange(
-			GetWorld(),
-			UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_AbilityInputCache
-		);
-	WaitEncounterDebugCategoryChangeTask->OnChange.AddUniqueDynamic(
+	// Console variable to control ability input cache debug
+	static TAutoConsoleVariable<int32> GUHLAbilityInputCacheCVar(
+		TEXT("uhl.Debug.AbilityInputCache"),
+		0,
+		TEXT("Toggle UHL ability input cache debug widget (0/1)"),
+		ECVF_Default);
+
+	// Install a console variable sink to listen to changes
+	ConsoleVariableSinkHandle = IConsoleManager::Get().RegisterConsoleVariableSink_Handle(FConsoleCommandDelegate::CreateUObject(
 		this,
-		&UUHLDebugModuleSubsystem::OnAbilityInputDebugCategoryChanged);
-	WaitEncounterDebugCategoryChangeTask->Activate();
+		&UUHLDebugModuleSubsystem::OnCVarUHLAbilityInputCacheChanged));
+
+	// Apply initial value
+	OnCVarUHLAbilityInputCacheChanged();
 }
 
 void UUHLDebugModuleSubsystem::Deinitialize()
 {
     Super::Deinitialize();
+	IConsoleManager::Get().UnregisterConsoleVariableSink_Handle(ConsoleVariableSinkHandle);
 }
 
 void UUHLDebugModuleSubsystem::OnAbilityInputDebugCategoryChanged(bool bEnabled)
@@ -95,4 +102,24 @@ UUHLAbilitySystemComponent* UUHLDebugModuleSubsystem::GetPlayerAbilitySystemComp
     if (!UHLASC) return nullptr;
 
     return UHLASC;
+}
+
+void UUHLDebugModuleSubsystem::OnCVarUHLAbilityInputCacheChanged()
+{
+	IConsoleVariable* Var = IConsoleManager::Get().FindConsoleVariable(TEXT("uhl.Debug.AbilityInputCache"));
+	const bool bEnabled = Var ? Var->GetInt() != 0 : false;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			2.0f,
+			bEnabled ? FColor::Green : FColor::Silver,
+			FString::Printf(TEXT("[UHLDebug] AbilityInputCache %s"), bEnabled ? TEXT("ON") : TEXT("OFF"))
+		);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[UHLDebug] AbilityInputCache %s"), bEnabled ? TEXT("ON") : TEXT("OFF"));
+
+	OnAbilityInputDebugCategoryChanged(bEnabled);
 }

@@ -11,6 +11,7 @@
 #include "DebugCategories/DCC_AbilitySystem_Effects.h"
 #include "DebugCategories/DCC_Collisions.h"
 #include "DebugCategories/DCC_InputSystem_EnhancedInput.h"
+#include "DebugCategories/DCC_AbilityInputCache.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLDebugSystemSettings)
@@ -101,6 +102,7 @@ TArray<FUHLDebugCategory> UUHLDebugSystemSettings::GET_DEFAULT_UHL_DEBUG_CATEGOR
     AbilityInputCacheDebugCategory.Name = "AbilityInputCache";
     AbilityInputCacheDebugCategory.Tags = FGameplayTagContainer{ UHLGameplayTags::TAG_UHL_DebugCategory_InputSystem_AbilityInputCache };
     AbilityInputCacheDebugCategory.bIsDefaultUHLDebugCategory = true;
+    AbilityInputCacheDebugCategory.Components = { UDCC_AbilityInputCache::StaticClass() };
     DEFAULT_UHL_DEBUG_CATEGORIES.Add(AbilityInputCacheDebugCategory);
 
 	FUHLDebugCategory CollisionsDebugCategory = {};

@@ -50,7 +50,6 @@ public class UHLDebug : ModuleRules
 				"DeveloperSettings",
 
 				"UnrealHelperLibrary",
-				"UHLDebugSystem",
 				"UHLGAS",
 			}
 			);
