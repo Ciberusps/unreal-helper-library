@@ -19,6 +19,3 @@
 [submodule "UHLStateTree"]
 	path = UHLStateTree
 	url = https://github.com/Ciberusps/UHLStateTree.git
-[submodule "Plugins/UHLBehaviorTree"]
-	path = Plugins/UHLBehaviorTree
-	url = https://github.com/Ciberusps/UHLBehaviorTree.git
