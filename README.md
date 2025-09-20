@@ -42,6 +42,7 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
 
     ```bash
     git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
+    git submodule update --init --recursive --checkout
     ```
 
 - <details>
@@ -854,3 +855,25 @@ TODO check ref - https://github.com/Atulin/ChannelMerger
 ## Special Thanks
 
 [@Ingarnm](https://github.com/Ingarnm), [@Vamp1rk0](https://github.com/Vamp1rk0) for feedback
+
+### Migration to UHL 2.0, NEW multi-plugins version
+
+if already have plugin
+- checkout main
+- commit UnrealHelperLibrary change
+- run command - `git submodule update --init --recursive`
+
+- UHL CommonMaps - in `Config/DefaultGame` rename section from [/Script/CommonMaps.UHLCommonMapsDeveloperSettings] -> [/Script/UHLCommonMaps.UHLCommonMapsDeveloperSettings]
+
+#### Install separately
+
+```C++
+git submodule add https://github.com/Ciberusps/UHL.git ./Plugins/UHL
+git submodule add https://github.com/Ciberusps/UHLAI.git ./Plugins/UHLAI
+git submodule add https://github.com/Ciberusps/UHLBehaviorTrees.git ./Plugins/UHLBehaviorTrees
+git submodule add https://github.com/Ciberusps/UHLStateTrees.git ./Plugins/UHLStateTrees
+git submodule add https://github.com/Ciberusps/UHLCharacter.git ./Plugins/UHLCharacter
+git submodule add https://github.com/Ciberusps/UHLCommonMaps.git ./Plugins/UHLCommonMaps
+git submodule add https://github.com/Ciberusps/UHLDebugSystem.git ./Plugins/UHLDebugSystem
+git submodule add https://github.com/Ciberusps/UHLGAS.git ./Plugins/UHLGAS
+```
