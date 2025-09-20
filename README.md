@@ -870,8 +870,8 @@ if already have plugin
 ```C++
 git submodule add https://github.com/Ciberusps/UHL.git ./Plugins/UHL
 git submodule add https://github.com/Ciberusps/UHLAI.git ./Plugins/UHLAI
-git submodule add https://github.com/Ciberusps/UHLBehaviorTrees.git ./Plugins/UHLBehaviorTrees
-git submodule add https://github.com/Ciberusps/UHLStateTrees.git ./Plugins/UHLStateTrees
+git submodule add https://github.com/Ciberusps/UHLBehaviorTree.git ./Plugins/UHLBehaviorTree
+git submodule add https://github.com/Ciberusps/UHLStateTree.git ./Plugins/UHLStateTree
 git submodule add https://github.com/Ciberusps/UHLCharacter.git ./Plugins/UHLCharacter
 git submodule add https://github.com/Ciberusps/UHLCommonMaps.git ./Plugins/UHLCommonMaps
 git submodule add https://github.com/Ciberusps/UHLDebugSystem.git ./Plugins/UHLDebugSystem
