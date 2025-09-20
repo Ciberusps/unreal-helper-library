@@ -4,9 +4,6 @@
 [submodule "UHLAI"]
 	path = UHLAI
 	url = https://github.com/Ciberusps/UHLAI.git
-[submodule "UHLBehaviorTrees"]
-	path = UHLBehaviorTrees
-	url = https://github.com/Ciberusps/UHLBehaviorTrees.git
 [submodule "UHLCharacter"]
 	path = UHLCharacter
 	url = https://github.com/Ciberusps/UHLCharacter.git
