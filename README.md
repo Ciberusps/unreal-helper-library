@@ -66,7 +66,7 @@ Support: `UE5.5 (main)`, `UE5.4 (branch UE5.4)`
           }
       }
   ```
-  
+
   - to use specific engine version specify branch e.g. `-b UE5.4`
 
     ```bash
@@ -877,3 +877,22 @@ git submodule add https://github.com/Ciberusps/UHLCommonMaps.git ./Plugins/UHLCo
 git submodule add https://github.com/Ciberusps/UHLDebugSystem.git ./Plugins/UHLDebugSystem
 git submodule add https://github.com/Ciberusps/UHLGAS.git ./Plugins/UHLGAS
 ```
+
+### Changelog
+
+- all modules moved to separate plugins and made as independent as possible now dependency tree looks like
+- **TODO: draw dependency tree using schemas**
+  - UHLAI
+    - UHLBehaviorTree
+    - UHLStateTree
+    - UHLCharacter
+  - UHLGAS
+    - UHLCharacter
+  - UHL
+    - UHLCharacter
+  - UHLCommonMaps
+  - UHLDebugSystem
+  - UHLCharacter
+- UHLSettings moved to UHLAISettings now UHLStateTree and UHLBehaviorTree independent from core "UHL" plugin
+and can be used completly separatly from it. UHLStateTree and UHLBehaviorTree depends only on UHLAI
+-
