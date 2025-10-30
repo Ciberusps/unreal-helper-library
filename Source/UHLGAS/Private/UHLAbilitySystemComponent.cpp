@@ -9,8 +9,21 @@
 #include "Core/UHLGameplayTags.h"
 #include "Development/UHLGASSettings.h"
 #include "Utils/UnrealHelperLibraryBPL.h"
+#include "GameplayAbilitySpec.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLAbilitySystemComponent)
+
+FGameplayAbilitySpecHandle UUHLAbilitySystemComponent::GiveAbilityWithSource(TSubclassOf<UGameplayAbility> AbilityClass, int32 AbilityLevel, int32 InputID, UObject* SourceObject)
+{
+    if (!AbilityClass)
+    {
+        return FGameplayAbilitySpecHandle();
+    }
+
+    FGameplayAbilitySpec AbilitySpec(AbilityClass, AbilityLevel, InputID, SourceObject);
+
+    return GiveAbility(AbilitySpec);
+}
 
 void UUHLAbilitySystemComponent::BeginPlay()
 {

@@ -31,6 +31,10 @@ public:
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL AbilitySystemComponent", meta=(ShowOnlyInnerProperties))
 	// FUHLAbilitySystemSettings Settings = {};
 
+	// Grant Ability with exposed Source object
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Gameplay Abilities", meta = (DisplayName = "Give Ability With Source", ScriptName = "GiveAbilityWithSource"))
+    FGameplayAbilitySpecHandle GiveAbilityWithSource(TSubclassOf<UGameplayAbility> AbilityClass, int32 AbilityLevel = 1, int32 InputID = -1, UObject* SourceObject = nullptr);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL AbilitySystemComponent", meta=(InlineEditConditionToggle))
 	bool bInitializeGameplayAttributes = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UHL AbilitySystemComponent", meta=(ForceInlineRow, EditCondition="bInitializeGameplayAttributes"))
