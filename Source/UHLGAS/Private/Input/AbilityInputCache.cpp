@@ -108,6 +108,19 @@ void UAbilityInputCache::CheckCache()
 				// 		// bCanceledSuccessfully;
 				// 	}
 				// }
+
+				FGameplayAbilitySpec AbilitySpec;
+				UUHLGASBlueprintLibrary::FindAbilitySpecByTagUsingASC(ASC.Get(), AbilityTagToActivate, AbilitySpec);
+				if (AbilitySpec.IsActive())
+				{
+					const UUHLGameplayAbility* AbilityCDO = Cast<UUHLGameplayAbility>(AbilitySpec.Ability);
+					if (AbilityCDO->bCheckTagsWhenCheckingCache)
+					{
+						// ASC->CancelAbilityHandle(AbilitySpec.Handle);
+						// bool bCanceledSuccessfully = ASC->TryCancelAbilityWithTag(AbilityTagToActivate);
+						// bCanceledSuccessfully;
+					}
+				}
 				
 				bool bActivated = ASC->TryActivateAbilityWithTag(AbilityTagToActivate);
 				UE_LOG(Log_UHL_AbilityInputCache, Log, TEXT("Activation %s - %s!"), bActivated ? TEXT("successful") : TEXT("failed"), *AbilityTagToActivate.ToString());

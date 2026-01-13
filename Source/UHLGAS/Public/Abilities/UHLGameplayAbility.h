@@ -80,6 +80,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache", DisplayName="[Add to Cache] BlockedTags")
     FGameplayTagContainer AddToCacheBlockedTags;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache")
+	bool bCheckTagsWhenCheckingCache = false;
+	
+	// tags required on owner ASC to activate ability from cache when we "Check" AbilityInputCache
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache", DisplayName="[Check Cache] RequiredTags", meta=(EditCondition="bCheckTagsWhenCheckingCache", EditConditionHides))
+	FGameplayTagContainer CheckCacheRequiredTags;
+	// tags blocked on owner ASC - if present ability won't be activated from cache when we "Check" AbilityInputCache
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AbilityInputCache", DisplayName="[Check Cache] RequiredTags", meta=(EditCondition="bCheckTagsWhenCheckingCache", EditConditionHides))
+	FGameplayTagContainer CheckCacheBlockedTags;
+
 	/**
 	* When true, external CancelAbility calls are intercepted and must be completed manually via ReleaseCancellation().
 	*/
