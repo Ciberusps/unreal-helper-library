@@ -1,0 +1,24 @@
+[submodule "UHL"]
+	path = UHL
+	url = https://github.com/Ciberusps/UHL.git
+[submodule "UHLAI"]
+	path = UHLAI
+	url = https://github.com/Ciberusps/UHLAI.git
+[submodule "UHLCharacter"]
+	path = UHLCharacter
+	url = https://github.com/Ciberusps/UHLCharacter.git
+[submodule "UHLCommonMaps"]
+	path = UHLCommonMaps
+	url = https://github.com/Ciberusps/UHLCommonMaps.git
+[submodule "UHLDebugSystem"]
+	path = UHLDebugSystem
+	url = https://github.com/Ciberusps/UHLDebugSystem.git
+[submodule "UHLGAS"]
+	path = UHLGAS
+	url = https://github.com/Ciberusps/UHLGAS.git
+[submodule "UHLStateTree"]
+	path = UHLStateTree
+	url = https://github.com/Ciberusps/UHLStateTree.git
+[submodule "UHLBehaviorTree"]
+	path = UHLBehaviorTree
+	url = https://github.com/Ciberusps/UHLBehaviorTree.git
