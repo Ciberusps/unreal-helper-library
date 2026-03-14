@@ -10,12 +10,11 @@ Support: `UE5.6` (at least)
 
 ## ✨ Plugins and features
 
-- [UHL](https://github.com/Ciberusps/UHL) - utility functions like `GetProjectVersion`, `GetAssetsOfClass`, `GetHighestPoint`. Editor - editor customization, e.g. `Custom thumnails`, `Custom class icon`
 - [UHLGAS](https://github.com/Ciberusps/UHLGAS) - GAS features provides
 much smoother GAS experience mostly based on [Lyra](https://dev.epicgames.com/documentation/en-us/unreal-engine/lyra-sample-game-in-unreal-engine?application_version=5.5) features.
 All GAS features designed in mind that they or their part can be added or dropped by you in development in any time
 and replaced by something custom that fits your project needs
-- [UHLAI](https://github.com/Ciberusps/UHLAI) - 
+- [UHLAI](https://github.com/Ciberusps/UHLAI) - basic utils for creating AI that most projects needs have two version for BehaviorsTrees/StateTrees with same functionality
   - [UHLBehaviorTrees](https://github.com/Ciberusps/UHLBehaviorTrees) & [UHLStateTree](https://github.com/Ciberusps/UHLStateTree) - AI nodes
     - `SetGameplayFocus` - set focus on actor
     - `InRange` - check distance to enemy
@@ -24,8 +23,9 @@ and replaced by something custom that fits your project needs
     - `InvokeGameplayAbility` - activate/deactivate GAS Gameplay Ability by tag, with optional "wait for finishing"
     - `TurnTo` - turn enemy using turn animations
   - [UHLStateTree](https://github.com/Ciberusps/UHLStateTree) - StateTree tools same set as for BehaviorTrees - InRange/InAngle/PlayAnimMontage/InvokeGameplayAbility/Cooldowns/Focuses(gameplya/... and much more
-- [UHLCommonMaps](https://github.com/Ciberusps/UHLCommonMaps)
-- [UHLDebugSystem](https://github.com/Ciberusps/UHLDebugSystem)
+- [UHL](https://github.com/Ciberusps/UHL) - utility functions like `GetProjectVersion`, `GetAssetsOfClass`, `GetHighestPoint`. Editor - editor customization, e.g. `Custom thumnails`, `Custom class icon`
+- [UHLCommonMaps](https://github.com/Ciberusps/UHLCommonMaps) - literaly button with common maps thats all. Based on Lyra CommonMaps(EditorPlugin) but extended with ability to select folder with maps
+- [UHLDebugSystem](https://github.com/Ciberusps/UHLDebugSystem) - Gameplay DebugCategories ability-like System, for easier debugging
 
 
 ## 🚀 Install & ⬆️ Update
@@ -70,20 +70,15 @@ https://www.fab.com/listings/9f7d82e9-bc72-42ff-b302-b3d6562bd4c8
 
 ### [🧠 AI](#-ai)
 
-AI nodes for behavior tree, based on `BehaviorTree` and `BehaviorTreeComponent` from `UE5.4` and `UE5.5` with some improvements and additional features
+AI nodes for
+- [BehaviorTree](https://github.com/Ciberusps/UHLBehaviorTree)
+- [StateTree](https://github.com/Ciberusps/UHLStateTree)
 
-#### **[🧠 AI - BehaviorTrees](https://github.com/Ciberusps/UHLBehaviorTree)**
-
-#### **[🧠 AI - StateTrees ](https://github.com/Ciberusps/UHLStateTree)**
+![AiModule](https://github.com/user-attachments/assets/4becb592-c02e-423a-bf80-fcfc629ce518)
 
 ### [💪 GAS](https://github.com/Ciberusps/UHLGAS)
 
 Gameplay Ability System - Lyra based inputs, ability system component, ability system config, input cache, attribute set, ability sets
-
-
-**[🦸 Character](#character)**
-
-Default character class with UHL interfaces implemented, so you don't need to do it by yourself
 
 
 ### [🪲 DebugSystem](https://github.com/Ciberusps/UHLDebugSystem)
@@ -99,7 +94,11 @@ Debug system for your game, in mid-size commands you always use limited set of g
 - **UnrealHelperEditor** - optional module with editor customization, e.g. custom thumnails, custom class icons
 ---
 
-### Migration to UHL 2.0, NEW multi-plugins version
+**[🦸 Character](#character)**
+
+Default character class with UHL interfaces implemented, so you don't need to do it by yourself
+
+### Migration to UHL 2.0 (NEW multi-plugins version)
 
 if already have plugin
 - checkout main
