@@ -1,3 +1,5 @@
+
+
 # Unreal Helper Library [UHL]
 
 **UHL** - unreal helper library, toolset to help developers working with AI, GAS, customizing editor and so on.
@@ -24,7 +26,7 @@ Support: `UE5.6` (at least)
 git submodule add https://github.com/Ciberusps/unreal-helper-library.git ./Plugins/UnrealHelperLibrary
 
 // to update plugin
-git submodule update --init --recursive --checkout
+git submodule update --init --recursive --remote --checkout
 ```
 
 ### Or install all UHL plugins as independent plugins
